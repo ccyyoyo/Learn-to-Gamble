@@ -1,0 +1,83 @@
+/* 5 軸 20 線影片機 — 前綴 sv- */
+.sv-root { display: flex; flex-direction: column; gap: 10px; }
+.sv-machine {
+  position: relative; width: 100%; max-width: 640px; margin: 0 auto; padding: 10px 8px 10px; box-sizing: border-box;
+  border-radius: 20px; color: #fff3d0;
+  background: radial-gradient(ellipse at 50% 0%, #7a1a1a 0%, #3d0b10 55%, #1d0508 100%);
+  box-shadow: inset 0 0 0 3px #e0b64a, inset 0 0 0 7px #5b3a12, 0 8px 24px rgba(0, 0, 0, .5);
+  transition: background .6s;
+}
+.sv-root.is-free .sv-machine { background: radial-gradient(ellipse at 50% 0%, #6d3bd1 0%, #2f1a7a 55%, #120a38 100%); box-shadow: inset 0 0 0 3px #9ff0ff, inset 0 0 0 7px #3a2a8a, 0 0 28px rgba(140, 120, 255, .6); }
+.sv-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; padding: 0 4px; }
+.sv-logo { font-weight: 900; font-size: 1.15em; color: #ffd76a; text-shadow: 0 2px 0 #6b3a00; }
+.sv-logo .en { font-size: .6em; color: #ffe9b0; }
+.sv-head .lg-paytable-btn { color: #fff3d0; border-color: #e0b64a; min-height: 36px; }
+
+.sv-free { text-align: center; margin: 0 auto 6px; padding: 4px 10px; border-radius: 999px; background: rgba(0, 0, 0, .45); border: 1px solid #9ff0ff; max-width: 320px; }
+.sv-free[hidden] { display: none; }
+.sv-free__en { display: block; color: #9ff0ff; letter-spacing: .08em; font-size: .95em; animation: sv-pulse 1s ease-in-out infinite; }
+.sv-free__zh { display: block; font-size: .78em; color: #fff; font-variant-numeric: tabular-nums; }
+@keyframes sv-pulse { 50% { opacity: .6; } }
+
+.sv-legend { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 6px; font-size: .75em; }
+.sv-legend__i { display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px 2px 2px; border-radius: 999px; background: rgba(0, 0, 0, .35); }
+.sv-legend__i .sv-s { width: 32px; height: 32px; border-radius: 6px; }
+.sv-legend__i .sv-s b { font-size: 13px; }
+.sv-legend__i .sv-s small { font-size: 6px; }
+.sv-legend__i em { font-style: normal; }
+
+.sv-board { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 4px; align-items: stretch; }
+.sv-reels { min-width: 0; }
+.sv-reels .lg-slot { padding: 6px; }
+.sv-reels .lg-slot__lines { inset: 6px; width: calc(100% - 12px); height: calc(100% - 12px); }
+.sv-reels .lg-slot__cell { min-height: 0; background: #1a0a0e; border-radius: 6px; }
+.sv-linenos { display: grid; grid-template-rows: repeat(3, 1fr); padding: 6px 0; gap: 4px; }
+.sv-linenos__row { display: grid; grid-template-columns: repeat(2, 22px); gap: 2px; align-content: center; justify-content: center; }
+.sv-lineno {
+  width: 22px; height: 22px; padding: 0; border-radius: 5px; border: 1px solid var(--c); background: rgba(0, 0, 0, .5);
+  color: var(--c); font-size: 11px; font-weight: 800; line-height: 1; cursor: pointer; font-variant-numeric: tabular-nums;
+}
+.sv-lineno.is-off { opacity: .35; }
+.sv-lineno.is-on, .sv-lineno.is-win { background: var(--c); color: #111; box-shadow: 0 0 8px var(--c); opacity: 1; }
+
+/* 符號 */
+.sv-s { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; border-radius: 6px; line-height: 1; }
+.sv-s b { font-size: clamp(13px, 4.2vw, 26px); font-weight: 900; }
+.sv-s small { font-size: clamp(6px, 1.8vw, 10px); font-weight: 800; letter-spacing: .04em; margin-top: 2px; }
+.sv-s--W { background: linear-gradient(160deg, #1b7a3a, #0b3d1c); color: #ffe27a; box-shadow: inset 0 0 0 2px #ffd76a; }
+.sv-s--SC { background: radial-gradient(circle at 40% 35%, #fff2a8, #e0a400 55%, #8a5a00); color: #5a2a00; border-radius: 50%; }
+.sv-s--SC small { color: #5a2a00; }
+.sv-s--CS { background: linear-gradient(160deg, #d8261e, #7a0c0c); color: #ffe27a; }
+.sv-s--GI { background: linear-gradient(160deg, #f4c542, #a8740b); color: #5a2a00; }
+.sv-s--RP { background: linear-gradient(160deg, #ff4b4b, #b00d1a); color: #ffd76a; }
+.sv-s--KO { background: linear-gradient(160deg, #ff9a3c, #b04a0b); color: #fff; }
+.sv-s--A, .sv-s--K, .sv-s--Q, .sv-s--J, .sv-s--T, .sv-s--N { background: linear-gradient(180deg, #fdfaf1, #e2d8bf); }
+.sv-s--A b { color: #c0151b; } .sv-s--K b { color: #1846c9; } .sv-s--Q b { color: #7a2ab8; }
+.sv-s--J b { color: #1b7a3a; } .sv-s--T b { color: #b8650b; } .sv-s--N b { color: #0b7a8a; }
+
+.sv-meters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 8px; }
+.sv-meter { background: #0e0306; border: 1px solid #7a5a1a; border-radius: 8px; padding: 4px 6px; text-align: center; min-width: 0; }
+.sv-meter__k { display: block; font-size: .68em; color: #e0b64a; letter-spacing: .06em; }
+.sv-meter__v { display: block; font-variant-numeric: tabular-nums; font-size: .95em; color: #ff5a3c; font-family: ui-monospace, "SFMono-Regular", Menlo, monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sv-meter--win .sv-meter__v { color: #3ddc84; }
+
+.sv-controls { width: 100%; max-width: 640px; margin: 0 auto; }
+.sv-controls .lg-betpanel { justify-content: center; }
+.sv-spinrow { display: flex; justify-content: center; padding: 0 8px; }
+.sv-spin { flex: 1 1 auto; max-width: 260px; min-height: 52px; font-size: 1.15em; font-weight: 900; letter-spacing: .06em; border-radius: 999px; }
+.sv-spin.is-spinning { opacity: .7; }
+.sv-hint { max-width: 640px; margin: 0 auto; padding: 0 8px; }
+
+/* Pay Table modal */
+.sv-pt__key { padding: 8px 10px; border-radius: 8px; background: rgba(217, 180, 81, .12); border: 1px solid var(--gold); }
+.sv-pt__m { text-align: right; font-weight: 800; color: var(--gold); font-variant-numeric: tabular-nums; }
+.sv-minis { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 8px; }
+.sv-mini { display: flex; align-items: center; gap: 4px; }
+.sv-mini__n { font-weight: 800; font-size: .8em; min-width: 16px; text-align: right; }
+.sv-mini__g { display: grid; grid-template-columns: repeat(5, 7px); grid-auto-rows: 7px; gap: 1px; }
+.sv-mini__g i { display: block; background: #333d48; border-radius: 1px; }
+
+@media (min-width: 600px) {
+  .sv-linenos__row { grid-template-columns: repeat(2, 28px); }
+  .sv-lineno { width: 28px; height: 28px; font-size: 13px; }
+}
