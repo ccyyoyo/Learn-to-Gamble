@@ -1,0 +1,78 @@
+/* 視訊撲克 Jacks or Better — 樣式前綴 vp- */
+.vp-machine {
+  background: linear-gradient(180deg, #14286b 0%, #0b1a4d 55%, #081338 100%);
+  box-shadow: inset 0 0 0 3px #6b7fbf, inset 0 0 0 6px #1d2d66, inset 0 0 40px rgba(0, 0, 0, .5), var(--shadow);
+  display: flex; flex-direction: column; gap: 8px; padding: 10px 8px 12px; overflow-x: hidden;
+}
+.vp-title { text-align: center; color: #ffe066; letter-spacing: .08em; font-size: .95em; line-height: 1.2; }
+.vp-title b { font-weight: 900; text-shadow: 0 2px 0 #b3261e; }
+.vp-title span { display: block; font-size: .72em; color: #cfd8ff; letter-spacing: .04em; }
+
+/* 賠付表：5 欄，目前枚數欄高亮，中獎列亮 */
+.vp-paytable {
+  width: 100%; border-collapse: collapse; table-layout: fixed; font-variant-numeric: tabular-nums;
+  font-size: .74em; color: #ffe066; background: rgba(0, 0, 0, .25); border: 2px solid #ffe066; border-radius: 6px;
+}
+.vp-paytable caption { caption-side: top; text-align: left; color: #cfd8ff; font-size: .95em; padding: 0 2px 3px; }
+.vp-paytable th, .vp-paytable td { padding: 2px 3px; border-bottom: 1px solid rgba(255, 224, 102, .18); text-align: right; line-height: 1.15; }
+.vp-paytable th { color: #cfd8ff; font-weight: 600; }
+.vp-paytable .vp-pt__name { width: 36%; text-align: left; }
+.vp-pt__zh { display: block; font-weight: 700; }
+.vp-pt__en { display: block; font-size: .78em; opacity: .75; letter-spacing: .03em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.vp-paytable .is-col { background: #b3261e; color: #fff; }
+.vp-paytable th.is-col { color: #fff; }
+.vp-pt__jackpot { font-weight: 900; }
+.vp-paytable tr.is-win td { background: #ffe066; color: #0b1a4d; animation: vp-blink .6s steps(2) 3; }
+.vp-paytable tr.is-win td.is-col { background: #fff; color: #b3261e; }
+@keyframes vp-blink { 50% { filter: brightness(1.4); } }
+
+/* 牌 + HELD */
+.vp-cards { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; padding-top: 18px; }
+.vp-slot {
+  position: relative; display: flex; justify-content: center; align-items: flex-end; padding: 0; min-height: 44px;
+  background: transparent; border: 0; cursor: pointer; touch-action: manipulation;
+}
+.vp-slot:disabled { cursor: default; }
+.vp-slot:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 8px; }
+.vp-slot .lg-card { --w: min(62px, 17vw); --h: calc(var(--w) * 1.42); }
+.vp-held {
+  position: absolute; top: -18px; left: 50%; transform: translateX(-50%); z-index: 2;
+  font-size: .72em; font-weight: 900; letter-spacing: .08em; color: #0b1a4d; background: #ffe066;
+  padding: 0 6px; border-radius: 4px; visibility: hidden;
+}
+.vp-slot.is-held .vp-held { visibility: visible; }
+.vp-slot.is-suggest .lg-card { outline: 2px dashed var(--push); outline-offset: 2px; }
+
+.vp-status { min-height: 1.5em; text-align: center; color: #fff; font-size: .9em; font-weight: 600; }
+
+/* 表頭：CREDIT / BET / WIN */
+.vp-meters { display: grid; grid-template-columns: 1.2fr 1fr .9fr; gap: 6px; }
+.vp-meter { background: rgba(0, 0, 0, .35); border-radius: 6px; padding: 3px 6px; text-align: center; min-width: 0; }
+.vp-meter__k { display: block; font-size: .66em; color: #cfd8ff; letter-spacing: .06em; }
+.vp-meter__v { display: block; color: #ffe066; font-variant-numeric: tabular-nums; font-size: .92em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.vp-meter--win .vp-meter__v { color: var(--win); }
+
+.vp-hint { margin: 8px 8px 0; }
+
+/* 每枚金額 */
+.vp-denoms { display: flex; align-items: center; gap: 5px; padding: 10px 4px 0; flex-wrap: wrap; justify-content: center; }
+.vp-denoms__k { font-size: .85em; color: var(--muted); }
+.vp-coin {
+  min-width: 50px; min-height: var(--tap); padding: 4px 5px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--border); background: var(--panel-2); font-variant-numeric: tabular-nums; font-size: .85em;
+}
+.vp-coin.is-active { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 0 1px var(--gold) inset; }
+.vp-coin:disabled { opacity: .45; cursor: not-allowed; }
+
+.vp-actions .lg-btn { flex: 1 1 22%; padding: 6px 8px; font-size: .9em; }
+
+/* 教學策略表 */
+.vp-rules { margin: .3em 0; padding-left: 2em; font-size: .88em; line-height: 1.4; }
+
+@media (min-width: 600px) {
+  .vp-paytable { font-size: .85em; }
+  .vp-slot .lg-card { --w: 76px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vp-paytable tr.is-win td { animation: none; }
+}
