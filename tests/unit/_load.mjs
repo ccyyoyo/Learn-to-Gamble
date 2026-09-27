@@ -83,7 +83,11 @@ const list = (dir, ext) => {
 export function loadLG(opts = {}) {
   const { games = [], core = 'all', test = true } = opts;
   const stub = domStub();
-  Object.assign(globalThis, { window: globalThis, LG_TEST: test }, stub);
+  const all = { window: globalThis, LG_TEST: test, ...stub };
+  for (const [k, v] of Object.entries(all)) {
+    try { globalThis[k] = v; }
+    catch { try { Object.defineProperty(globalThis, k, { value: v, configurable: true, writable: true }); } catch { /* 忽略不可覆寫的全域（navigator 等） */ } }
+  }
   globalThis.LG = {};
   let files = list('src/core', '.js');
   if (core === 'libs') files = files.filter(f => /\/(00|1\d)-/.test(f));
