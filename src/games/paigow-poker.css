@@ -1,0 +1,77 @@
+/* Pai Gow Poker 牌九撲克 — 只用 pg- 前綴 */
+.pg-table { display: flex; flex-direction: column; gap: 10px; }
+.pg-area { display: flex; flex-direction: column; gap: 4px; align-items: stretch; }
+.pg-area__label { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; align-items: baseline; }
+.pg-area__sub { text-transform: none; letter-spacing: 0; opacity: .75; font-size: .95em; }
+
+/* 高手 / 低手兩區：同一橫排（手機寬度用 --pg-w 縮放牌寬） */
+.pg-dealer { --pg-w: clamp(30px, calc((100vw - 124px) / 7), 50px); }
+.pg-player { --pg-w: clamp(30px, calc((100vw - 94px) / 7.8), 60px); }
+.pg-table .lg-card { --w: var(--pg-w); --h: calc(var(--pg-w) * 1.4); border-radius: 5px; }
+.pg-table .lg-card__tl, .pg-table .lg-card__br { font-size: calc(var(--w) * .3); }
+.pg-dealer .lg-card__br { display: none; }
+.pg-zones { display: flex; justify-content: safe center; align-items: stretch; gap: 8px; }
+.pg-zone {
+  display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 0;
+  padding: 3px 4px 4px; border: 1px dashed var(--line-soft); border-radius: 10px;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+}
+.pg-zone--low .pg-zone__label { white-space: normal; text-align: center; max-width: calc(var(--pg-w) * 2.2); }
+.pg-zone--low { border-style: solid; border-color: var(--gold-soft); background: rgba(0, 0, 0, .12); }
+.pg-zone__label { font-size: .68em; letter-spacing: .06em; color: var(--line); opacity: .85; white-space: nowrap; }
+.pg-zone__n { display: inline-block; min-width: 1.4em; border-radius: 999px; background: rgba(0, 0, 0, .3); text-align: center; }
+.pg-zone__cards { display: flex; gap: 3px; justify-content: center; min-height: calc(var(--pg-w) * 1.4); }
+.pg-zone__eval { font-size: .7em; line-height: 1.25; text-align: center; color: var(--line); max-width: calc(var(--pg-w) * 5.4); min-height: 0; }
+.pg-zone__eval:empty { display: none; }
+.pg-zone--low .pg-zone__eval { max-width: calc(var(--pg-w) * 2.4); }
+.pg-zone.is-win { border-color: var(--win); box-shadow: 0 0 0 1px var(--win), 0 0 12px rgba(61, 220, 132, .35); }
+.pg-zone.is-lose { opacity: .7; border-color: rgba(255, 92, 92, .6); }
+.pg-zone.is-copy { border-color: var(--push); box-shadow: 0 0 0 1px var(--push); }
+.pg-zone.is-win .pg-zone__eval { color: var(--win); font-weight: 700; }
+.pg-zone.is-copy .pg-zone__eval::after { content: "（copy 歸莊）"; color: var(--push); }
+
+.pg-slot {
+  flex: 0 0 auto; width: var(--pg-w); height: calc(var(--pg-w) * 1.4);
+  border: 1px dashed rgba(243, 233, 201, .35); border-radius: 5px;
+}
+.pg-slot--hint {
+  width: calc(var(--pg-w) * .8); display: flex; align-items: center; justify-content: center; text-align: center;
+  font-size: .58em; line-height: 1.15; color: var(--line); opacity: .7; padding: 1px; word-break: break-all;
+}
+
+/* 可點的牌 */
+.pg-player.is-arranging .pg-tap { cursor: pointer; }
+.pg-player.is-arranging .pg-tap:hover { transform: translateY(-3px); }
+.pg-player.is-arranging .pg-tap:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.pg-player.is-arranging .pg-zone--low { border-color: var(--gold); }
+.pg-player.is-foul .pg-zone--low, .pg-zone.is-foul { border-color: var(--lose); box-shadow: 0 0 0 1px var(--lose); }
+.pg-player.is-dealt .lg-card { animation: pg-deal .25s ease-out; }
+@keyframes pg-deal { from { opacity: 0; transform: translateY(-10px); } }
+
+/* 狀態列 / 規則說明 */
+.pg-status {
+  text-align: center; font-size: .82em; line-height: 1.35; padding: 5px 8px; border-radius: 8px;
+  background: rgba(0, 0, 0, .25); color: var(--line); min-height: 1.4em;
+}
+.pg-status.is-ok { color: var(--win); }
+.pg-status.is-foul, .pg-foul { color: #fff; background: rgba(255, 92, 92, .28); border: 1px solid var(--lose); font-weight: 700; }
+.pg-status.is-win { color: var(--win); }
+.pg-status.is-lose { color: var(--lose); }
+.pg-status.is-push { color: var(--push); }
+.pg-status.is-example { color: var(--gold); }
+.pg-note { text-align: center; font-size: .75em; color: var(--gold); line-height: 1.35; }
+.pg-note:empty { display: none; }
+
+/* 下注格 */
+.pg-bets { display: grid; grid-template-columns: 1fr 1.25fr; gap: 10px; }
+.pg-spot { min-height: 88px; padding-bottom: 26px; }
+.pg-spot--main { border-radius: 50% / 38%; }
+.pg-spot--main .lg-spot__zh { font-size: 1.3em; }
+.pg-spot__table { font-size: .62em; line-height: 1.3; opacity: .8; margin-top: 2px; }
+
+.pg-hint { margin: 8px 8px 0; line-height: 1.45; }
+.pg-actions .lg-btn[hidden] { display: none; }
+@media (max-width: 360px) {
+  .pg-zones { gap: 5px; }
+  .pg-zone { padding: 2px 2px 3px; }
+}
