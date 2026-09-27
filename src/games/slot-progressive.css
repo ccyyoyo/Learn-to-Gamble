@@ -1,0 +1,67 @@
+/* 四級累積獎金機「金龍」— 紅金主題；只用 pg- 前綴 */
+.pg-machine {
+  display: flex; flex-direction: column; gap: 8px; padding: 10px;
+  background: radial-gradient(ellipse at top, #6b1010 0%, #3a0707 60%, #1c0303 100%);
+  box-shadow: inset 0 0 0 3px #d9b451, inset 0 0 0 6px #5b3a1d, inset 0 0 40px rgba(0, 0, 0, .5), var(--shadow);
+}
+.pg-jackpots { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.pg-jp {
+  position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 50px;
+  padding: 4px 6px; border-radius: 10px; text-align: center; border: 2px solid rgba(255, 255, 255, .3);
+  font-variant-numeric: tabular-nums; min-width: 0; transition: opacity .25s, filter .25s;
+}
+.pg-jp__k { font-size: .72em; font-weight: 900; letter-spacing: .06em; }
+.pg-jp__v { font-size: clamp(13px, 4vw, 18px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.pg-jp--grand { grid-column: 1 / -1; background: linear-gradient(180deg, #d4a017, #7a5200); border-color: #ffe9a8; color: #fffbe8; min-height: 58px; }
+.pg-jp--grand .pg-jp__v { font-size: clamp(16px, 5.2vw, 24px); }
+.pg-jp--major { background: linear-gradient(180deg, #6a1b9a, #34094f); border-color: #d4a8f0; color: #f6e8ff; }
+.pg-jp--minor { background: linear-gradient(180deg, #1565c0, #0a3264); border-color: #9cc8ff; color: #e6f1ff; }
+.pg-jp--mini { background: linear-gradient(180deg, #2e7d32, #124116); border-color: #a5d6a7; color: #eaffea; }
+.pg-jp__maxonly { font-size: .66em; font-weight: 700; padding: 1px 8px; border-radius: 999px; background: rgba(0, 0, 0, .35); margin-top: 2px; }
+.pg-jp.is-inactive { opacity: .42; filter: grayscale(.6); }
+.pg-jp.is-inactive .pg-jp__maxonly { background: var(--lose); color: #fff; opacity: 1; }
+.pg-note { font-size: .78em; color: #ffd9a8; text-align: center; min-height: 1.3em; }
+.pg-machine.is-max .pg-note { color: var(--win); }
+
+.pg-reels .lg-slot { background: linear-gradient(180deg, #4a0b0b, #1c0303); box-shadow: inset 0 0 0 3px #d9b451, inset 0 0 0 6px #5b3a1d, var(--shadow); }
+.pg-reels .lg-slot__cell { background: linear-gradient(180deg, #fffaf0, #f1e2c2); }
+.pg-reels .lg-slot__sym { font-size: clamp(16px, 6vw, 30px); }
+.pg-reels .lg-slot__cell[data-sym="JP"] .lg-slot__sym svg { width: 88%; height: 88%; }
+
+.pg-meter { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: .9em; color: #ffe9c4; flex-wrap: wrap; }
+.pg-meter__win { color: var(--gold); font-size: 1.2em; font-variant-numeric: tabular-nums; }
+.pg-meter__sep { opacity: .5; }
+.pg-hint { margin: 8px 8px 0; }
+.pg-actions .pg-spin { min-width: 140px; font-size: 1.1em; }
+
+/* 輪盤 modal */
+.pg-wheelwrap { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.pg-wheel { position: relative; width: min(280px, 72vw); aspect-ratio: 1 / 1; }
+.pg-wheel__disc {
+  position: absolute; inset: 0; border-radius: 50%; border: 6px solid var(--gold);
+  box-shadow: 0 0 0 3px #5b3a1d, 0 8px 24px rgba(0, 0, 0, .5); will-change: transform; overflow: hidden;
+}
+.pg-wheel__label {
+  position: absolute; left: 50%; top: 0; height: 50%; width: 56px; transform-origin: 50% 100%;
+  display: flex; justify-content: center; padding-top: 10px; color: #fff; font-size: 11px; letter-spacing: .02em;
+}
+.pg-wheel__label b { font-weight: 900; font-size: 11px; text-shadow: 0 1px 2px #000; line-height: 1; white-space: nowrap; }
+.pg-wheel__label.is-swapped b { color: #ffe38a; }
+.pg-wheel__label.is-hit b { color: #fff36b; text-shadow: 0 0 8px #fff36b, 0 0 2px #000; }
+.pg-wheel__pointer {
+  position: absolute; left: 50%; top: -10px; transform: translateX(-50%); z-index: 2;
+  width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent; border-top: 24px solid #fff;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, .6));
+}
+.pg-wheel__hub {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 1; width: 30%; aspect-ratio: 1 / 1;
+  border-radius: 50%; background: radial-gradient(circle, #8a1414, #2a0404); border: 3px solid var(--gold);
+  display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; color: #ffe38a;
+}
+.pg-wheel__result { text-align: center; min-height: 3em; display: flex; flex-direction: column; gap: 4px; font-variant-numeric: tabular-nums; }
+.pg-wheel__win { font-size: 1.5em; animation: pg-win .6s ease-out; }
+.pg-wheel__win.is-grand { color: #ffd54f; }
+.pg-wheel__win.is-major { color: #ce93d8; }
+.pg-wheel__win.is-minor { color: #90caf9; }
+.pg-wheel__win.is-mini { color: #a5d6a7; }
+@keyframes pg-win { 0% { transform: scale(2); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }

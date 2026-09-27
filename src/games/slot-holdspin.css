@@ -1,0 +1,41 @@
+/* Hold & Spin 機 — 深海藍主題；只用 hs- 前綴 */
+.hs-machine {
+  display: flex; flex-direction: column; gap: 8px; padding: 10px;
+  background: radial-gradient(ellipse at top, #12506b 0%, #0a2a3d 60%, #061822 100%);
+  box-shadow: inset 0 0 0 3px #1f7fa3, inset 0 0 0 6px #0b3347, inset 0 0 40px rgba(0, 0, 0, .5), var(--shadow);
+  transition: background .3s;
+}
+.hs-machine.is-feature { background: radial-gradient(ellipse at top, #3a2a06 0%, #1a1203 70%, #0c0801 100%); }
+.hs-machine.is-grand { box-shadow: inset 0 0 0 3px var(--gold), 0 0 28px rgba(217, 180, 81, .7); }
+
+.hs-jackpots { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 6px; }
+.hs-jp {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 48px;
+  padding: 4px 6px; border-radius: 10px; text-align: center; border: 2px solid rgba(255, 255, 255, .25);
+  font-variant-numeric: tabular-nums; min-width: 0;
+}
+.hs-jp__k { font-size: .7em; font-weight: 900; letter-spacing: .08em; opacity: .9; }
+.hs-jp__v { font-size: clamp(12px, 3.6vw, 16px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.hs-jp--grand { background: linear-gradient(180deg, #c62828, #6d0f0f); border-color: #ffb4a8; color: #fff3c4; }
+.hs-jp--major { background: linear-gradient(180deg, #6a1b9a, #34094f); border-color: #d4a8f0; color: #f6e8ff; }
+.hs-jp--minor { background: linear-gradient(180deg, #1565c0, #0a3264); border-color: #9cc8ff; color: #e6f1ff; }
+
+.hs-status { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 36px; font-size: .82em; color: #cfe8f5; }
+.hs-respins { font-size: 1em; color: var(--gold); white-space: nowrap; }
+.hs-respins b { font-size: 1.9em; line-height: 1; vertical-align: middle; font-variant-numeric: tabular-nums; }
+.hs-respins.is-reset b { animation: hs-reset .6s ease-out; }
+@keyframes hs-reset { 0% { transform: scale(1.8); color: #fff; } 100% { transform: scale(1); } }
+
+.hs-reels .lg-slot { background: linear-gradient(180deg, #0d3a52, #061a26); box-shadow: inset 0 0 0 3px #3aa0c8, inset 0 0 0 6px #0b3347, var(--shadow); }
+.hs-reels .lg-slot__cell { background: linear-gradient(180deg, #f4fbff, #d6ebf5); }
+.hs-reels .lg-slot__sym { font-size: clamp(14px, 5.2vw, 28px); }
+.hs-reels .lg-slot__cell[data-sym="ORB"] .lg-slot__value { color: #ffe38a; background: rgba(0, 0, 0, .55); font-size: 10px; white-space: nowrap; overflow: hidden; }
+.hs-reels .lg-slot__cell.is-locked { box-shadow: inset 0 0 0 3px var(--gold), 0 0 10px rgba(217, 180, 81, .55); }
+.hs-reels .lg-slot__cell.is-locked::after { color: var(--gold); }
+
+.hs-meter { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: .9em; color: #cfe8f5; flex-wrap: wrap; }
+.hs-meter__win { color: var(--gold); font-size: 1.2em; font-variant-numeric: tabular-nums; }
+.hs-meter__orbs { color: #ffe38a; }
+.hs-meter__sep { opacity: .5; }
+.hs-hint { margin: 8px 8px 0; }
+.hs-actions .hs-spin { min-width: 140px; font-size: 1.1em; }
