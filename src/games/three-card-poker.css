@@ -1,0 +1,31 @@
+/* Three Card Poker — 前綴 tcp- */
+.tcp-table { display: flex; flex-direction: column; gap: 8px; }
+.tcp-area { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.tcp-hand { gap: 6px; min-height: 90px; flex-wrap: nowrap; }
+.tcp-hand .lg-card.is-dim { opacity: .35; }
+.tcp-rank { min-height: 1.3em; font-size: .82em; color: var(--gold); font-weight: 700; text-align: center; }
+.tcp-print { display: flex; flex-direction: column; gap: 6px; border-top: 1px solid var(--line-soft); border-bottom: 1px solid var(--line-soft); padding: 5px 4px; }
+.tcp-qualify { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.tcp-qualify__en { font-size: .64em; letter-spacing: .1em; color: var(--gold); font-weight: 700; }
+.tcp-qualify__zh { font-size: .72em; opacity: .85; }
+.tcp-pays { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.tcp-pay { font-size: .66em; line-height: 1.35; padding: 4px 6px; border: 1px solid var(--line-soft); border-radius: 8px; min-width: 0; }
+.tcp-pay__title { text-align: center; font-weight: 800; letter-spacing: .08em; color: var(--gold); margin-bottom: 2px; }
+.tcp-pay__row { display: flex; justify-content: space-between; gap: 4px; white-space: nowrap; }
+.tcp-pay__row span { overflow: hidden; text-overflow: ellipsis; }
+.tcp-pay__row .en { display: none; }
+.tcp-pay__row b { color: var(--gold); font-variant-numeric: tabular-nums; }
+.tcp-spots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; align-items: start; padding-bottom: 6px; }
+.tcp-spot { border-radius: 50%; aspect-ratio: 1 / 1; width: 100%; max-width: 104px; min-height: 80px; justify-self: center; padding: 4px 4px 22px; }
+.tcp-spot--pairPlus { border-color: var(--gold); }
+.tcp-spot--pairPlus .lg-spot__en { font-size: .58em; }
+.tcp-spot--play { border-style: dashed; margin-top: 18px; }   /* 最靠近玩家 */
+.tcp-spot__note { font-size: .58em; opacity: .75; line-height: 1.15; }
+.tcp-hint { margin: 8px 8px 0; }
+@media (min-width: 640px) {
+  .tcp-pay { font-size: .74em; }
+  .tcp-pay__row .en { display: inline; }
+}
+@media (max-width: 380px) {
+  .tcp-hand .lg-card { --w: 64px; --h: 92px; }
+}
