@@ -1,0 +1,132 @@
+/* 輪盤 Roulette — 遊戲樣式只用 rl- 前綴。
+   直式（手機）：欄 = [紅黑單雙大小][打][號碼 ×3]，列 = [0][12 排號碼][2to1]。
+   橫式（≥ 900px）：標準歐式 layout，0 在左、號碼 3 行 × 12 列、打與 1:1 外注在下。
+   每個格子用 --pr/--pc(/--prs/--pcs) 與 --lr/--lc(/--lrs/--lcs) 指定直式/橫式位置。 */
+.rl-table {
+  --rl-red: #b3261e; --rl-black: #151515; --rl-green: #0a7a3a;
+  --ow: 50px; --ch: 48px;
+  padding: 12px 10px 14px;
+}
+
+/* ---------------------------------------------------------------- 輪盤 + 資訊 */
+.rl-wheelzone { display: grid; grid-template-columns: minmax(0, 180px) minmax(0, 1fr); gap: 10px; align-items: center; margin-bottom: 8px; }
+.rl-wheelbox { min-width: 0; }
+.rl-wheel { display: block; width: 100%; height: auto; filter: drop-shadow(0 4px 10px rgba(0, 0, 0, .55)); }
+.rl-wheel__rim { fill: #5b3a1d; stroke: #d9b451; stroke-width: 1.5; }
+.rl-wheel__track { fill: #3b2411; }
+.rl-pocket { stroke: #d9b451; stroke-width: .6; }
+.rl-pocket.is-red { fill: var(--rl-red); }
+.rl-pocket.is-black { fill: var(--rl-black); }
+.rl-pocket.is-green { fill: var(--rl-green); }
+.rl-pocket.is-hit { stroke: #fff; stroke-width: 2.2; }
+.rl-pocket__n { fill: #fff; font-size: 7.5px; font-weight: 700; text-anchor: middle; dominant-baseline: middle; font-family: var(--font, sans-serif); }
+.rl-wheel__cone { fill: #7a4f28; stroke: #d9b451; stroke-width: 1; }
+.rl-wheel__hub { fill: #9a6a3a; }
+.rl-wheel__turret { fill: #d9b451; }
+.rl-wheel__knob { fill: #f3e9c9; stroke: #d9b451; }
+.rl-ball { fill: #fff; stroke: #aaa; stroke-width: .6; }
+
+.rl-info { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.rl-info__k { font-size: .72em; opacity: .85; line-height: 1.3; }
+.rl-info__k small { opacity: .8; }
+.rl-last { display: flex; align-items: center; gap: 8px; min-height: 52px; }
+.rl-last__n {
+  flex: 0 0 auto; width: 50px; height: 50px; border-radius: 50%; display: grid; place-items: center;
+  font-size: 1.5em; font-weight: 800; color: #fff; border: 2px solid var(--gold); font-variant-numeric: tabular-nums;
+}
+.rl-last__n.is-red { background: var(--rl-red); }
+.rl-last__n.is-black { background: var(--rl-black); }
+.rl-last__n.is-green { background: var(--rl-green); }
+.rl-last__n.is-empty { background: rgba(0, 0, 0, .3); color: var(--muted); }
+.rl-last__t { font-size: .85em; line-height: 1.3; font-weight: 700; min-width: 0; }
+.rl-history { display: grid; grid-template-columns: repeat(6, 24px); gap: 4px; }
+.rl-hist {
+  width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center;
+  font-size: 11px; font-weight: 700; color: #fff; font-variant-numeric: tabular-nums; border: 1px solid rgba(243, 233, 201, .4);
+}
+.rl-hist.is-red { background: var(--rl-red); }
+.rl-hist.is-black { background: var(--rl-black); }
+.rl-hist.is-green { background: var(--rl-green); }
+.rl-hist.is-new { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(217, 180, 81, .5); }
+.rl-legend { font-size: .7em; line-height: 1.45; opacity: .85; margin: 0 0 8px; }
+
+/* ---------------------------------------------------------------- 桌布 grid */
+.rl-board {
+  position: relative; display: grid; gap: 0;
+  grid-template-columns: var(--ow) var(--ow) repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(14, var(--ch));
+}
+.rl-board > * { grid-row: var(--pr) / span var(--prs, 1); grid-column: var(--pc) / span var(--pcs, 1); }
+.rl-board .rl-cell {
+  min-width: 0; min-height: 0; margin: 0; padding: 2px 2px 16px; border-radius: 0;
+  border: 1px solid rgba(243, 233, 201, .55); overflow: visible;
+}
+.rl-board .rl-cell.has-bet { border-color: rgba(243, 233, 201, .55); background-image: linear-gradient(rgba(217, 180, 81, .14), rgba(217, 180, 81, .14)); }
+.rl-board .rl-cell.lg-spot--hl { border-radius: 0; }
+.rl-num { color: #fff; }
+.rl-num.is-red { background-color: var(--rl-red); }
+.rl-num.is-black { background-color: var(--rl-black); }
+.rl-num.is-green { background-color: var(--rl-green); }
+.rl-num .lg-spot__zh { font-size: 1.15em; color: #fff; font-variant-numeric: tabular-nums; }
+.rl-num .lg-spot__odds { font-size: .56em; opacity: .75; margin-top: 0; }
+.rl-out .lg-spot__zh { font-size: .8em; }
+.rl-out .lg-spot__en { font-size: .56em; letter-spacing: .02em; }
+.rl-out .lg-spot__odds { font-size: .66em; }
+.rl-even--red .lg-spot__zh { color: #ff8a80; }
+.rl-even--black .lg-spot__zh { color: #fff; }
+.rl-cell .lg-spot__stack { bottom: 2px; }
+.rl-even .lg-spot__stack, .rl-dozen .lg-spot__stack { transform: translateX(-50%) scale(.8); transform-origin: 50% 100%; }
+
+/* 熱區（格線上的透明圓點） */
+.rl-hot { position: relative; pointer-events: none; z-index: 3; }
+.rl-board .rl-hs,
+.rl-board .rl-hs.lg-spot--hl {
+  position: absolute; left: calc(var(--x) * 100% / 3); top: calc(var(--y) * 100% / 14);
+  width: 24px; height: 24px; min-width: 0; min-height: 0; margin: -12px 0 0 -12px; padding: 0;
+  border: 0; border-radius: 50%; background: transparent; pointer-events: auto; outline-offset: 1px;
+}
+.rl-hs::before {
+  content: ''; position: absolute; left: 50%; top: 50%; width: 6px; height: 6px; margin: -3px 0 0 -3px;
+  border-radius: 50%; background: rgba(243, 233, 201, .32); transition: transform .15s, background .15s;
+}
+.rl-board .rl-hs:hover { background: rgba(217, 180, 81, .18); }
+.rl-hs:hover::before, .rl-hs:focus-visible::before { background: var(--gold); transform: scale(1.6); }
+.rl-hs.has-bet::before { background: var(--gold); }
+.rl-board .rl-hs.has-bet { border: 0; background: rgba(217, 180, 81, .12); }
+.rl-board .rl-hs.is-win { box-shadow: 0 0 0 2px var(--win), 0 0 12px rgba(61, 220, 132, .7); }
+.rl-hs .lg-spot__stack { left: 3px; top: 50%; bottom: auto; transform: translateY(-50%); }
+.rl-hs .lg-chipstack__amt { font-size: 9px; line-height: 14px; }
+.rl-hs.has-bet { z-index: 2; }
+
+/* Dolly 標記 */
+.rl-dolly {
+  position: absolute; left: 50%; top: 3px; width: 14px; height: 20px; margin-left: -7px; z-index: 4; pointer-events: none;
+  border-radius: 7px 7px 3px 3px; background: linear-gradient(#ffffff, #cfd8dc 70%, #90a4ae);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, .7), 0 0 0 1.5px var(--gold);
+  animation: rl-drop .35s ease-out;
+}
+.rl-dolly::after { content: ''; position: absolute; left: 3px; right: 3px; top: -4px; height: 5px; border-radius: 50%; background: var(--gold); }
+@keyframes rl-drop { from { transform: translateY(-14px); opacity: 0; } }
+
+.rl-badge { display: inline-grid; place-items: center; min-width: 26px; height: 26px; padding: 0 4px; border-radius: 13px; color: #fff; font-weight: 800; }
+.rl-badge.is-red { background: var(--rl-red); }
+.rl-badge.is-black { background: var(--rl-black); border: 1px solid #555; }
+.rl-badge.is-green { background: var(--rl-green); }
+.rl-hint { margin: 8px 8px 0; display: flex; flex-direction: column; gap: 2px; }
+.rl-hint__row { display: block; }
+
+/* ---------------------------------------------------------------- 桌機：橫式 */
+@media (min-width: 900px) {
+  .rl-table { --lh: 56px; --oh: 50px; }
+  .rl-wheelzone { grid-template-columns: 220px minmax(0, 1fr); }
+  .rl-board {
+    grid-template-columns: repeat(14, minmax(0, 1fr));
+    grid-template-rows: repeat(3, var(--lh)) var(--oh) var(--oh);
+  }
+  .rl-board > * { grid-row: var(--lr) / span var(--lrs, 1); grid-column: var(--lc) / span var(--lcs, 1); }
+  .rl-board .rl-hs,
+  .rl-board .rl-hs.lg-spot--hl { left: calc(var(--y) * 100% / 14); top: calc((3 - var(--x)) * 100% / 3); }
+  .rl-out .lg-spot__zh { font-size: .9em; }
+  .rl-out .lg-spot__en { font-size: .62em; }
+  .rl-even .lg-spot__stack, .rl-dozen .lg-spot__stack { transform: translateX(-50%); }
+}
