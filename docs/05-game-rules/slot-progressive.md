@@ -1,0 +1,27 @@
+# 四級累積獎金機（id: `slot-progressive`）
+
+## 1. 概念
+5×3、20 線（`LINES_20`）、基礎遊戲加 **JACKPOT 符號**。3 個以上 JACKPOT 符號（任意位置）→ **獎金輪盤 Jackpot Wheel**。四級 MINI / MINOR / MAJOR / GRAND。**只有最大注（每線 RM 5 × 20 = RM 100）才有資格中 GRAND**；非最大注時輪盤 GRAND 格替換為 MAJOR。RTP 92% ± 0.5%（最大注）。
+
+## 2. 累積獎金（存 `store.jackpots['slot-progressive']`）
+| 級別 | 種子 | 每轉成長（總注 ×） | 輪盤格數（12 格） |
+|------|------|------|------|
+| MINI | RM 20 | 0.5% | 6 |
+| MINOR | RM 50 | 0.5% | 4 |
+| MAJOR | RM 500 | 0.8% | 1 |
+| GRAND | RM 10,000 | 1.2% | 1（非最大注 → 變 MAJOR） |
+中獎後該級回種子。
+
+## 3. 基礎符號表
+同 `slot-video` 結構（自訂主題「金龍」），JACKPOT 符號每軸 1–2 停點；3 個觸發機率約 1/150 轉。
+
+## 4. 畫面
+上方四塊獎金牌（GRAND 在非最大注時半透明並標「僅最大注 MAX BET ONLY」）；輪盤 modal：12 格旋轉 3 秒指針停 → 中獎級別放大 → 金額加入 credit。
+
+## 5. 教學大綱（≥ 12 步）
+layout：四級牌、MAX BET ONLY 標示、JACKPOT 符號；flow：3 符號 → 輪盤 → 派彩 → 獎池重置；payout：獎池成長來源是所有人下注的一部分；strategy：**若要玩累積獎金機就一定要最大注**，否則付出成長貢獻卻無資格；GRAND 期望值極低；預算。
+
+## 6. 驗收測試
+- 非最大注時輪盤沒有 GRAND；最大注時有。
+- 成長比例與重置正確（透過 store）。
+- simulateRTP 200k 轉 91.5–92.5%（最大注，獎池取種子期望）。
