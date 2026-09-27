@@ -1,0 +1,116 @@
+/* 21 點 Blackjack — 半圓桌（荷官在直邊、5 座位在弧邊）。前綴 bj- */
+.bj-table {
+  padding: 10px 8px 26px;
+  border-radius: 18px 18px 50% 50% / 18px 18px 26% 26%;
+}
+.bj-felt { position: relative; min-width: 340px; display: flex; flex-direction: column; gap: 2px; }
+
+/* 荷官區：棄牌盒（荷官右手 = 畫面左）、莊家牌、牌靴（荷官左手 = 畫面右） */
+.bj-top { display: grid; grid-template-columns: 54px 1fr 54px; align-items: start; gap: 6px; }
+.bj-shoe, .bj-discard {
+  min-height: 62px; padding: 4px 2px; border-radius: 8px; text-align: center; line-height: 1.2;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: .72em;
+}
+.bj-shoe { background: linear-gradient(160deg, #6b4a26, #3b2411); border: 2px solid #8a6a3a; color: var(--line); box-shadow: 0 3px 6px rgba(0, 0, 0, .45); }
+.bj-discard { border: 2px dashed var(--line-soft); background: rgba(0, 0, 0, .18); }
+.bj-box__zh { font-weight: 700; }
+.bj-box__en { font-size: .82em; opacity: .75; letter-spacing: .08em; }
+.bj-box__n { font-size: .85em; color: var(--gold); font-variant-numeric: tabular-nums; }
+.bj-dealer { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 0; }
+.bj-dcards { gap: 0; min-height: 84px; flex-wrap: nowrap; }
+.bj-dcards .lg-card + .lg-card { margin-left: -22px; }
+.bj-total { margin-left: 4px; }
+
+/* 桌面印字 */
+.bj-print { text-align: center; color: var(--line); line-height: 1.25; margin-top: 2px; }
+.bj-print b { display: block; color: var(--gold); letter-spacing: .1em; font-size: .8em; }
+.bj-print span { display: block; letter-spacing: .1em; font-size: .64em; }
+.bj-print small { display: block; font-size: .64em; opacity: .7; }
+
+/* 弧形保險線 */
+.bj-insline { display: flex; flex-direction: column; align-items: center; }
+.bj-arcwrap { width: 100%; }
+.bj-arc { display: block; width: 100%; height: auto; overflow: visible; }
+.bj-arc text { fill: var(--gold); font-size: 12.5px; font-weight: 700; letter-spacing: 2.5px; font-family: var(--font); }
+.bj-arc .bj-arc-line { fill: none; stroke: var(--line-soft); stroke-width: 2; }
+.bj-ins-spot {
+  flex-direction: row; gap: 5px; min-height: 44px; min-width: 120px; margin-top: -4px;
+  padding: 4px 12px 20px; border-radius: 999px; border-style: dashed;
+}
+.bj-ins-spot .lg-spot__zh { font-size: .9em; }
+.bj-ins-spot .lg-spot__odds { margin-top: 0; }
+
+/* 座位：5 → 1（畫面左 → 右），弧形排列（中間座位最低） */
+.bj-seats {
+  display: grid; align-items: end; gap: 4px; margin-top: 6px;
+  grid-template-columns: minmax(44px, 1fr) minmax(44px, 1fr) auto minmax(44px, 1fr) minmax(44px, 1fr);
+}
+.bj-seat { display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 0; }
+.bj-seat--5, .bj-seat--1 { margin-bottom: 58px; }
+.bj-seat--4, .bj-seat--2 { margin-bottom: 20px; }
+.bj-seat__ring { width: 44px; height: 44px; border-radius: 50%; border: 2px dashed var(--line-soft); opacity: .6; }
+.bj-seat__label { font-size: .68em; color: var(--line); opacity: .8; text-align: center; line-height: 1.2; white-space: nowrap; }
+.bj-seat__label small { display: block; color: var(--gold); font-size: .95em; }
+.bj-felt.is-split .bj-seats { grid-template-columns: 28px 28px auto 28px 28px; }
+.bj-felt.is-split .bj-seat__ring { width: 24px; height: 24px; }
+.bj-felt.is-split .bj-seat--empty .bj-seat__label { display: none; }
+
+/* 你的手牌（最多 4 手） */
+.bj-hands { display: flex; gap: 6px; justify-content: center; align-items: flex-end; }
+.bj-hand {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 4px; border-radius: 12px; border: 2px solid transparent; transition: border-color .2s, background .2s;
+}
+.bj-hand.is-active { border-color: var(--gold); background: rgba(217, 180, 81, .1); }
+.bj-hcards { display: flex; align-items: flex-end; min-height: 80px; }
+.bj-hands.is-many .bj-hcards { min-height: 56px; }
+.bj-hcards .lg-card--md + .lg-card { margin-left: -34px; }
+.bj-hcards .lg-card--sm + .lg-card { margin-left: -24px; }
+.bj-hcards:empty::before {
+  content: ""; width: 56px; height: 80px; border-radius: 7px; border: 1px dashed rgba(243, 233, 201, .25);
+}
+.bj-hands.is-many .bj-hcards:empty::before { width: 40px; height: 56px; }
+.bj-hand__meta { display: flex; align-items: center; gap: 4px; min-height: 22px; }
+.bj-tag { font-size: .72em; font-weight: 800; padding: 1px 7px; border-radius: 999px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.bj-tag.is-win { background: var(--win); color: #062312; }
+.bj-tag.is-blackjack { background: var(--gold); color: #1b1606; }
+.bj-tag.is-lose { background: var(--lose); color: #2a0707; }
+.bj-tag.is-push { background: var(--push); color: #2a2107; }
+.bj-tag.is-note { background: rgba(0, 0, 0, .4); color: var(--line); font-weight: 600; }
+.bj-spot { width: 76px; height: 76px; min-width: 76px; border-radius: 50%; padding: 4px 4px 20px; }
+.bj-spot .lg-spot__zh { font-size: .95em; }
+.bj-spot .lg-spot__en { font-size: .58em; }
+.bj-spot .lg-spot__odds { font-size: .6em; white-space: nowrap; }
+.bj-hands.is-many .bj-spot { width: 64px; height: 64px; min-width: 64px; }
+.bj-old .lg-card { opacity: .45; }
+
+.lg-card.bj-in { animation: bj-in .28s ease-out; }
+@keyframes bj-in { from { opacity: 0; transform: translate(36px, -70px) rotate(10deg); } }
+@media (prefers-reduced-motion: reduce) { .lg-card.bj-in { animation: none; } }
+
+/* 提示 / 餘額不足 */
+.bj-advice {
+  margin: 8px 8px 0; padding: 6px 10px; border-radius: 8px; text-align: center;
+  background: rgba(255, 209, 102, .1); border: 1px solid rgba(255, 209, 102, .35);
+}
+.bj-advice small { color: var(--muted); }
+.bj-note { margin: 6px 8px 0; font-size: .85em; color: var(--lose); text-align: center; }
+
+/* 動作列（真實模式加手勢文字） */
+.bj-actions .lg-btn { min-width: 76px; }
+.bj-actions.is-real .lg-btn { flex-direction: column; gap: 0; line-height: 1.2; padding: 6px 10px; white-space: normal; }
+.bj-gesture { display: block; font-size: .72em; font-weight: 500; opacity: .8; }
+
+/* 策略表（教學與提示面板） */
+.bj-strategy .lg-datatable { font-size: .78em; }
+.bj-strategy .lg-datatable th, .bj-strategy .lg-datatable td { padding: 3px 4px; text-align: center; border: 1px solid var(--border); }
+.bj-strategy .lg-datatable tbody th { white-space: nowrap; }
+.bj-c--S { background: rgba(255, 92, 92, .22); }
+.bj-c--D, .bj-c--Ds { background: rgba(79, 156, 255, .28); }
+.bj-c--P { background: rgba(61, 220, 132, .25); }
+.bj-strategy td.is-hl { outline: 2px solid var(--gold); outline-offset: -2px; background: rgba(217, 180, 81, .55); color: #fff; font-weight: 800; }
+.bj-strat .lg-muted { font-size: .8em; }
+
+/* 教學練習題 */
+.bj-quiz { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px; }
+.bj-quiz .lg-btn.is-picked { border-color: var(--gold); background: rgba(217, 180, 81, .22); }
