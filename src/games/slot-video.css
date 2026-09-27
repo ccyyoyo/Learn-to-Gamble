@@ -11,7 +11,7 @@
 .sv-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; padding: 0 4px; }
 .sv-logo { font-weight: 900; font-size: 1.15em; color: #ffd76a; text-shadow: 0 2px 0 #6b3a00; }
 .sv-logo .en { font-size: .6em; color: #ffe9b0; }
-.sv-head .lg-paytable-btn { color: #fff3d0; border-color: #e0b64a; min-height: 36px; }
+.sv-head .lg-paytable-btn { color: #fff3d0; border-color: #e0b64a; }
 
 .sv-free { text-align: center; margin: 0 auto 6px; padding: 4px 10px; border-radius: 999px; background: rgba(0, 0, 0, .45); border: 1px solid #9ff0ff; max-width: 320px; }
 .sv-free[hidden] { display: none; }

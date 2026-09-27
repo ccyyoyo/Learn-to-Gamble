@@ -187,7 +187,7 @@
       function spot(id, { zh, en, odds, cls } = {}) {
         const k = kindOf(id);
         const st = STATS[id];
-        const hint = k === 'nim' ? `贏${pct(st.pWin)} 和${pct(st.pPush)}<br>EV −${st.edge.toFixed(2)}%` : `贏${pct(st.pWin)}<br>EV −${st.edge.toFixed(2)}%`;
+        const hint = k === 'nim' ? `贏${pct(st.pWin)}<br>和${pct(st.pPush)}<br>EV −${st.edge.toFixed(2)}%` : `贏${pct(st.pWin)}<br>EV −${st.edge.toFixed(2)}%`;
         return el('div', { class: ['lg-spot', 'ft-spot', `ft-spot--${k}`, cls], dataset: { bet: id }, title: `${labelOf(id)} ${ODDS_TEXT[k]}` }, [
           el('span.lg-spot__zh', { text: zh ?? labelOf(id) }),
           el('span.lg-spot__en', { text: en ?? T[k].en }),
@@ -461,18 +461,18 @@
             body: '<p>押番 RM 100 贏：<br><b>RM 100 × 3 × 0.95 = RM 285</b>（淨贏）<br>拿回 RM 385（含本金）。</p>',
             highlight: ['.ft-fan'], setup: (inst) => inst.demo.showResult(3, 63) },
           { id: 'payout-nim', section: 'payout', title: '念的和局 <i class="en">Push</i>',
-            body: '<p>押「3念2」RM 100，開 2 → 和局，退回 RM 100，淨 RM 0。開 3 → RM 100 × 2 × 0.95 = RM 190。</p>',
+            body: '<p>押「3念2」RM 100，開 2 → 和局，退回 RM 100，淨 RM 0。開 3 → RM 100 × 2 × 0.95 = RM 190（淨贏），拿回 RM 290。</p>',
             highlight: ['[data-bet="nim-3-2"]'], setup: (inst) => inst.demo.showResult(2, 62) },
           { id: 'payout-ngatan', section: 'payout', title: '三門 1:3',
             body: '<p>押三門 1·2·3 RM 300，開 1：<br><b>RM 300 × 1/3 × 0.95 = RM 95</b>（淨贏）<br>拿回 RM 395。開 4 則輸 RM 300。</p>',
             highlight: ['[data-bet="ngatan-4"]'], setup: (inst) => inst.demo.showResult(1, 61) },
           { id: 'payout-try', section: 'payout', title: '押一個角試試',
-            body: '<p>角押兩個號，贏 1:1：RM 100 × 1 × 0.95 = RM 95。</p>',
+            body: '<p>角押兩個號，贏 1:1：RM 100 × 1 × 0.95 = RM 95（淨贏），拿回 RM 195。</p>',
             highlight: ['.ft-kwok'],
             setup: (inst) => { inst.demo.cover(); inst.demo.ensureBetting(); },
             action: { label: '在任一個「角」放籌碼', check: (inst) => inst.bets.entries().some(([id]) => id.startsWith('kwok-')) || '點四個角落或下方「角 1-3 / 2-4」' } },
           // ===== strategy
-          { id: 'strategy-edge', section: 'strategy', title: '莊家優勢 <i class="en">House edge</i>',
+          { id: 'strategy-edge', section: 'strategy', title: '這段你會學到：莊家優勢 <i class="en">House edge</i>',
             body: `<table class="lg-datatable"><tr><th>注</th><th>賠率</th><th>扣佣後優勢</th></tr>${edgeRows}</table>`,
             highlight: null },
           { id: 'strategy-do', section: 'strategy', title: '該押：念 / 角 / 單雙',

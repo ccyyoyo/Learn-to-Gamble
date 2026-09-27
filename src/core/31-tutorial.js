@@ -93,7 +93,7 @@
       bar.firstChild.style.width = `${((i + 1) / N) * 100}%`;
       secBtns.forEach((b, k) => b.classList.toggle('is-active', SECTIONS[k].id === st.section));
       prevB.disabled = i === 0;
-      nextB.innerHTML = i === N - 1 ? '完成！去練習模式 <i class="en">Practice</i>' : '下一步 <i class="en">Next</i>';
+      nextB.innerHTML = i === N - 1 ? '完成！去練習模式試 10 局 <i class="en">Practice</i>' : '下一步 <i class="en">Next</i>';
       nextB.dataset.last = i === N - 1 ? '1' : '0';
       paintAction();
     }

@@ -38,7 +38,7 @@
 layout；flow（排牌、Foul 規則、時限、不可露牌給人看）；payout（兩贏扣佣 RM 100 → +95；一贏一輸 push；copies 歸莊實例）；strategy（房規要點、幾乎 41% 是 push 所以波動低、Fortune 旁注貴）。
 
 ## 6. 真實模式
-RM 50–3,000；排牌 60 秒。
+RM 50–3,000；Fortune 旁注 RM 10–500（不可單押）；排牌 60 秒。Fortune 旁注優勢 ≈ 8.6%（Monte Carlo 模擬）。
 
 ## 7. 驗收測試
 - 小丑：A-A-X-9-8 = 三條 A；小丑補 9-10-J-Q = 順；不能補對子。

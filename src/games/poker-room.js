@@ -671,7 +671,10 @@
         const odd = main.net % w.length;
         if (odd) why.push(`除不盡的 ${fmt(odd)} 奇數籌碼給按鈕左側第一位（${name(w[0])}）。`);
       } else if (losers.length) {
-        why.push(`${name(w[0])}的 ${LG.poker.describe(wh)} 大過 ${losers.map((x) => `${name(x)}的 ${LG.poker.describe(r.hands[x])}`).join('、')}。`);
+        why.push(`${name(w[0])}的 ${LG.poker.describe(wh)} 大過 ${losers.map((x) => {
+          const k = LG.poker.kicker(wh, r.hands[x]);   // 牌型相同 → 說明差在哪一張
+          return `${name(x)}的 ${LG.poker.describe(r.hands[x])}${k ? `（${k}）` : ''}`;
+        }).join('、')}。`);
       }
       if (r.pots.length > 1) why.push('有人全下 <i class="en">All-in</i> 金額較小：他只能贏他跟得起的主池，多出的錢另成邊池。');
     } else {
@@ -733,6 +736,8 @@
     // 撲克室沒有「限注」：min/max 用買入範圍（checkBroke 以 RM 400 判斷能不能再買入）
     limits: { real: { min: RULES.buyInMin, max: RULES.buyInMax }, practice: { min: RULES.buyInMin, max: RULES.buyInMax } },
     countdown: RULES.actSeconds,
+    countdownText: `每次輪到你行動倒數 <b>${RULES.actSeconds} 秒</b>`,
+    limitsLabel: `買入 RM ${RULES.buyInMin}–${LG.money.fmt(RULES.buyInMax).replace('RM ', '')} · 盲注 RM ${RULES.sb}/${RULES.bb}`,
     logic,
 
     create(ctx) {
@@ -1399,7 +1404,7 @@
             body: '<p>A 全下 100，B、C 各 300。<br>主池 = RM 100 × 3 = <b>RM 300</b>（A、B、C 爭）<br>邊池 = RM 200 × 2 = <b>RM 400</b>（只有 B、C 爭）</p>',
             highlight: ['.pr-pot'] },
           // ===== strategy 策略（6 步）
-          { id: 'strategy-edge', section: 'strategy', title: '莊家優勢？ <i class="en">House edge</i>',
+          { id: 'strategy-edge', section: 'strategy', title: '這段你會學到：撲克室有莊家優勢嗎？ <i class="en">House edge</i>',
             body: '<table class="lg-datatable"><tr><th>項目</th><th>數字</th></tr><tr><td>莊家優勢</td><td>無（跟玩家比）</td></tr><tr><td>抽水</td><td>5%，上限 RM 50</td></tr><tr><td>沒翻牌</td><td>不抽</td></tr></table><p>贏錢要靠比對手打得好。</p>',
             highlight: null },
           { id: 'strategy-hands', section: 'strategy', title: '起手牌表 <i class="en">Starting hands</i>',

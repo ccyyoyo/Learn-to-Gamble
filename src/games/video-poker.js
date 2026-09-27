@@ -260,7 +260,9 @@
       { bet: { zh: 'Jacks or Better 9/6 最佳策略', en: '9/6 optimal strategy' }, edge: 0.46, best: true },
     ],
     limits: { real: { min: 0.2, max: 25 }, practice: { min: 0.2, max: 25 } },
-    countdown: 0,              // 視訊撲克不倒數（玩家自己按 DEAL）
+    countdown: 0,              // 視訊撲克不倒數（玩家自己按 DEAL）：核心進場 modal 顯示「不倒數」
+    startHint: '自己按 DEAL 發牌',
+    limitsLabel: (l) => `每手 ${LG.money.fmt(l.min, { cents: true })} – ${LG.money.fmt(l.max, { cents: true })}（每枚 RM 0.20–5 × 1–5 枚）`,
     logic: { PAYTABLE, COIN_VALUES, MAX_COINS, perCoin, coinsWon, handKey, handKeyFromScore, payout, suggestHold, classifyHold, evHold, hintText, RULE_TEXT },
 
     create(ctx) {
@@ -606,7 +608,9 @@
 
       // ---- 教學步驟（layout 5、flow 5、payout 3、strategy 7；action 8 個）
       function tutorialSteps() {
-        const rules = RULE_TEXT.slice(1).map((r) => `<li>${r.zh}</li>`).join('');
+        const li = (r) => `<li>${r.zh}</li>`;
+        const rulesA = RULE_TEXT.slice(1, 8).map(li).join('');     // 1–7：已成牌與強聽牌
+        const rulesB = RULE_TEXT.slice(8).map(li).join('');        // 8–15：弱聽牌與高牌
         return [
           // ===== layout
           { id: 'layout-intro', section: 'layout', title: '這段你會學到：機台畫面',
@@ -675,8 +679,11 @@
           { id: 'strategy-96', section: 'strategy', title: '別玩：8/5 以下的機台',
             body: '<p>看<b>葫蘆</b>和<b>同花</b>每枚賠多少：9/6 = 99.54%；8/5 = 97.30%；7/5 = 96.15%；6/5 = 95.00%。坐下前先看這兩列，不是 9/6 就換一台。</p>',
             highlight: ['.vp-paytable tr[data-hand="fh"]', '.vp-paytable tr[data-hand="flush"]'] },
-          { id: 'strategy-table', section: 'strategy', title: '持牌策略表 15 條',
-            body: `<p>由上往下，第一條符合就照做：</p><ol class="vp-rules">${rules}</ol>`,
+          { id: 'strategy-table', section: 'strategy', title: '持牌策略表 15 條（1–7）',
+            body: `<p>由上往下，第一條符合就照做：</p><ol class="vp-rules">${rulesA}</ol>`,
+            highlight: null },
+          { id: 'strategy-table-2', section: 'strategy', title: '持牌策略表 15 條（8–15）',
+            body: `<p>前 7 條都不符合，再往下看：</p><ol class="vp-rules" start="8">${rulesB}</ol>`,
             highlight: null },
           { id: 'strategy-q1', section: 'strategy', title: '互動題 1：拆不拆對子？',
             body: '<p>10♠ J♠ Q♠ K♠ K♦——你有一對 K，也有四張同花色的皇家牌。你會留哪幾張？</p>',
@@ -711,11 +718,6 @@
           }
           if (ctx.isReal) {
             ctx.ready.then(() => { state.ready = true; });
-            // 進場 modal 由框架在 mount 後建立，預設寫「倒數 N 秒」；視訊撲克不倒數 → 改寫文字（見 change-request CR-VP1）
-            ctx.later(() => {
-              const p = document.querySelector('.lg-modal .lg-modal__body p');
-              if (p) p.innerHTML = p.innerHTML.replace(/倒數 <b>\d+ 秒<\/b>/, '<b>不倒數</b>（自己按 DEAL 發牌）');
-            }, 0);
           }
           root.dataset.ready = '1';
         },

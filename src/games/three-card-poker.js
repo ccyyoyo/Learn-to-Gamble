@@ -46,6 +46,8 @@
   const label = (c) => LG.cards.label(c);
   const labels = (cs) => cs.map(label).join(' ');
   const describe = (ev) => poker.describe(ev);
+  /** 牌型相同時補一句差在哪一張（踢腳 kicker） */
+  const kickerNote = (a, b) => { const k = LG.poker.kicker(a, b); return k ? `（${k}）` : ''; };
   const RZ = { 14: 'A', 13: 'K', 12: 'Q', 11: 'J', 10: '10' };
   const rz = (r) => RZ[r] || String(r);
 
@@ -98,10 +100,10 @@
           steps.compare = '莊不合格 → 不比牌：Ante 賠 1:1、Play 退回';
           lines.push(win('ante', ante), push('play', play));
         } else if (cmp > 0) {
-          steps.compare = `你的 ${describe(pe)} > 莊的 ${describe(de)} → <b>你贏</b>`;
+          steps.compare = `你的 ${describe(pe)} > 莊的 ${describe(de)}${kickerNote(pe, de)} → <b>你贏</b>`;
           lines.push(win('ante', ante), win('play', play));
         } else if (cmp < 0) {
-          steps.compare = `你的 ${describe(pe)} < 莊的 ${describe(de)} → <b>莊贏</b>`;
+          steps.compare = `你的 ${describe(pe)} < 莊的 ${describe(de)}${kickerNote(pe, de)} → <b>莊贏</b>`;
           lines.push(lose('ante', ante), lose('play', play));
         } else {
           steps.compare = `雙方同為 ${describe(pe)} → <b>平手</b> <i class="en">Push</i>`;
@@ -299,8 +301,6 @@
         ctx.bank.debit(state.staked);
         state.phase = 'dealing';
         markSpots(null);
-        await ctx.wait(500);                         // 讓「停止下注 No more bets」停留一下
-        if (!ctx.alive()) return;
         ctx.dealer.say('發牌', 'Dealing');
         shoe.shuffle();
         if (state.forced) { shoe.stack(state.forced); state.forced = null; }
@@ -483,7 +483,7 @@
             highlight: ['.tcp-pay--pp'],
             setup: (inst) => inst.demo.show('5S 6H 7D', '2H 9H KH') },
           // ===== strategy
-          { id: 'strategy-edge', section: 'strategy', title: '莊家優勢 <i class="en">House edge</i>',
+          { id: 'strategy-edge', section: 'strategy', title: '這段你會學到：莊家優勢 <i class="en">House edge</i>',
             body: '<table class="lg-datatable"><tr><th>注</th><th>優勢</th></tr><tr><td>Pair Plus（1-4-6-30-40）</td><td>2.32%</td></tr><tr><td>Ante/Play（Q-6-4）</td><td>3.37%</td></tr></table>',
             highlight: null },
           { id: 'strategy-q64', section: 'strategy', title: 'Q-6-4 規則',

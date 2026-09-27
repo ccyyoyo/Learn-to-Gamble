@@ -185,3 +185,16 @@ test('lib-poker: outs 同花聽 9、兩頭順聽 8', () => {
   assert.equal(PK.outs(P('AS KD'), []), 0);
   assert.equal(PK.outs(P('AS KD'), P('2C 3C 4C 5C 6C')), 0);
 });
+
+test('kicker：牌型相同時說明差在哪一張', () => {
+  const B = (s) => LG.poker.best(LG.cards.parseMany(s));
+  const a = B('TS TH 8C 8D AS 3C 2D'), b = B('TC TD 8S 8H 7C 3D 2H');
+  assert.match(LG.poker.kicker(a, b), /踢腳.*A > 7/);
+  assert.match(LG.poker.kicker(B('KS KH 9C 5D 2S'), B('9S 9H KC 5C 2H')), /組成牌型的牌：K > 9/);
+  assert.match(LG.poker.kicker(B('AS JS 9S 5S 2S'), B('AH JH 8H 5H 2H')), /第 3 張：9 > 8/);
+  assert.match(LG.poker.kicker(B('9S TH JC QD KS'), B('5S 6H 7C 8D 9C')), /順子最大張：K > 9/);
+  assert.equal(LG.poker.kicker(B('KS KH 9C 5D 2S'), B('KC KD 9H 5H 2C')), '', '完全相同');
+  assert.equal(LG.poker.kicker(B('KS KH 9C 5D 2S'), B('AS JS 9S 5S 2S')), '', '牌型不同');
+  const e3 = (s) => LG.poker.eval3(LG.cards.parseMany(s));
+  assert.match(LG.poker.kicker(e3('QS QH 9C'), e3('QC QD 5H')), /踢腳.*9 > 5/);
+});

@@ -51,9 +51,17 @@
     const vDef = variants.find((v) => v.id === variant) || null;
     const limits = LG.limitsFor(def, mode, variant);
     const R = LG.router;
+    // def.limitsLabel：字串或 (limits, mode) => 字串（例：撲克室「買入 RM 400–1,000 · 盲注 RM 5/10」）；預設「限注 RM 50 – 5,000」
+    const limitsLabel = typeof def.limitsLabel === 'function' ? def.limitsLabel(limits, mode)
+      : (def.limitsLabel || `限注 ${limitsText(limits)}`);
+    // 不倒數：def.countdown === 0 或老虎機類（玩家自己按 SPIN / DEAL）
+    const noCountdown = def.countdown === 0 || def.category === 'slots';
 
     // ---------------------------------------------------------- 版面
-    const balance = el('div.lg-balance', { 'aria-label': '餘額 Balance' });
+    // 教學模式：示範籌碼沙盒（固定 RM 1,000，不寫 store、不動真實餘額；離開教學自動還原）
+    if (isTutorial) LG.bank.sandbox(LG.store.START_BANK);
+    const balance = el('div', { class: ['lg-balance', isTutorial && 'is-sandbox'], 'aria-label': isTutorial ? '示範籌碼 Demo chips' : '餘額 Balance',
+      title: isTutorial ? '教學用示範籌碼 RM 1,000：不影響真實餘額' : null });
     const menuB = el('button', { type: 'button', class: 'lg-topbar__menu', 'aria-label': '選單 Menu', dataset: { action: 'menu' }, text: '⋯' });
     const topbar = el('header.lg-topbar', [
       el('a.lg-topbar__back', { href: '#/', 'aria-label': '回首頁', html: '← 首頁' }),
@@ -64,7 +72,7 @@
       el('a', { class: ['lg-seg__btn', m === mode && 'is-active'], href: R.href(gameId, m, variant), dataset: { mode: m }, 'aria-current': m === mode ? 'page' : null, html: term(MODE_INFO[m].zh, MODE_INFO[m].en) })));
     const hintB = el('button', { type: 'button', class: 'lg-switch', role: 'switch', dataset: { action: 'hints' }, html: '<span class="lg-switch__knob"></span>提示 <i class="en">Hints</i>' });
     const modebar = el('div.lg-modebar', [seg, isPractice ? hintB : null,
-      isReal ? el('span.lg-modebar__limits', { html: `限注 ${limitsText(limits)}` }) : null]);
+      isReal ? el('span.lg-modebar__limits', { html: limitsLabel }) : null]);
     const variantbar = variants.length > 1 ? el('nav.lg-variantbar', { 'aria-label': '變體 Variant' }, [
       el('span.lg-variantbar__k', { text: '變體' }),
       ...variants.map((v) => el('a', { class: ['lg-variantbar__btn', v.id === variant && 'is-active'], href: R.href(gameId, mode, v.id), dataset: { variant: v.id }, html: term(v.name.zh, v.name.en) })),
@@ -136,13 +144,13 @@
       });
     }
 
-    function brokeOverlay() {
+    function brokeOverlay(need = limits.min) {
       LG.stats.session.markBroke();
       const s = LG.stats.session.current() || { rounds: 0, wagered: 0, net: 0, maxWin: 0, maxLoss: 0 };
       const ov = el('div.lg-broke', { role: 'dialog', 'aria-modal': 'true' }, [
         el('div.lg-broke__box', [
           el('h2', { html: '籌碼用完 <i class="en">Out of chips</i>' }),
-          el('p', { html: `餘額 ${balText(LG.bank.balance())} 低於本桌最低注 ${fmt(limits.min)}。` }),
+          el('p', { html: `餘額 ${balText(LG.bank.balance())} 低於${need > limits.min ? '本桌開一局需要的' : '本桌最低注'} ${fmt(need, { cents: need < 1 })}。` }),
           el('div', { html: sessionHtml(s) }),
           el('p.lg-muted', { text: '真實賭場裡，這就是今晚結束的時候。' }),
           el('div.lg-broke__actions', [
@@ -163,6 +171,7 @@
       bank: LG.bank, stats: LG.stats,
       limits, denoms: def.denoms || [10, 25, 50, 100, 500, 1000],
       limitsText: limitsText(limits),
+      limitsLabel,
       get hints() { return hintsOn(); },
       isReal, isPractice, isTutorial,
       root: section,
@@ -187,15 +196,16 @@
       /**
        * 下注時段。真實：「請下注」→ 倒數 seconds 秒 →「停止下注」→ bets.lock() → onClose。
        * 練習/教學：「請下注」+ 顯示「發牌 Deal」按鈕（放在 [data-deal-slot] 或 .lg-actions，否則桌面下方），按下 → onClose。
-       * @param {{seconds?:number, onClose:Function, bets?:LG.Bets, label?:string, validate?:() => true|string, onTick?:Function}} o
+       * @param {{seconds?:number, onClose:Function, bets?:LG.Bets, label?:string, validate?:() => true|string, onTick?:Function, closeAt?:number, onNoMoreBets?:Function}} o
        *  bets：練習模式按「發牌」前先 bets.validate()；兩種模式關閉時自動 bets.lock()。
        *  onClose({auto, ok, validation})：真實模式倒數結束 auto=true；ok=false 代表下注不合法（遊戲自行處理）。
+       *  closeAt（真實模式）：倒數剩 N 秒時先喊「No more bets」並 bets.lock()、呼叫 onNoMoreBets()；倒數繼續跑到 0 才 onClose（例：輪盤末 5 秒）。
        * @returns {{cancel(), close(), isOpen():boolean}}
        */
       bettingWindow(o = {}) {
         if (st.win) st.win.cancel();
         const seconds = o.seconds ?? def.countdown ?? 15;
-        let closed = false, cd = null, btn = null;
+        let closed = false, cd = null, btn = null, early = false;
         const h = {
           cancel() { closed = true; if (cd) cd.cancel(); if (btn) btn.remove(); if (st.win === h) st.win = null; },
           close() { fire(false); },
@@ -205,7 +215,7 @@
           if (closed || !st.alive) return;
           const validation = o.bets ? o.bets.validate() : { ok: true, errors: [], zh: '' };
           h.cancel();
-          ctx.dealer.say('停止下注', 'No more bets');
+          if (!early) ctx.dealer.say('停止下注', 'No more bets');
           if (o.bets) o.bets.lock();
           if (o.onClose) o.onClose({ auto, ok: validation.ok, validation });
         };
@@ -214,7 +224,16 @@
           ready.then(() => {
             if (closed || !st.alive) return;
             ctx.dealer.say('請下注', 'Place your bets');
-            cd = LG.ui.countdown(seconds, { onTick: o.onTick, onDone: () => fire(true) });
+            const onTick = (n) => {
+              if (o.closeAt && !early && n <= o.closeAt) {
+                early = true;
+                ctx.dealer.say('停止下注', 'No more bets');
+                if (o.bets) o.bets.lock();
+                if (o.onNoMoreBets) o.onNoMoreBets();
+              }
+              if (o.onTick) o.onTick(n);
+            };
+            cd = LG.ui.countdown(seconds, { onTick, onDone: () => fire(true) });
           });
         } else {
           ctx.dealer.say('請下注', 'Place your bets');
@@ -238,19 +257,23 @@
         if (isReal) LG.stats.session.record(r);
       },
 
-      /** 餘額 < 最低注：真實 → 「籌碼用完」覆蓋層（暫停自動下一局）；練習 → 提示可重置。回傳是否破產 */
-      checkBroke() {
+      /**
+       * 餘額 < 門檻：真實 → 「籌碼用完」覆蓋層（暫停自動下一局）；練習 → 提示可重置。回傳是否破產。
+       * @param {number} [minNeeded] 開一局實際需要的最低金額（例：三公需保留 3 倍、UTH 需 Ante + Blind）；預設最低注，且不低於最低注。
+       */
+      checkBroke(minNeeded) {
         if (isTutorial || !st.alive) return false;
-        if (LG.bank.balance() >= limits.min - 1e-9) { st.practiceWarned = false; return false; }
+        const need = Math.max(limits.min, Number(minNeeded) || 0);
+        if (LG.bank.balance() >= need - 1e-9) { st.practiceWarned = false; return false; }
         if (isReal) {
-          if (!st.broke) { st.broke = true; brokeOverlay(); }
+          if (!st.broke) { st.broke = true; brokeOverlay(need); }
           return true;
         }
         if (!st.practiceWarned) {
           st.practiceWarned = true;
           LG.ui.modal({
             title: '籌碼不足 <i class="en">Low balance</i>',
-            body: `<p>餘額 ${balText(LG.bank.balance())} 低於最低注 ${fmt(limits.min)}。練習模式可以隨時重置。</p>`,
+            body: `<p>餘額 ${balText(LG.bank.balance())} 低於${need > limits.min ? '開一局需要的' : '最低注'} ${fmt(need, { cents: need < 1 })}。練習模式可以隨時重置。</p>`,
             actions: [
               { label: '稍後', id: 'later' },
               { label: '重置籌碼 RM 1,000', id: 'reset-bank', primary: true, onClick: () => { LG.bank.reset(); st.practiceWarned = false; } },
@@ -339,8 +362,8 @@
       else {
         st.entry = LG.ui.modal({
           title: '真實模式 <i class="en">Real mode</i>',
-          body: `<p>真實模式：限注 <b>${limitsText(limits)}</b>，倒數 <b>${def.countdown ?? 15} 秒</b>，不會有解說。</p>
-            <ul class="lg-list"><li>荷官說 <b>No more bets</b> 後，籌碼不能再碰。</li><li>結果只顯示輸贏金額。</li><li>籌碼用完就結束（可手動重置）。</li></ul>`,
+          body: `<p>真實模式：${def.limitsLabel ? `<b>${limitsLabel}</b>` : `限注 <b>${limitsText(limits)}</b>`}，${noCountdown ? `<b>不倒數</b>（${def.startHint || '自己按鍵開局'}）` : (def.countdownText || `倒數 <b>${def.countdown ?? 15} 秒</b>`)}，不會有解說。</p>
+            <ul class="lg-list"><li>${noCountdown ? '機台沒有荷官：每次按下就扣注，輸贏立即結算。' : def.category === 'poker-room' ? '跟其他玩家對打：輪到你時要在時限內行動，逾時自動過牌或棄牌。' : '荷官說 <b>No more bets</b> 後，籌碼不能再碰。'}</li><li>結果只顯示輸贏金額。</li><li>籌碼用完就結束（可手動重置）。</li></ul>`,
           dismissable: false,
           actions: [
             { id: 'real-back', label: '回練習', onClick: () => { LG.router.go(R.href(gameId, 'practice', variant)); } },
@@ -366,8 +389,10 @@
     if (c.win) c.win.cancel();
     if (c.entry) c.entry.close();
     LG.tutorial.stop();
+    LG.ui.dealer.clear();
     try { c.instance && c.instance.unmount && c.instance.unmount(); } catch (e) { console.error('[LG.modes] unmount', c.gameId, e); }
     LG.ui.clearOverlays();
+    if (LG.bank.isSandbox()) LG.bank.sandbox(null);
     if (c.mode === 'real' && !keepSession) return LG.stats.session.end();
     return null;
   }

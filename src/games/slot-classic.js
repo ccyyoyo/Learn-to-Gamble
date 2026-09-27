@@ -34,7 +34,6 @@
     noMoney: '餘額不足，降低面額或注數',
     overMax: (max) => `每轉最高 ${cents(max)}`,
     underMin: (min) => `每轉最低 ${cents(min)}`,
-    realIntro: (lim) => `真實模式：每轉 <b>${lim}</b>，<b>沒有倒數</b>，按 SPIN 就轉，只顯示輸贏金額。`,
     noWin: (bet) => `未中獎，本次投入 ${cents(bet)}`,
     hint: '提示：RTP 90% = 每押 RM 100，長期平均拿回 RM 90。押大押小，比例都一樣；每一轉都是獨立的，沒有「快出了」。',
   };
@@ -136,6 +135,9 @@
     summary: '只有一條線、一種「發」字：看懂老虎機最簡單的一台。',
     houseEdge: [{ bet: { zh: '總體', en: 'Overall' }, edge: 10.0, best: true }],
     limits: { real: { min: 0.1, max: 25 }, practice: { min: 0.1, max: 25 } },
+    countdown: 0,                 // 老虎機不倒數：核心進場 modal 顯示「不倒數」
+    startHint: '按 SPIN 就轉，只顯示輸贏金額',
+    limitsLabel: (l) => `每轉 ${LG.money.fmt(l.min, { cents: true })} – ${LG.money.fmt(l.max, { cents: true })}`,
     logic: { STRIPS, SYMBOLS, PAYS, CREDIT_VALUES, CREDITS, evalLine, evalGrid, comboStats, simulate },
 
     create(ctx) {
@@ -369,7 +371,7 @@
             body: '<p>押 RM 0.50 中一個發：RM 0.50 × 1 = RM 0.50。<br>拿回的剛好是本金，<b>淨贏 RM 0</b>。燈會亮，但你沒贏。</p>',
             highlight: ['.sc-reelwrap'], setup: () => demo.setGrid('XBX', 'RXX', 'XXG') },
           // ===== strategy
-          { id: 'strategy-rtp', section: 'strategy', title: `RTP 是什麼 <i class="en">Return to Player</i>`,
+          { id: 'strategy-rtp', section: 'strategy', title: `這段你會學到：RTP 是什麼 <i class="en">Return to Player</i>`,
             body: '<table class="lg-datatable"><tr><th>RTP</th><th>莊家優勢</th></tr><tr><td>90%</td><td>10%</td></tr></table><p>每押 RM 100，長期平均拿回 RM 90、輸 RM 10。</p>',
             highlight: null, setup: () => demo.clear() },
           { id: 'strategy-size', section: 'strategy', title: '押大不改變比例',
@@ -409,12 +411,6 @@
               ['合計', '', `中獎 ${(st.hit * 100).toFixed(1)}%`, `${(st.rtp * 100).toFixed(1)}%`]], { caption: 'RTP 90% 從哪裡來' }));
           }
           if (ctx.isReal) {
-            // 核心進場 modal 寫「倒數 N 秒」，老虎機沒有倒數 → 改寫文字（見 change-request CR-1）
-            Promise.resolve().then(() => {
-              const b = document.querySelector('[data-action="real-start"]');
-              const p = b && b.closest('.lg-modal') && b.closest('.lg-modal').querySelector('.lg-modal__body p');
-              if (p) p.innerHTML = T.realIntro(`${cents(ctx.limits.min)} – ${cents(ctx.limits.max)}`);
-            });
             ctx.ready.then(() => { ready = true; paintSpin(); });
           }
           root.dataset.ready = '1';

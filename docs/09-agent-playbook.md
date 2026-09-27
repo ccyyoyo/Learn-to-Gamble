@@ -7,7 +7,7 @@
 1. 讀 `CLAUDE.md`、`docs/02-architecture.md`（API 合約）、`docs/03-ui-spec.md`、`docs/06-tutorial-guide.md`、`docs/09-agent-playbook.md`（本文）。
 2. 讀你負責的 `docs/05-game-rules/<id>.md` 與 `docs/05-game-rules/00-common.md`。
 3. 讀實際核心程式 `src/core/*.js`（以程式為準；若程式與合約不符，合約優先並寫 change-request）。
-4. 看 `src/games/` 有沒有已完成的遊戲可參考結構（例如先完成的 `baccarat.js`）。
+4. 參考 `src/games/sicbo.js`（標準桌遊：下注格、bettingWindow、教學、提示）的結構；示範遊戲 `_demo` 已於 Wave 3 刪除。
 
 ## 2. 檔案所有權（嚴格）
 | 你是 | 只能建立/修改 |

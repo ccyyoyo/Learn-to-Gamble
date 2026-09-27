@@ -1,11 +1,11 @@
 # 核心 A：與合約（02-architecture.md）的差異與擴充
 
-所有合約簽名皆已實作；以下為「語意補充」與「新增的擴充 API」。遊戲代理可放心使用擴充 API（示範見 `src/games/_demo.js`）。
+所有合約簽名皆已實作；以下為「語意補充」與「新增的擴充 API」。遊戲代理可放心使用擴充 API（示範見 `src/games/sicbo.js`；`_demo` 已於 Wave 3 刪除）。
 
 ## CR-A1 金流約定（語意補充，所有遊戲必須一致）
 - 下注階段**不扣款**：籌碼只放在 `LG.Bets` 上；可用餘額 = `bank.balance() − bets.total()`（betLayer 以此判斷「籌碼不足」並灰掉籌碼）。
 - `bettingWindow` 的 `onClose` 之後（No more bets）由遊戲 `ctx.bank.debit(bets.total())`；結算 `ctx.bank.credit(拿回金額含本金)`。
-- 局中卸載（切模式/離開）：遊戲在 `unmount()` 退回已扣未結算的注金（見 `_demo.js`）。
+- 局中卸載（切模式/離開）：遊戲在 `unmount()` 退回已扣未結算的注金（見 `sicbo.js`）。
 - 局中加注（Double / Play / Raise）：`bets.set(spot, amt)`（不檢查限額與鎖定）+ `bank.debit(追加額)`。
 
 ## CR-A2 `LG.Bets` 限額語意
@@ -70,5 +70,5 @@
 - `LG.store`：`peek()`（核心內部快速讀取，勿修改）、`load()`、`persistent`、`migrate()`、`defaults()`、`START_BANK`。
 - `LG.stats.session.markBroke()`、`LG.progress.get(gameId)`；事件另有 `'stats:change'`、`'hints:change'`。
 - 教學：「下一步」鎖住時用 `aria-disabled`（仍可點，點了顯示提示）；e2e 需 `click(..., {force:true})`。前進（通過）時才 `markStep`。
-- `LG.tutorial.lint(steps)` → `{ok, problems}`，遊戲單元測試可直接檢查教學規範（見 `tests/unit/core-demo.test.mjs`）。
+- `LG.tutorial.lint(steps)` → `{ok, problems}`，遊戲單元測試可直接檢查教學規範（見 `tests/unit/sicbo.test.mjs` 等各遊戲測試）。
 - e2e：`tests/e2e/<id>.mjs` 匯出 `default async function (t)`，用 `t.test(name, async (page, h) => …)`；每個 test 新 context、乾淨 localStorage、有 console error 即失敗。

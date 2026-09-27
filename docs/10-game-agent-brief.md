@@ -8,7 +8,7 @@
 3. docs/03-ui-spec.md、docs/06-tutorial-guide.md、docs/05-game-rules/00-common.md
 4. 你的規格書：docs/05-game-rules/<你的遊戲 id>.md —— 賠率、限注、桌面 ASCII 圖、data-bet spotId、教學大綱、驗收測試都以它為準，不得改數字。
 5. 實際核心程式：src/core/20-ui.js、21-bets.js、32-modes.js、31-tutorial.js、30-registry.js（以及你會用到的 lib：派工訊息列出的 src/core/1x-*.js）。程式為準；若與合約不一致，寫 docs/change-requests/<你的遊戲 id>.md 說明並用能動的方式繞過。
-6. 範本：src/games/_demo.js 與 _demo.css（完整走完三模式與教學的極簡遊戲，照它的結構寫）。
+6. 範本：參考 src/games/sicbo.js 與 sicbo.css（完整走完三模式、下注格、教學與提示的標準桌遊，照它的結構寫；示範遊戲 _demo 已於 Wave 3 刪除）。
 7. 核心代理給的使用提示：docs/core-notes.md（若存在）。
 
 ## 你只能建立/修改

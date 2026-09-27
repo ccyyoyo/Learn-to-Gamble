@@ -489,7 +489,7 @@
           hintEl.innerHTML = `建議：<b>${term(T.actions[adv.action].zh, T.actions[adv.action].en)}</b>——${adv.why}`;
           hintEl.dataset.advice = adv.action;
         } else {
-          hintEl.innerHTML = '提示：放 Ante 時 Blind 會自動同額。好牌翻牌前就 4×；Trips 旁注優勢 3.5%，比 Ante 高。';
+          hintEl.innerHTML = '提示：放 Ante 時 Blind 會自動同額。好牌翻牌前就 4×；Trips 旁注優勢 3.50%，比 Ante 高。';
           delete hintEl.dataset.advice;
         }
       }
@@ -528,8 +528,6 @@
         ctx.bank.debit(state.staked);
         state.phase = 'dealing';
         state.lastAction = null;
-        await ctx.wait(500);                   // 荷官說完 No more bets 再發牌
-        if (!ctx.alive()) return;
         ctx.dealer.say('發牌', 'Dealing');
         const hand = dealHand(nextShoe());
         state.hand = hand;
@@ -625,7 +623,7 @@
         state.phase = 'settled';
         bets.unlock();
         bets.clear();
-        ctx.checkBroke();
+        ctx.checkBroke(2 * ctx.limits.min);          // 每局最少 Ante + Blind（CR-4）
         ctx.nextRound(startRound);
       }
 
@@ -648,17 +646,18 @@
         };
         const formula = r.lines.map((l) => l.formula).join('<br>') + `<br>淨 <b>${money.fmtSigned(r.net)}</b>`;
         const pN = handName(r.p), dN = handName(r.d);
+        const kk = (() => { const k = LG.poker.kicker(r.p, r.d); return k ? `（${k}）` : ''; })();   // 牌型相同 → 踢腳
         const why = [];
         if (r.outcome === 'fold') {
           why.push('棄牌輸 Ante + Blind（Trips 照算）。');
           const alt = settle({ ante: state.stakes.ante, blind: state.stakes.blind, play: state.stakes.ante }, hand, { playMult: 1 });
           why.push(`如果河牌加注 1×：你 ${pN} vs 莊 ${dN}，主注合計會是 ${money.fmtSigned(alt.net)}。`);
         } else if (r.outcome === 'win') {
-          why.push(`你的 ${pN} 大於莊的 ${dN} → Play 1:1。`);
+          why.push(`你的 ${pN} 大於莊的 ${dN}${kk} → Play 1:1。`);
           why.push(r.qual ? '莊家有一對以上（合格）→ Ante 1:1。' : '莊家沒有一對（不合格）→ Ante 退回。');
           why.push(BLIND_PAY[r.p.cat] ? `Blind：你是${r.p.name.zh} → ${oddsTxt(BLIND_PAY[r.p.cat])}。` : 'Blind 只有順子以上才賠，你贏但沒到順子 → 退回。');
         } else if (r.outcome === 'lose') {
-          why.push(`莊的 ${dN} 大於你的 ${pN} → Blind、Play 都輸；${r.qual ? 'Ante 也輸' : '莊不合格，Ante 退回'}。`);
+          why.push(`莊的 ${dN} 大於你的 ${pN}${kk} → Blind、Play 都輸；${r.qual ? 'Ante 也輸' : '莊不合格，Ante 退回'}。`);
         } else {
           why.push('兩邊最佳 5 張一樣大 → 平手，全部退回。');
         }
@@ -777,7 +776,7 @@
             highlight: ['[data-bet="blind"]', '.uth-row--player'],
             setup: (inst) => inst.demo.show({ player: 'AS KD', dealer: '9C 9H', board: 'KS 7D 2C 5H JS' }) },
           { id: 'payout-noqual', section: 'payout', title: '莊不合格 + 你順子',
-            body: '<p>Ante/Blind 各 50、Play 100（2×）。莊沒有對子：<br>Ante 退回；Play <b>RM 100 × 1 = RM 100</b>；Blind 順子 <b>RM 50 × 1 = RM 50</b>。淨贏 RM 150。</p>',
+            body: '<p>Ante/Blind 各 50、Play 100（2×）。莊沒有對子：<br>Ante 退回；Play <b>RM 100 × 1 = RM 100</b>；Blind 順子 <b>RM 50 × 1 = RM 50</b>。淨贏 RM 150，拿回 RM 350（含本金 RM 200）。</p>',
             highlight: ['.uth-row--dealer', '[data-bet="ante"]'],
             setup: (inst) => inst.demo.show({ player: '9S 8D', dealer: 'AC 4H', board: 'TH 7C 6S 2D KH' }) },
           { id: 'payout-lose', section: 'payout', title: '莊家贏：全部輸',

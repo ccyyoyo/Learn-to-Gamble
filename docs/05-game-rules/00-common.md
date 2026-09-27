@@ -38,7 +38,7 @@
 | Three Card Poker | Ante / Pair Plus RM 25 | RM 500 | |
 | Casino Hold'em | Ante RM 25 | RM 500 | AA 旁注 RM 10–100 |
 | Ultimate Texas Hold'em | Ante RM 25（Blind 同額） | RM 500 | Trips RM 10–100 |
-| Pai Gow Poker | RM 50 | RM 3,000 | |
+| Pai Gow Poker | RM 50 | RM 3,000 | Fortune 旁注 RM 10–500（不可單押） |
 | 老虎機 | 每線 RM 0.10 | 每線 RM 5 | 累積獎金機 Grand 只在最大注 |
 | 視訊撲克 | 每枚 RM 0.20 | 每枚 RM 5；1–5 枚 | |
 | 撲克室 | 盲注 RM 5 / RM 10 | 買入 RM 400–1,000 | 抽水 5%，上限 RM 50，No flop no drop |
@@ -54,14 +54,14 @@
 | baccarat/super6 | 莊（免佣、贏 6 點半賠） | 1.46% | Super 6 旁注 12:1 29.98% |
 | baccarat/tiger | 莊（贏 6 點半賠） | 1.46% | Tiger 7.66%、Big Tiger 6.03%、Small Tiger 5.36%、Tiger Tie 9.9%、Tiger Pair 8.9%（近似） |
 | casino-holdem | Ante | 2.16% | AA 旁注 6.26% |
-| ultimate-holdem | Ante（最佳策略） | 2.19% | Trips 1.9%–3.5% 依賠付表 |
+| ultimate-holdem | Ante（最佳策略） | 2.19% | Trips 3.50%（本桌賠付表 50/40/30/8/7/4/3） |
 | three-card-poker | Pair Plus（1-4-6-30-40） | 2.32% | Ante/Play 3.37% |
-| fantan | 念 Nim / 角 Kwok（5% 佣） | 2.50% | 番 Fan 3.75% |
+| fantan | 念 Nim / 角 Kwok（5% 佣） | 2.50% | 單雙 2.50%；三門 Nga Tan（1:3）1.25%；番 Fan 3.75% |
 | roulette | 所有注（單零） | 2.70% | |
-| sicbo | 大 / 小 Big / Small | 2.78% | 單點 7.87%；雙骰 18.5%；圍骰 30.1%；總點 9.7%–15.3% |
-| paigow-poker | 玩家不做莊 | 2.84% | |
-| three-pictures | 主注 | ≈3.5%（以 Monte Carlo 註明模擬值） | 和局歸莊 |
-| caribbean-stud | Ante（最佳策略） | 5.22% | 累積獎金旁注視獎池而異 |
+| sicbo | 大 / 小 Big / Small | 2.78% | 單點 7.87%；全圍 13.89%；圍骰（180:1）16.20%；組合 16.67%；雙骰 18.52%；總點 9.72%–18.98%（9/12 最高） |
+| paigow-poker | 玩家不做莊 | 2.84% | Fortune 旁注 ≈ 8.6%（模擬） |
+| three-pictures | 主注 | ≈4.2%（模擬值；精確枚舉 4.17%） | 比點數 → 公數，全同莊贏（不比單張）；莊 9 點/三公贏收 2/3 倍 |
+| caribbean-stud | Ante（最佳策略） | 5.22% | 累積獎金旁注：獎池 RM 100,000 時 ≈ 86%，需 RM 1.58M 才打平 |
 | slot-holdspin | 總體 | 5.5% | RTP 94.5% |
 | slot-video | 總體 | 6.0% | RTP 94.0% |
 | slot-progressive | 總體（最大注） | 8.0% | RTP 92.0%（非最大注更低） |

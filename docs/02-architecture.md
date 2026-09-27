@@ -85,6 +85,7 @@ LG.bank.canAfford(amount)
 LG.bank.debit(amount)   // 不足 → throw Error('INSUFFICIENT')；成功 emit 'bank:change'
 LG.bank.credit(amount)
 LG.bank.reset()         // 回到 1000
+LG.bank.sandbox(1000|null) / LG.bank.isSandbox() // 教學模式示範籌碼（記憶體，不寫 store）；LG.modes 進出教學自動切換
 ```
 
 ### 2.6 `LG.stats` / `LG.progress`
@@ -146,6 +147,7 @@ LG.poker.eval3(cards)        // Three Card Poker：{cat: 'SF'|'TRIPS'|'STRAIGHT'
 LG.poker.equity(hole, board, nOpponents, iters=2000) // Monte Carlo 勝率 0–1（撲克室 AI/提示用）
 LG.poker.outs(hole, board)   // 簡易 outs 數（提示用）
 LG.poker.describe(result)    // '一對 K（Pair of Kings）'
+LG.poker.kicker(a, b)        // 牌型相同時差在哪一張：'牌型相同，比踢腳 Kicker：A > 7'（不同牌型或完全相同回 ''）
 ```
 
 ### 2.11 `LG.paigow`
@@ -185,14 +187,15 @@ LG.ui.modal({title, body /* node|html */, actions:[{label, onClick, primary}]}) 
 LG.ui.confirm(text) → Promise<boolean>
 LG.ui.chipTray(container, {denoms, onSelect}) → {selected(), select(d), setEnabled(bool), setAffordable(balance)}
 LG.ui.chipStack(amount)                // → 小籌碼堆元素（下注格上顯示）
-LG.ui.dealer.say(zh, en, {speak=false}) // 荷官口令橫幅，兩行（中/英）；真實模式可用 speechSynthesis 念英文
+LG.ui.dealer.say(zh, en, {speak=false, hold}) // 荷官口令橫幅，兩行（中/英）；真實模式可用 speechSynthesis 念英文
+                                        // 「No more bets」預設停留 600ms（×LG.speed）才被下一句蓋掉（之後的口令排隊）
 LG.ui.countdown(seconds, {onTick, onDone}) → {cancel}  // 顯示於桌面頂部
 LG.ui.resultPanel({title, hand, result, formula, why, actions}) // 練習模式的「牌型 → 結果 → 賠付計算式 → 為什麼」
 LG.ui.payoutFlash(net)                  // 真實模式：只顯示 +RM 95 / −RM 50
 LG.ui.highlight(selectors[] | null)     // 教學：spotlight 高亮，null 清除
 LG.ui.table(html, {caption})            // 策略表 / 賠付表渲染
 LG.ui.tabs(container, [{id,label,render}])
-LG.ui.actionBar(container, [{id, label, en, onClick, disabled, primary}]) → {set(id, {disabled,label}), clear()}
+LG.ui.actionBar(container, [{id, label, en, onClick, disabled, primary}]) → {set(id, {disabled,label}), clear()}  // set() 保留外部 class（教學高亮）
 ```
 
 ### 3.2 `LG.Bets` 與 `LG.ui.betLayer`
@@ -231,7 +234,9 @@ LG.registerGame({
   houseEdge: [ { bet: {zh:'莊', en:'Banker'}, edge: 1.06, best: true }, ... ], // 排行榜取 best 或最小值
   limits: { real: {min: 50, max: 5000}, practice: {min: 10, max: 100000} },   // 可依 variant 覆寫
   denoms: [10, 25, 50, 100, 500, 1000], // 老虎機可省略
-  variants: [ { id:'classic', name:{zh,en}, limits? } ],                        // 可省略
+  variants: [ { id:'classic', name:{zh,en}, limits?, houseEdge? } ],            // 可省略；houseEdge 為變體別優勢（首頁卡片/排行榜顯示）
+  countdown: 15,                        // 真實模式倒數秒數；0（或 category 'slots'）= 不倒數，進場說明顯示「不倒數」（startHint 補充說明）
+  limitsLabel: '買入 RM 400–1,000 · 盲注 RM 5/10', // 可省略；字串或 (limits, mode) => 字串，取代真實模式「限注 …」文字
   create(ctx) → instance
 });
 
@@ -252,9 +257,9 @@ ctx.hints           // boolean，練習模式的提示開關（真實模式永�
 ctx.isReal, ctx.isPractice, ctx.isTutorial
 ctx.explain({hand, result, formula, why})   // 練習：resultPanel；真實：只 payoutFlash(net)；教學：resultPanel
 ctx.dealer.say(zh, en)                       // 練習+真實顯示；教學亦可用
-ctx.bettingWindow({seconds, onClose})        // 真實：倒數→'No more bets'→onClose；練習/教學：顯示「發牌 Deal」按鈕，按下→onClose
+ctx.bettingWindow({seconds, onClose, closeAt?, onNoMoreBets?}) // 真實：倒數→'No more bets'→onClose；closeAt=N：剩 N 秒先喊口令並鎖注、倒數到 0 才 onClose；練習/教學：顯示「發牌 Deal」按鈕，按下→onClose
 ctx.recordRound({wagered, net, outcome})     // 統一寫 stats（真實模式同時寫 session）
-ctx.checkBroke()                             // 真實模式餘額 < 最低注 → 顯示「籌碼用完」覆蓋層（手動重置）
+ctx.checkBroke(minNeeded?)                   // 真實模式餘額 < max(最低注, minNeeded) → 顯示「籌碼用完」覆蓋層（手動重置）
 ctx.setVariant(id)
 ctx.strategyPanel(html)                      // 練習模式提示面板內容（策略表等）
 ```
@@ -267,6 +272,7 @@ ctx.strategyPanel(html)                      // 練習模式提示面板內容�
 | 結果 | resultPanel | resultPanel（四段） | 只 payoutFlash 金額 |
 | 提示 | 內建於步驟 | 可開關 | 無 |
 | 荷官口令 | 可 | 顯示 | 顯示（可念） |
+| 餘額 | 示範籌碼 RM 1,000（沙盒，不動真實餘額） | 真實餘額 | 真實餘額 |
 | 破產 | 不會 | 提示可重置 | 覆蓋層，手動重置，顯示本次統計 |
 | 統計 | 不記 | 記 stats | 記 stats + session |
 

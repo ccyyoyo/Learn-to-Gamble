@@ -114,3 +114,8 @@
   .sb-bowl { width: 160px; height: 112px; }
   .sb-dice .sb-die { --s: 36px; }
 }
+
+/* 整合修正：手機上「圍 + 三顆小骰」放不下 → 骰子換行到中文下方，避免重疊 */
+@media (max-width: 759px) {
+  .sb-row .lg-spot__zh { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 1px 2px; }
+}

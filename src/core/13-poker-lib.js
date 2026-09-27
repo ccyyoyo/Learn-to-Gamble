@@ -350,8 +350,26 @@
     }
   }
 
+  /**
+   * 牌型相同時說明勝負差在哪一張（踢腳 kicker）。a、b 為 eval5/best/eval3（或 paigow eval5/eval2）結果。
+   * → '牌型相同，比踢腳 Kicker：A > 7'；完全相同回 ''。牌型不同也回 ''（呼叫端自己說牌型高低）。
+   */
+  function kicker(a, b) {
+    if (!a || !b || a.cat !== b.cat) return '';
+    const ra = a.ranks || [], rb = b.ranks || [];
+    const i = ra.findIndex((x, k) => x !== rb[k]);
+    if (i < 0) return '';
+    const txt = `${RANK_ZH[ra[i]] ?? ra[i]} ${ra[i] > rb[i] ? '>' : '<'} ${RANK_ZH[rb[i]] ?? rb[i]}`;
+    const grouped = ra.filter((x) => ra.filter((y) => y === x).length > 1).length;
+    const straight = [CATEGORY.STRAIGHT, CATEGORY.STRAIGHT_FLUSH, 'STRAIGHT', 'SF'].includes(a.cat);
+    if (straight) return `牌型相同，比順子最大張：${txt}`;
+    if (i < grouped) return `牌型相同，比組成牌型的牌：${txt}`;
+    if (!grouped) return `牌型相同，由大到小逐張比，第 ${i + 1} 張：${txt}`;
+    return `牌型相同，比踢腳 <i class="en">Kicker</i>：${txt}`;
+  }
+
   LG.poker = {
     CATEGORY, CATEGORY_NAME, CAT3, CAT3_NAME, CAT3_KEYS,
-    eval5, best, score, compare, eval3, equity, equityDetail, outs, outsDetail, describe,
+    eval5, best, score, compare, eval3, equity, equityDetail, outs, outsDetail, describe, kicker,
   };
 })();

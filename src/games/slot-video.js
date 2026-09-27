@@ -36,7 +36,6 @@
     noMoney: '餘額不足，降低每線注或線數',
     overMax: (max) => `每轉最高 ${cents(max)}`,
     underMin: (min) => `每轉最低 ${cents(min)}`,
-    realIntro: (lim) => `真實模式：每轉 <b>${lim}</b>（固定 20 線），<b>沒有倒數</b>，按 SPIN 就轉，只顯示輸贏金額。`,
     noWin: (bet) => `未中獎，本次投入 ${cents(bet)}`,
   };
 
@@ -185,6 +184,9 @@
     summary: '財神與龍：20 條線、百搭、金幣免費轉——現代老虎機的標準配備。',
     houseEdge: [{ bet: { zh: '總體', en: 'Overall' }, edge: 6.0, best: true }],
     limits: { real: { min: 2, max: 100 }, practice: { min: 0.1, max: 100 } },
+    countdown: 0,                 // 老虎機不倒數：核心進場 modal 顯示「不倒數」
+    startHint: '按 SPIN 就轉，只顯示輸贏金額',
+    limitsLabel: (l, mode) => `每轉 ${LG.money.fmt(l.min, { cents: true })} – ${LG.money.fmt(l.max, { cents: true })}${mode === 'real' ? '（固定 20 線）' : ''}`,
     logic: { STRIPS, SYMBOLS, PAYTABLE, FREE_SPINS, SCATTER_MULT, LINE_BETS, LINE_OPTS, WILD, SCATTER, evalSpin, spinValue, simulate, exactRTP },
 
     create(ctx) {
@@ -527,7 +529,7 @@
             body: '<p>中線 元寶・龍・元寶 = 3 個元寶：<br><b>25 × RM 0.10 = RM 2.50</b>。龍不會另外賠。</p>',
             highlight: ['.sv-reels'], setup: () => demo.setGrid(G_WILD) },
           // ===== strategy
-          { id: 'strategy-rtp', section: 'strategy', title: `RTP 是什麼 <i class="en">Return to Player</i>`,
+          { id: 'strategy-rtp', section: 'strategy', title: `這段你會學到：RTP 是什麼 <i class="en">Return to Player</i>`,
             body: '<table class="lg-datatable"><tr><th>RTP</th><th>莊家優勢</th></tr><tr><td>94%</td><td>6%</td></tr></table><p>每押 RM 100，長期平均拿回 RM 94。</p>',
             highlight: null, setup: () => demo.clear() },
           { id: 'strategy-volatility', section: 'strategy', title: `波動 <i class="en">Volatility</i>`,
@@ -575,11 +577,6 @@
             ], { caption: `免費轉平均每 ${Math.round(exact.triggerEvery)} 轉觸發一次` }));
           }
           if (ctx.isReal) {
-            Promise.resolve().then(() => {
-              const b = document.querySelector('[data-action="real-start"]');
-              const p = b && b.closest('.lg-modal') && b.closest('.lg-modal').querySelector('.lg-modal__body p');
-              if (p) p.innerHTML = T.realIntro(`${cents(ctx.limits.min)} – ${cents(ctx.limits.max)}`);
-            });
             ctx.ready.then(() => { ready = true; paintSpin(); });
           }
           root.dataset.ready = '1';

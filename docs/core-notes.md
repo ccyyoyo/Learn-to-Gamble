@@ -13,7 +13,7 @@
 
 ## 框架與 UI（核心 A）— 詳見 docs/change-requests/core-a.md
 - **扣款時機（所有遊戲一致）**：下注階段不扣款；`No more bets` 後遊戲自己 `bank.debit(bets.total())`；結算 `bank.credit(拿回金額含本金)`；局中離開在 `unmount` 退回已扣注金。
-- **一局標準流程**（照 `src/games/_demo.js`）：`ctx.bettingWindow({bets, onClose})` → `onClose` 若 `!ok`：`bets.unlock(); ctx.nextRound(startRound)`；若 `ok`：debit → 發牌 → credit → `ctx.recordRound` → `ctx.explain` → `bets.unlock(); bets.clear()` → `ctx.checkBroke()` → `ctx.nextRound(startRound)`。每局都要呼叫 `nextRound`（破產也要）。
+- **一局標準流程**（參考 `src/games/sicbo.js`）：`ctx.bettingWindow({bets, onClose})` → `onClose` 若 `!ok`：`bets.unlock(); ctx.nextRound(startRound)`；若 `ok`：debit → 發牌 → credit → `ctx.recordRound` → `ctx.explain` → `bets.unlock(); bets.clear()` → `ctx.checkBroke()` → `ctx.nextRound(startRound)`。每局都要呼叫 `nextRound`（破產也要）。
 - **下注 UI 三件組**：`ui.chipTray(容器,{denoms:ctx.denoms})`、`ui.betLayer(桌面,{bets, chipTray, gameId:ctx.gameId})`、`ui.betBar(容器,{bets, layer})`；在 `.lg-actions` 加 `data-deal-slot` 讓「發牌」按鈕放進去。
 - `Bets` 的 `min/max` 是整桌總注上下限；`perSpotMin/perSpotMax` 未給時沿用；有旁注的遊戲要把 `max` 設大並用 `spotRules` 設每格限額。
 - 切模式/變體一律重新 `create`；`onModeChange/onVariantChange` 只在 mount 後各呼叫一次。

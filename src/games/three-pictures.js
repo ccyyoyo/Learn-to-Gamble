@@ -1,11 +1,12 @@
 // ============================================================================
 // 三公 Three Pictures（id: three-pictures）— 規格：docs/05-game-rules/three-pictures.md
 // 1 副牌每局重洗；莊家與 3 個位置各 3 張。玩家可同時押多個位置，每個位置獨立與莊比。
-// 牌型：三公 > 9 > 8 > … > 0；同點比公數；再比最高單張（K>Q>J>10>…>A）；全同 → 莊贏。
+// 牌型：三公 > 9 > 8 > … > 0；同點比公數；點數與公數全同 → 莊贏（B 方案：不比最高單張）。
 // 玩家贏：三公 3:1、9 點 2:1、其他 1:1。
 // 莊贏：玩家輸「莊家牌型倍數」（莊三公輸 3 倍、莊 9 點輸 2 倍、其他輸 1 倍）。
-//   ↑ 與規格 §2「莊勝輸 1 倍」不同：照規格字面玩家反而有 +10.5% 優勢（精確枚舉），
-//     見 docs/change-requests/three-pictures.md CR-1。RULES.bankerMultiplier 可切回規格字面。
+//   精確枚舉（407,170,400 種組合）：主注莊家優勢 4.17%、和局歸莊率 3.78%。
+//   若莊勝一律只收 1 倍（bankerMultiplier=false），同一比牌規則下玩家反有 +7.42% 優勢，
+//   見 docs/change-requests/three-pictures.md 與 README 協調者決議的整合備註。
 // ============================================================================
 (() => {
   const { ui, money } = LG;
@@ -14,12 +15,12 @@
 
   // ---------------------------------------------------------------- 規則常數
   const RULES = {
-    bankerMultiplier: true,   // 莊贏時玩家輸莊家牌型倍數（CR-1）
+    bankerMultiplier: true,   // 莊贏時玩家輸莊家牌型倍數（見檔頭說明；false 會變成玩家優勢）
     maxLossMult: 3,           // 下注時需保留 3 倍注額（莊三公輸 3 倍）
   };
-  /** Monte Carlo 主注優勢（%）：LG.rng.seed(20260927); logic.simulate(40,000,000) → 0.8905%（精確枚舉 0.8935%），見 change-request */
-  const MC_EDGE = 0.89;
-  const RANK_ORDER = 'A23456789TJQK';           // 比最高單張：K 最大、A 最小
+  /** 主注優勢（%）：精確枚舉 4.1713%；Monte Carlo LG.rng.seed(123); simulate(1,000,000) 見單元測試 [slow] */
+  const MC_EDGE = 4.17;
+  const RANK_ORDER = 'A23456789TJQK';
   const SEATS = [1, 2, 3];
   const YOU = 2;
   const EN_NUM = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
@@ -44,7 +45,7 @@
   const rankText = (r) => (r === 'T' ? '10' : r);
   const cardText = (c) => `${rankText(c.rank)}${ui.SUIT ? ui.SUIT[c.suit].symbol : c.suit}`;
 
-  /** 牌型 → {points, pics, three, top, topRank, level, score, mult, name:{zh,en}} */
+  /** 牌型 → {points, pics, three, top, topRank, level, score, mult, name:{zh,en}}（score 只含點數與公數；top 僅供顯示） */
   function evaluate(cards) {
     const pics = cards.filter(isPic).length;
     const points = cards.reduce((s, c) => s + point(c), 0) % 10;
@@ -53,10 +54,10 @@
     const level = three ? 10 : points;
     const name = three ? { zh: '三公', en: 'Three Pictures' }
       : { zh: `${points} 點${ZH_PICS[pics]}`, en: `${EN_NUM[points]}${pics ? `, ${EN_PICS[pics]}` : ''}` };
-    return { points, pics, three, top, topRank: RANK_ORDER[top - 1], level, score: level * 10000 + pics * 100 + top, mult: three ? 3 : points === 9 ? 2 : 1, name };
+    return { points, pics, three, top, topRank: RANK_ORDER[top - 1], level, score: level * 100 + pics, mult: three ? 3 : points === 9 ? 2 : 1, name };
   }
 
-  /** 位置 vs 莊：→ {win:boolean, by:'level'|'pics'|'top'|'tie', why} */
+  /** 位置 vs 莊：→ {win:boolean, by:'level'|'pics'|'tie', why} */
   function compare(p, b) {
     const win = p.score > b.score;
     let by, why;
@@ -66,12 +67,9 @@
     } else if (p.pics !== b.pics) {
       by = 'pics';
       why = `同 ${p.three ? '三公' : p.points + ' 點'}，比公數：${p.pics} 公 ${win ? '>' : '<'} ${b.pics} 公`;
-    } else if (p.top !== b.top) {
-      by = 'top';
-      why = `點數與公數都一樣，比最高單張：${rankText(p.topRank)} ${win ? '>' : '<'} ${rankText(b.topRank)}`;
     } else {
       by = 'tie';
-      why = `點數、公數、最高單張（${rankText(p.topRank)}）全同 → 和局歸莊`;
+      why = `點數與公數都一樣（${p.name.zh}）→ 和局歸莊`;
     }
     return { win, by, why };
   }
@@ -356,10 +354,8 @@
         state.phase = 'settled';
         bets.unlock();
         bets.clear();
-        ctx.checkBroke();
-        if (ctx.isReal && RULES.bankerMultiplier && ctx.bank.balance() >= ctx.limits.min && ctx.bank.balance() < ctx.limits.min * RULES.maxLossMult) {
-          ui.toast(`餘額不足最低注的 3 倍保留（${fmt(ctx.limits.min * RULES.maxLossMult)}），無法再下注`, { type: 'warn', ms: 3000 });
-        }
+        // 下最低注需保留 3 倍（莊三公輸 3 倍）→ 破產門檻 = 最低注 × 3
+        ctx.checkBroke(RULES.bankerMultiplier ? round2(ctx.limits.min * RULES.maxLossMult) : ctx.limits.min);
         ctx.nextRound(startRound);
       }
 
@@ -436,7 +432,7 @@
             body: '<p>K-Q-J 三張都是公 = <b>三公</b>，比 9 點還大。押 RM 100：<b>RM 100 × 3 = RM 300</b>，拿回 RM 400。</p>',
             highlight: ['[data-seat-box="3"]'] },
           { id: 'payout-compare', section: 'payout', title: '同點怎麼比',
-            body: '<p>同點數 → 公多的贏；再同 → 比最高單張（K 最大、A 最小）；全部一樣 → <b>莊贏</b>。</p>',
+            body: '<p>同點數 → 公多的贏；點數和公數都一樣 → <b>莊贏</b>（不比單張大小）。</p>',
             highlight: ['.tp-seats'],
             setup: (inst) => inst.demo.showHands(H('8S KH TC', 'QD 8H JC', '9C 9D KS', '4H 4D QS')) },
           { id: 'payout-banker-mult', section: 'payout', title: '莊家拿 9 點或三公',
@@ -448,8 +444,8 @@
             setup: (inst) => { inst.demo.clear(); inst.demo.ensureBetting(); },
             action: { label: '在位置 1 或位置 3 放籌碼', check: (inst) => inst.bets.get('seat-1') > 0 || inst.bets.get('seat-3') > 0 || '點位置 1 或 3 的下注格' } },
           // ===== strategy
-          { id: 'strategy-edge', section: 'strategy', title: '莊家優勢 <i class="en">House edge</i>',
-            body: `<table class="lg-datatable"><tr><th>注</th><th>優勢</th></tr><tr><td>押任一位置</td><td>≈ ${MC_EDGE}%（模擬值）</td></tr></table><p>由電腦模擬 4,000 萬局算出。</p>`,
+          { id: 'strategy-edge', section: 'strategy', title: '這段你會學到：莊家優勢 <i class="en">House edge</i>',
+            body: `<table class="lg-datatable"><tr><th>注</th><th>優勢</th></tr><tr><td>押任一位置</td><td>≈ ${MC_EDGE}%</td></tr></table><p>精確列舉全部 4 億多種發牌組合算出 4.17%（電腦模擬 100 萬局也約 4.2%）。</p>`,
             highlight: null },
           { id: 'strategy-no-choice', section: 'strategy', title: '沒有決策，純運氣',
             body: '<p>三公發完牌就定輸贏，你不能補牌也不能換牌。沒有「技巧」可以降低優勢。</p>',

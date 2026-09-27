@@ -172,6 +172,25 @@
   /** 教學示範用的路單（固定，不是預測） */
   const DEMO_ROAD = 'B P P T B B P B P B B P T P B B P P B'.split(' ').map((o, i) => ({ o, pp: i === 4, bp: i === 9, p: 0, b: 0 }));
 
+  /** 變體別優勢（variants[i].houseEdge；首頁卡片/排行榜顯示變體資訊用）。best = 00-common.md 該變體的代表值 */
+  const HE = {
+    bankerComm: { bet: { zh: '莊（抽 5% 佣）', en: 'Banker' }, edge: EDGE.bankerComm },
+    bankerNoComm: { bet: { zh: '莊（免佣，6 點贏賠一半）', en: 'Banker (no commission)' }, edge: EDGE.bankerNoComm },
+    player: { bet: { zh: '閒', en: 'Player' }, edge: EDGE.player },
+    tie: { bet: { zh: '和 8:1', en: 'Tie' }, edge: EDGE.tie },
+    pair: { bet: { zh: '閒對 / 莊對 11:1', en: 'Pair' }, edge: EDGE.pair },
+    super6: { bet: { zh: 'Super 6 12:1', en: 'Super 6' }, edge: EDGE.super6 },
+    tiger: { bet: { zh: '老虎', en: 'Tiger' }, edge: EDGE.tiger, approx: true },
+    bigTiger: { bet: { zh: '大老虎', en: 'Big Tiger' }, edge: EDGE.bigTiger, approx: true },
+    smallTiger: { bet: { zh: '小老虎', en: 'Small Tiger' }, edge: EDGE.smallTiger, approx: true },
+    tigerTie: { bet: { zh: '老虎和', en: 'Tiger Tie' }, edge: EDGE.tigerTie, approx: true },
+    tigerPair: { bet: { zh: '老虎對', en: 'Tiger Pair' }, edge: EDGE.tigerPair, approx: true },
+  };
+  const variantEdges = (v) => {
+    const main = noComm(v) ? HE.bankerNoComm : HE.bankerComm;
+    return [{ ...main, best: true }, HE.player, HE.tie, HE.pair, ...(SIDES[v] || []).map((k) => HE[k])];
+  };
+
   // ---------------------------------------------------------------- 註冊
   LG.registerGame({
     id: 'baccarat',
@@ -196,10 +215,10 @@
     denoms: [10, 25, 50, 100, 500, 1000],
     countdown: 15,
     variants: [
-      { id: 'classic', name: { zh: '傳統', en: 'Commission' } },
-      { id: 'super6', name: { zh: '免佣', en: 'Super 6' } },
-      { id: 'tiger', name: { zh: '老虎', en: 'Tiger' } },
-      { id: 'squeeze', name: { zh: '咪牌', en: 'Squeeze' } },
+      { id: 'classic', name: { zh: '傳統', en: 'Commission' }, houseEdge: variantEdges('classic') },
+      { id: 'super6', name: { zh: '免佣', en: 'Super 6' }, houseEdge: variantEdges('super6') },
+      { id: 'tiger', name: { zh: '老虎', en: 'Tiger' }, houseEdge: variantEdges('tiger') },
+      { id: 'squeeze', name: { zh: '咪牌', en: 'Squeeze' }, houseEdge: variantEdges('squeeze') },
     ],
     logic: {
       T, EDGE, SPOT_EDGE, SIDES, REAL_RULES, spotsFor, noComm, makeBets, drawReason, bankerRuleText,
@@ -658,17 +677,19 @@
             setup: (inst) => inst.demo.showCoup('3S 4D', 'KC 7H'),
             action: { label: '選出淨輸贏', check: quizCheck('tie') } },
           { id: 'payout-pair', section: 'payout', title: '對子怎麼判定',
-            body: '<p>只看<b>前兩張</b>、要<b>同點數字母</b>：K♠K♥ 是對子；10 和 K 雖然都算 0 點，但不是對子。莊對 RM 10 中：RM 10 × 11 = RM 110，拿回 RM 120。</p>',
+            body: '<p>只看<b>前兩張</b>、要<b>同點數字母</b>：K♠K♥ 是對子；10 和 K 雖然都算 0 點，但不是對子。莊對 RM 10 中：RM 10 × 11 = RM 110（淨贏），拿回 RM 120。</p>',
             highlight: ['[data-bet="bankerPair"]', '.bac-hand[data-side="banker"]'],
             setup: (inst) => inst.demo.showCoup('TS 9D', 'KS KH') },
           // ===== strategy
-          { id: 'strategy-edge', section: 'strategy', title: `莊家優勢 <i class="en">House edge</i>`,
-            get body() { return `${html(edgeTable())}<p>優勢 1.06% = 長期每押 RM 100 平均輸 RM 1.06。</p>`; },
+          { id: 'strategy-edge', section: 'strategy', title: `這段你會學到：莊家優勢 <i class="en">House edge</i>`,
+            get body() {
+              return `${html(edgeTable())}<p>${nc ? '免佣桌：閒 1.24% = 長期每押 RM 100 平均輸 RM 1.24；莊 1.46% 平均輸 RM 1.46。' : '優勢 1.06% = 長期每押 RM 100 平均輸 RM 1.06。'}</p>`;
+            },
             highlight: null },
-          { id: 'strategy-bet', section: 'strategy', title: '該押：莊',
+          { id: 'strategy-bet', section: 'strategy', title: nc ? '該押：閒（1.24% &lt; 莊 1.46%）' : '該押：莊',
             body: nc ? '<p>傳統桌<b>莊最划算</b>（1.06%）。這張免佣桌莊 6 點只賠一半，莊變 1.46%，<b>閒 1.24% 反而略好</b>——兩者都可以。</p>'
               : '<p><b>莊最划算</b>：優勢 1.06%，比閒的 1.24% 低。莊贏的機率比較高，所以要抽 5% 佣，抽完還是最好。</p>',
-            highlight: ['[data-bet="banker"]'] },
+            highlight: nc ? ['[data-bet="player"]', '[data-bet="banker"]'] : ['[data-bet="banker"]'] },
           { id: 'strategy-avoid', section: 'strategy', title: '別押：和、對子、老虎旁注',
             body: '<p>和 14.36%、對子 10.36%、Super 6 29.98%、老虎旁注約 5–10%。<b>和與對子是給賭場賺的</b>，賠率高只是因為很難中。</p>',
             highlight: ['[data-bet="tie"]', '.bac-pairs'] },

@@ -79,8 +79,7 @@
 
 /* 熱區（格線上的透明圓點） */
 .rl-hot { position: relative; pointer-events: none; z-index: 3; }
-.rl-board .rl-hs,
-.rl-board .rl-hs.lg-spot--hl {
+.rl-board .rl-hs {
   position: absolute; left: calc(var(--x) * 100% / 3); top: calc(var(--y) * 100% / 14);
   width: 24px; height: 24px; min-width: 0; min-height: 0; margin: -12px 0 0 -12px; padding: 0;
   border: 0; border-radius: 50%; background: transparent; pointer-events: auto; outline-offset: 1px;
@@ -124,8 +123,7 @@
     grid-template-rows: repeat(3, var(--lh)) var(--oh) var(--oh);
   }
   .rl-board > * { grid-row: var(--lr) / span var(--lrs, 1); grid-column: var(--lc) / span var(--lcs, 1); }
-  .rl-board .rl-hs,
-  .rl-board .rl-hs.lg-spot--hl { left: calc(var(--y) * 100% / 14); top: calc((3 - var(--x)) * 100% / 3); }
+  .rl-board .rl-hs { left: calc(var(--y) * 100% / 14); top: calc((3 - var(--x)) * 100% / 3); }
   .rl-out .lg-spot__zh { font-size: .9em; }
   .rl-out .lg-spot__en { font-size: .62em; }
   .rl-even .lg-spot__stack, .rl-dozen .lg-spot__stack { transform: translateX(-50%); }

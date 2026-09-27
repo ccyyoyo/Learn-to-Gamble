@@ -516,7 +516,7 @@
             setup: (inst) => { inst.demo.clearLights(); inst.demo.ensureBetting(); },
             action: { label: '在任一個「單點」格放籌碼', check: (inst) => N6.some((n) => inst.bets.get(`single-${n}`) > 0) || '點下方任一顆骰子的單點格' } },
           // ===== strategy
-          { id: 'strategy-edge', section: 'strategy', title: '莊家優勢 <i class="en">House edge</i>',
+          { id: 'strategy-edge', section: 'strategy', title: '這段你會學到：莊家優勢 <i class="en">House edge</i>',
             body: `<table class="lg-datatable"><tr><th>注</th><th>賠率</th><th>優勢</th></tr>${edgeRows}</table>`,
             highlight: null },
           { id: 'strategy-do', section: 'strategy', title: '該押：大小 / 單雙',

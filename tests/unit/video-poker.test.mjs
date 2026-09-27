@@ -145,8 +145,9 @@ test('教學步驟符合規範（≥12 步、四段、≥3 action、3 題互動�
   assert.ok(quiz.length >= 3, '策略段 3 題互動');
   const ids = steps.map((s) => s.id);
   for (const id of ['layout-paytable', 'layout-royal', 'layout-hold', 'strategy-max', 'strategy-96', 'strategy-table', 'payout-jacks']) assert.ok(ids.includes(id), id);
-  const table = steps.find((s) => s.id === 'strategy-table');
-  assert.equal((table.body.match(/<li>/g) || []).length, 15, '策略表 15 條');
+  const tables = steps.filter((s) => /^strategy-table/.test(s.id));
+  assert.equal(tables.map((t) => (t.body.match(/<li>/g) || []).length).reduce((a, b) => a + b, 0), 15, '策略表 15 條（分兩步）');
+  for (const t of tables) assert.ok(t.body.replace(/<[^>]+>/g, '').replace(/[\x00-\x7f]/g, '').length <= 80, `${t.id} ≤ 80 字`);
 });
 
 // ---------------------------------------------------------------- Monte Carlo RTP

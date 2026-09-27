@@ -100,7 +100,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
 .lg-btn--primary:hover { background: linear-gradient(180deg, #f0d27a, #dfbb58); }
 .lg-btn--ghost { background: transparent; }
 .lg-btn--danger { background: transparent; color: var(--lose); border-color: rgba(255, 92, 92, .5); }
-.lg-btn--sm { min-height: 36px; padding: 4px 12px; font-size: .9em; }
+.lg-btn--sm { min-height: var(--tap); padding: 4px 12px; font-size: .9em; }  /* 觸控目標 ≥ 44px（07-test-plan §4） */
 .lg-btn.is-locked { opacity: .55; }
 .lg-btn.is-shake { animation: lg-shake .35s; }
 @keyframes lg-shake { 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
@@ -116,6 +116,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
 .lg-topbar__back { color: var(--text); text-decoration: none; min-height: var(--tap); display: inline-flex; align-items: center; padding: 0 8px; white-space: nowrap; }
 .lg-topbar__title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .lg-topbar .lg-balance { font-weight: 700; color: var(--gold); white-space: nowrap; }
+.lg-topbar .lg-balance.is-sandbox::before { content: "示範 "; font-size: .72em; font-weight: 600; color: var(--muted); }
 .lg-topbar__menu { min-width: var(--tap); min-height: var(--tap); border: 0; background: transparent; font-size: 22px; cursor: pointer; border-radius: 50%; }
 .lg-modebar { display: flex; align-items: center; gap: 10px; padding: 8px; flex-wrap: wrap; }
 .lg-modebar__limits { font-size: .85em; color: var(--muted); }
@@ -133,10 +134,10 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
 .lg-switch__knob::after { content: ""; position: absolute; left: 2px; top: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform .2s; }
 .lg-switch.is-on .lg-switch__knob { background: var(--win); }
 .lg-switch.is-on .lg-switch__knob::after { transform: translateX(14px); }
-.lg-variantbar { display: flex; gap: 6px; padding: 0 8px 8px; overflow-x: auto; align-items: center; scrollbar-width: none; }
+.lg-variantbar { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 8px 8px; align-items: center; }
 .lg-variantbar__k { color: var(--muted); font-size: .85em; white-space: nowrap; }
 .lg-variantbar__btn {
-  min-height: 36px; padding: 4px 12px; border: 1px solid var(--border); border-radius: 999px;
+  min-height: var(--tap); padding: 4px 12px; border: 1px solid var(--border); border-radius: 999px;
   color: var(--text); text-decoration: none; white-space: nowrap; display: inline-flex; align-items: center; gap: 3px; font-size: .9em;
 }
 .lg-variantbar__btn.is-active { border-color: var(--gold); color: var(--gold); background: rgba(217, 180, 81, .1); }
@@ -324,7 +325,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
 .lg-datatable th { color: var(--muted); font-weight: 600; background: var(--panel-2); position: sticky; top: 0; }
 .lg-datatable tr.is-hl td, .lg-datatable td.is-hl { background: rgba(217, 180, 81, .18); color: var(--gold); }
 .lg-tabs__bar { display: flex; gap: 4px; overflow-x: auto; border-bottom: 1px solid var(--border); }
-.lg-tabs__btn { min-height: 40px; padding: 6px 12px; background: transparent; border: 0; border-bottom: 2px solid transparent; cursor: pointer; white-space: nowrap; color: var(--muted); }
+.lg-tabs__btn { min-height: var(--tap); padding: 6px 12px; background: transparent; border: 0; border-bottom: 2px solid transparent; cursor: pointer; white-space: nowrap; color: var(--muted); }
 .lg-tabs__btn.is-active { color: var(--gold); border-bottom-color: var(--gold); }
 .lg-tabs__panel { padding: 10px 0; }
 
@@ -384,9 +385,10 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
 .lg-flash.is-push { color: var(--push); }
 @keyframes lg-flash { 0% { opacity: 0; transform: translate(-50%, -30%) scale(.8); } 15% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); } 70% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -70%); } }
 
-/* ------------------------------------------------------------ 教學 spotlight */
+/* ------------------------------------------------------------ 教學 spotlight
+   不設 position（絕對定位的熱區被高亮時才不會跑位）；z-index 只對已定位元素或 flex/grid 子項生效 */
 .lg-spot--hl {
-  position: relative; z-index: 5;
+  z-index: 5;
   outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 10px;
   animation: lg-breathe 1.4s ease-in-out infinite;
 }
@@ -451,6 +453,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
 .lg-gcard__en { color: var(--muted); font-size: .82em; }
 .lg-gcard__summary { color: #cfd6dc; font-size: .9em; margin: 0; }
 .lg-gcard__edge { font-size: .85em; color: var(--gold); }
+.lg-gcard__variants { font-size: .78em; color: var(--muted); margin-top: -4px; }
 .lg-gcard__stats { font-size: .82em; color: var(--muted); }
 .lg-gcard__modes { display: flex; gap: 6px; margin-top: 4px; }
 .lg-gcard__modes .lg-btn { flex: 1; padding: 4px 6px; font-size: .85em; }
@@ -464,6 +467,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
 .lg-lb td:first-child, .lg-lb th:first-child { width: 28px; text-align: center; color: var(--muted); }
 .lg-lb__edge { white-space: nowrap; font-weight: 700; color: var(--gold); }
 .lg-lb__edge small { display: block; font-weight: 400; color: var(--muted); font-size: .8em; }
+.lg-lb__var { display: block; color: var(--muted); font-size: .8em; margin-top: 2px; }
 .lg-lb__room td { color: var(--muted); border-top: 2px solid var(--border); }
 .lg-lb__room .lg-lb__edge { white-space: normal; color: var(--accent); font-weight: 600; }
 .lg-lb a { color: var(--text); }
@@ -496,7 +500,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
 .lg-betpanel__group { display: flex; flex-direction: column; gap: 2px; }
 .lg-betpanel__k { font-size: .78em; color: var(--muted); }
 .lg-betpanel__stepper { display: flex; align-items: center; gap: 4px; background: var(--panel); border: 1px solid var(--border); border-radius: 999px; padding: 2px; }
-.lg-betpanel__btn { min-width: 36px; padding: 0; font-size: 18px; }
+.lg-betpanel__btn { min-width: var(--tap); padding: 0; font-size: 18px; }
 .lg-betpanel__v { min-width: 64px; text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; }
 .lg-betpanel__max { background: #6a1b1b; border-color: #a33; }
 .lg-betpanel.is-max .lg-betpanel__max { background: var(--lose); color: #fff; }
@@ -520,18 +524,6 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .lg-flash { animation: none; }
 }
-
-
-/* ==== src/games/_demo.css ==== */
-/* 示範遊戲「猜大小」— 遊戲樣式只用自己的前綴（demo-） */
-.demo-table { display: flex; flex-direction: column; gap: 10px; align-items: stretch; }
-.demo-cardslot { min-height: 116px; }
-.demo-rule { text-align: center; font-size: .85em; opacity: .85; }
-.demo-spots { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding-bottom: 10px; }
-.demo-spot { min-height: 96px; padding-bottom: 28px; }
-.demo-spot .lg-spot__zh { font-size: 1.6em; }
-.demo-spot__rule { font-size: .72em; opacity: .7; }
-.demo-hint { margin: 8px 8px 0; }
 
 
 /* ==== src/games/baccarat.css ==== */
@@ -768,6 +760,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
 .cstud-spot--progressive { width: 78px; min-height: 78px; max-width: 78px; border-color: var(--gold); background: radial-gradient(circle, rgba(0, 0, 0, .35) 0 40%, transparent 41%); }
 .cstud-spot--progressive .lg-spot__zh { font-size: .72em; }
 .cstud-spot--progressive .lg-spot__en { font-size: .52em; }
+.cstud-spot--progressive .lg-spot__odds { font-size: .5em; line-height: 1.15; text-align: center; max-width: 64px; }
 .cstud-slot { display: block; width: 26px; height: 5px; border-radius: 3px; background: #111; margin-top: 2px; box-shadow: inset 0 1px 2px rgba(255, 255, 255, .2); }
 .cstud-spot--progressive.is-in { background: radial-gradient(circle, rgba(217, 180, 81, .55) 0 40%, rgba(217, 180, 81, .12) 41%); box-shadow: 0 0 12px rgba(217, 180, 81, .6); }
 .cstud-spot--progressive.is-in .cstud-slot { background: var(--gold); }
@@ -870,7 +863,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
 .ft-fan__num { font-size: 1.6em; line-height: 1; color: var(--gold); font-family: Georgia, serif; }
 .ft-kwok { border-style: dashed; }
 .ft-spot--nim { border-width: 1.5px; }
-.ft-spot__hint { display: none; font-size: .5em; color: var(--push); line-height: 1.2; white-space: nowrap; }
+.ft-spot__hint { display: none; font-size: .5em; color: var(--push); line-height: 1.2; max-width: 100%; overflow-wrap: anywhere; }
 .ft-show-hints .ft-spot__hint { display: block; }
 .ft-spot.ft-push { border-color: var(--push); box-shadow: 0 0 0 2px var(--push); }
 
@@ -1259,8 +1252,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
 
 /* 熱區（格線上的透明圓點） */
 .rl-hot { position: relative; pointer-events: none; z-index: 3; }
-.rl-board .rl-hs,
-.rl-board .rl-hs.lg-spot--hl {
+.rl-board .rl-hs {
   position: absolute; left: calc(var(--x) * 100% / 3); top: calc(var(--y) * 100% / 14);
   width: 24px; height: 24px; min-width: 0; min-height: 0; margin: -12px 0 0 -12px; padding: 0;
   border: 0; border-radius: 50%; background: transparent; pointer-events: auto; outline-offset: 1px;
@@ -1304,8 +1296,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
     grid-template-rows: repeat(3, var(--lh)) var(--oh) var(--oh);
   }
   .rl-board > * { grid-row: var(--lr) / span var(--lrs, 1); grid-column: var(--lc) / span var(--lcs, 1); }
-  .rl-board .rl-hs,
-  .rl-board .rl-hs.lg-spot--hl { left: calc(var(--y) * 100% / 14); top: calc((3 - var(--x)) * 100% / 3); }
+  .rl-board .rl-hs { left: calc(var(--y) * 100% / 14); top: calc((3 - var(--x)) * 100% / 3); }
   .rl-out .lg-spot__zh { font-size: .9em; }
   .rl-out .lg-spot__en { font-size: .62em; }
   .rl-even .lg-spot__stack, .rl-dozen .lg-spot__stack { transform: translateX(-50%); }
@@ -1430,6 +1421,11 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
   .sb-dice .sb-die { --s: 36px; }
 }
 
+/* 整合修正：手機上「圍 + 三顆小骰」放不下 → 骰子換行到中文下方，避免重疊 */
+@media (max-width: 759px) {
+  .sb-row .lg-spot__zh { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 1px 2px; }
+}
+
 
 /* ==== src/games/slot-classic.css ==== */
 /* 3 軸經典機 FA FA FA — 前綴 sc- */
@@ -1445,7 +1441,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
 .sc-logo span { color: #ffd76a; text-shadow: 0 2px 0 #7a4c00, 0 0 10px rgba(255, 200, 80, .6); }
 .sc-logo span:nth-child(2) { color: #ff6b6b; text-shadow: 0 2px 0 #6b0000, 0 0 10px rgba(255, 90, 90, .6); }
 .sc-logo span:nth-child(3) { color: #7fb0ff; text-shadow: 0 2px 0 #0a2a6b, 0 0 10px rgba(110, 160, 255, .6); }
-.sc-head .lg-paytable-btn { color: #fff3d0; border-color: #e0b64a; min-height: 36px; }
+.sc-head .lg-paytable-btn { color: #fff3d0; border-color: #e0b64a; }
 
 .sc-reelwrap { position: relative; padding: 0 18px 18px; }
 .sc-reels { max-width: 300px; margin: 0 auto; }
@@ -1624,7 +1620,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
 .sv-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; padding: 0 4px; }
 .sv-logo { font-weight: 900; font-size: 1.15em; color: #ffd76a; text-shadow: 0 2px 0 #6b3a00; }
 .sv-logo .en { font-size: .6em; color: #ffe9b0; }
-.sv-head .lg-paytable-btn { color: #fff3d0; border-color: #e0b64a; min-height: 36px; }
+.sv-head .lg-paytable-btn { color: #fff3d0; border-color: #e0b64a; }
 
 .sv-free { text-align: center; margin: 0 auto 6px; padding: 4px 10px; border-radius: 999px; background: rgba(0, 0, 0, .45); border: 1px solid #9ff0ff; max-width: 320px; }
 .sv-free[hidden] { display: none; }
@@ -2177,7 +2173,9 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
   const LG = globalThis.LG;
   const { round2 } = LG.money;
 
-  function balance() { return round2(LG.store.peek().bank); }
+  // 教學沙盒：教學模式用記憶體裡的示範籌碼（不寫 store、不動真實餘額）。LG.modes 進出教學時切換。
+  let sandbox = null;
+  function balance() { return sandbox ? sandbox.value : round2(LG.store.peek().bank); }
 
   function check(amount) {
     const a = round2(amount);
@@ -2186,7 +2184,8 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
   }
 
   function set(v, delta) {
-    LG.store.update((s) => { s.bank = round2(v); });
+    if (sandbox) sandbox.value = round2(v);
+    else LG.store.update((s) => { s.bank = round2(v); });
     LG.events.emit('bank:change', { balance: balance(), delta });
   }
 
@@ -2208,12 +2207,24 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
       set(balance() + a, a);
       return balance();
     },
-    /** 只把餘額設回 RM 1,000（不清進度與統計） */
+    /** 只把餘額設回 RM 1,000（不清進度與統計）；沙盒中只重置示範籌碼 */
     reset() {
       const before = balance();
       set(LG.store.START_BANK, round2(LG.store.START_BANK - before));
       return balance();
     },
+    /**
+     * 教學沙盒。sandbox(1000) → 之後 balance/debit/credit 只作用在記憶體裡的示範籌碼；sandbox(null) → 回到真實餘額。
+     * 切換時 emit 'bank:change'。
+     */
+    sandbox(amount) {
+      const was = !!sandbox;
+      sandbox = amount === null || amount === undefined ? null : { value: round2(amount) };
+      if (was || sandbox) LG.events.emit('bank:change', { balance: balance(), delta: 0 });
+      return balance();
+    },
+    /** 目前是否在教學沙盒 */
+    isSandbox: () => !!sandbox,
   };
 })();
 
@@ -3297,9 +3308,27 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
     }
   }
 
+  /**
+   * 牌型相同時說明勝負差在哪一張（踢腳 kicker）。a、b 為 eval5/best/eval3（或 paigow eval5/eval2）結果。
+   * → '牌型相同，比踢腳 Kicker：A > 7'；完全相同回 ''。牌型不同也回 ''（呼叫端自己說牌型高低）。
+   */
+  function kicker(a, b) {
+    if (!a || !b || a.cat !== b.cat) return '';
+    const ra = a.ranks || [], rb = b.ranks || [];
+    const i = ra.findIndex((x, k) => x !== rb[k]);
+    if (i < 0) return '';
+    const txt = `${RANK_ZH[ra[i]] ?? ra[i]} ${ra[i] > rb[i] ? '>' : '<'} ${RANK_ZH[rb[i]] ?? rb[i]}`;
+    const grouped = ra.filter((x) => ra.filter((y) => y === x).length > 1).length;
+    const straight = [CATEGORY.STRAIGHT, CATEGORY.STRAIGHT_FLUSH, 'STRAIGHT', 'SF'].includes(a.cat);
+    if (straight) return `牌型相同，比順子最大張：${txt}`;
+    if (i < grouped) return `牌型相同，比組成牌型的牌：${txt}`;
+    if (!grouped) return `牌型相同，由大到小逐張比，第 ${i + 1} 張：${txt}`;
+    return `牌型相同，比踢腳 <i class="en">Kicker</i>：${txt}`;
+  }
+
   LG.poker = {
     CATEGORY, CATEGORY_NAME, CAT3, CAT3_NAME, CAT3_KEYS,
-    eval5, best, score, compare, eval3, equity, equityDetail, outs, outsDetail, describe,
+    eval5, best, score, compare, eval3, equity, equityDetail, outs, outsDetail, describe, kicker,
   };
 })();
 
@@ -4169,29 +4198,58 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
     if (!b && doc.body) { b = el('div.lg-dealer-banner.is-floating'); doc.body.appendChild(b); }
     return b;
   }
+  // 「No more bets」至少停留 HOLD_MS（×LG.speed），期間的新口令排隊依序顯示（最後一句留在橫幅上）。
+  const HOLD_MS = 600;
+  let holdUntil = 0, holdTimer = 0;
+  const queue = [];
+  const now = () => Date.now();
+  function flushQueue() {
+    holdTimer = 0;
+    while (queue.length) {
+      const wait = holdUntil - now();
+      if (wait > 0) { holdTimer = setTimeout(flushQueue, wait); return; }
+      const args = queue.shift();
+      show(...args);
+    }
+  }
+  function show(zh, en, { speak = false, hold } = {}) {
+    const b = banner();
+    if (!b) return;
+    const ms = hold ?? (/^no more bets/i.test(String(en)) ? HOLD_MS : 0);
+    if (ms > 0) holdUntil = now() + LG.ms(ms);
+    b.innerHTML = `<span class="lg-dealer-banner__zh">${zh}</span>${en ? `<span class="lg-dealer-banner__en">${en}</span>` : ''}`;
+    b.dataset.zh = String(zh).replace(/<[^>]+>/g, '');
+    b.dataset.en = String(en).replace(/<[^>]+>/g, '');
+    b.classList.add('is-active');
+    b.classList.remove('is-pulse');
+    void b.offsetWidth; // 重新觸發動畫
+    b.classList.add('is-pulse');
+    const ss = globalThis.speechSynthesis;
+    if (speak && en && ss && globalThis.SpeechSynthesisUtterance) {
+      try {
+        ss.cancel();
+        const u = new globalThis.SpeechSynthesisUtterance(b.dataset.en);
+        u.lang = 'en-US'; u.rate = 1;
+        ss.speak(u);
+      } catch { /* 沒有語音也沒關係 */ }
+    }
+  }
   const dealer = {
-    /** 荷官口令橫幅（中/英兩行）；speak=true 時用 speechSynthesis 念英文 */
-    say(zh, en = '', { speak = false } = {}) {
-      const b = banner();
-      if (!b) return;
-      b.innerHTML = `<span class="lg-dealer-banner__zh">${zh}</span>${en ? `<span class="lg-dealer-banner__en">${en}</span>` : ''}`;
-      b.dataset.zh = String(zh).replace(/<[^>]+>/g, '');
-      b.dataset.en = String(en).replace(/<[^>]+>/g, '');
-      b.classList.add('is-active');
-      b.classList.remove('is-pulse');
-      void b.offsetWidth; // 重新觸發動畫
-      b.classList.add('is-pulse');
-      const ss = globalThis.speechSynthesis;
-      if (speak && en && ss && globalThis.SpeechSynthesisUtterance) {
-        try {
-          ss.cancel();
-          const u = new globalThis.SpeechSynthesisUtterance(b.dataset.en);
-          u.lang = 'en-US'; u.rate = 1;
-          ss.speak(u);
-        } catch { /* 沒有語音也沒關係 */ }
+    /**
+     * 荷官口令橫幅（中/英兩行）；speak=true 時用 speechSynthesis 念英文。
+     * hold：這句至少停留幾毫秒（×LG.speed）再被下一句蓋掉；預設「No more bets」600ms，其餘 0。
+     */
+    say(zh, en = '', opts = {}) {
+      if (queue.length || holdUntil > now()) {
+        queue.push([zh, en, opts]);
+        if (!holdTimer) holdTimer = setTimeout(flushQueue, Math.max(0, holdUntil - now()));
+        return;
       }
+      show(zh, en, opts);
     },
     clear() {
+      queue.length = 0; holdUntil = 0;
+      if (holdTimer) { clearTimeout(holdTimer); holdTimer = 0; }
       const b = doc.querySelector('.lg-dealer-banner');
       if (!b) return;
       b.classList.remove('is-active', 'is-pulse');
@@ -4421,11 +4479,17 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
   function actionBar(container, items = []) {
     container.classList.add('lg-actions');
     const map = new Map();
+    const own = new WeakMap();
     const paint = (b, it) => {
       b.innerHTML = it.en ? term(it.label, it.en) : String(it.label ?? '');
       b.disabled = !!it.disabled;
       b.hidden = !!it.hidden;
-      b.className = ['lg-btn', it.primary && 'lg-btn--primary', it.danger && 'lg-btn--danger', it.className].filter(Boolean).join(' ');
+      // 只替換動作列自己加的 class，保留外部加上的（例如教學高亮 .lg-spot--hl、.lg-dimmed）
+      const next = ['lg-btn', it.primary && 'lg-btn--primary', it.danger && 'lg-btn--danger', ...String(it.className || '').split(/\s+/)].filter(Boolean);
+      const prev = own.get(b) || [];
+      prev.forEach((c) => { if (!next.includes(c)) b.classList.remove(c); });
+      next.forEach((c) => b.classList.add(c));
+      own.set(b, next);
     };
     const api = {
       el: container,
@@ -4479,7 +4543,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
 // 金流約定（所有遊戲一致）：
 //   下注階段「不扣款」；籌碼只是放在 Bets 模型上。可用餘額 = bank.balance() − bets.total()。
 //   No more bets（bettingWindow 的 onClose）後由遊戲 ctx.bank.debit(bets.total())，
-//   結算時 ctx.bank.credit(拿回金額含本金)。見 src/games/_demo.js。
+//   結算時 ctx.bank.credit(拿回金額含本金)。見 src/games/sicbo.js。
 (() => {
   const LG = globalThis.LG;
   const { round2, fmt } = LG.money;
@@ -5033,7 +5097,8 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
 
   /**
    * 註冊遊戲。必填：id, category, name{zh,en}, create(ctx)。
-   * 選填擴充：countdown（真實模式倒數秒數，預設 15，用於進場說明）、demo（示範遊戲）。
+   * 選填擴充：countdown（真實模式倒數秒數，預設 15；0 = 不倒數）、limitsLabel（真實模式限注文字，字串或 (limits, mode) => 字串）、
+   * variants[i].houseEdge（變體別優勢）、demo（示範遊戲）。
    */
   LG.registerGame = function registerGame(def) {
     if (!def || !def.id || typeof def.create !== 'function') throw Error('registerGame: 需要 id 與 create(ctx)');
@@ -5056,11 +5121,23 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
       .sort((a, b) => (a.order - b.order) || a.id.localeCompare(b.id));
   };
 
-  /** def.houseEdge 中 best:true 的一筆；沒有就取 edge 最小值 */
-  LG.bestEdge = function bestEdge(def) {
-    const list = (def && def.houseEdge) || [];
+  /** 某變體的 houseEdge 陣列：variants[i].houseEdge 優先，否則 def.houseEdge */
+  LG.edgesFor = function edgesFor(def, variantId) {
+    const v = variantId && ((def && def.variants) || []).find((x) => x.id === variantId);
+    return (v && v.houseEdge && v.houseEdge.length ? v.houseEdge : (def && def.houseEdge)) || [];
+  };
+
+  /** houseEdge 中 best:true 的一筆；沒有就取 edge 最小值。給 variantId 時用該變體的 houseEdge（若有） */
+  LG.bestEdge = function bestEdge(def, variantId) {
+    const list = LG.edgesFor(def, variantId);
     if (!list.length) return null;
     return list.find((x) => x.best) || [...list].sort((a, b) => a.edge - b.edge)[0];
+  };
+
+  /** 有自己 houseEdge 的變體 → [{variant, best}]（首頁卡片/排行榜顯示變體資訊） */
+  LG.variantEdges = function variantEdges(def) {
+    return ((def && def.variants) || []).filter((v) => v.houseEdge && v.houseEdge.length)
+      .map((v) => ({ variant: v, best: LG.bestEdge(def, v.id) }));
   };
 
   /** 依模式與變體算出限注 {min,max}（variant.limits 覆寫 def.limits） */
@@ -5170,7 +5247,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
       bar.firstChild.style.width = `${((i + 1) / N) * 100}%`;
       secBtns.forEach((b, k) => b.classList.toggle('is-active', SECTIONS[k].id === st.section));
       prevB.disabled = i === 0;
-      nextB.innerHTML = i === N - 1 ? '完成！去練習模式 <i class="en">Practice</i>' : '下一步 <i class="en">Next</i>';
+      nextB.innerHTML = i === N - 1 ? '完成！去練習模式試 10 局 <i class="en">Practice</i>' : '下一步 <i class="en">Next</i>';
       nextB.dataset.last = i === N - 1 ? '1' : '0';
       paintAction();
     }
@@ -5318,9 +5395,17 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
     const vDef = variants.find((v) => v.id === variant) || null;
     const limits = LG.limitsFor(def, mode, variant);
     const R = LG.router;
+    // def.limitsLabel：字串或 (limits, mode) => 字串（例：撲克室「買入 RM 400–1,000 · 盲注 RM 5/10」）；預設「限注 RM 50 – 5,000」
+    const limitsLabel = typeof def.limitsLabel === 'function' ? def.limitsLabel(limits, mode)
+      : (def.limitsLabel || `限注 ${limitsText(limits)}`);
+    // 不倒數：def.countdown === 0 或老虎機類（玩家自己按 SPIN / DEAL）
+    const noCountdown = def.countdown === 0 || def.category === 'slots';
 
     // ---------------------------------------------------------- 版面
-    const balance = el('div.lg-balance', { 'aria-label': '餘額 Balance' });
+    // 教學模式：示範籌碼沙盒（固定 RM 1,000，不寫 store、不動真實餘額；離開教學自動還原）
+    if (isTutorial) LG.bank.sandbox(LG.store.START_BANK);
+    const balance = el('div', { class: ['lg-balance', isTutorial && 'is-sandbox'], 'aria-label': isTutorial ? '示範籌碼 Demo chips' : '餘額 Balance',
+      title: isTutorial ? '教學用示範籌碼 RM 1,000：不影響真實餘額' : null });
     const menuB = el('button', { type: 'button', class: 'lg-topbar__menu', 'aria-label': '選單 Menu', dataset: { action: 'menu' }, text: '⋯' });
     const topbar = el('header.lg-topbar', [
       el('a.lg-topbar__back', { href: '#/', 'aria-label': '回首頁', html: '← 首頁' }),
@@ -5331,7 +5416,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
       el('a', { class: ['lg-seg__btn', m === mode && 'is-active'], href: R.href(gameId, m, variant), dataset: { mode: m }, 'aria-current': m === mode ? 'page' : null, html: term(MODE_INFO[m].zh, MODE_INFO[m].en) })));
     const hintB = el('button', { type: 'button', class: 'lg-switch', role: 'switch', dataset: { action: 'hints' }, html: '<span class="lg-switch__knob"></span>提示 <i class="en">Hints</i>' });
     const modebar = el('div.lg-modebar', [seg, isPractice ? hintB : null,
-      isReal ? el('span.lg-modebar__limits', { html: `限注 ${limitsText(limits)}` }) : null]);
+      isReal ? el('span.lg-modebar__limits', { html: limitsLabel }) : null]);
     const variantbar = variants.length > 1 ? el('nav.lg-variantbar', { 'aria-label': '變體 Variant' }, [
       el('span.lg-variantbar__k', { text: '變體' }),
       ...variants.map((v) => el('a', { class: ['lg-variantbar__btn', v.id === variant && 'is-active'], href: R.href(gameId, mode, v.id), dataset: { variant: v.id }, html: term(v.name.zh, v.name.en) })),
@@ -5403,13 +5488,13 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
       });
     }
 
-    function brokeOverlay() {
+    function brokeOverlay(need = limits.min) {
       LG.stats.session.markBroke();
       const s = LG.stats.session.current() || { rounds: 0, wagered: 0, net: 0, maxWin: 0, maxLoss: 0 };
       const ov = el('div.lg-broke', { role: 'dialog', 'aria-modal': 'true' }, [
         el('div.lg-broke__box', [
           el('h2', { html: '籌碼用完 <i class="en">Out of chips</i>' }),
-          el('p', { html: `餘額 ${balText(LG.bank.balance())} 低於本桌最低注 ${fmt(limits.min)}。` }),
+          el('p', { html: `餘額 ${balText(LG.bank.balance())} 低於${need > limits.min ? '本桌開一局需要的' : '本桌最低注'} ${fmt(need, { cents: need < 1 })}。` }),
           el('div', { html: sessionHtml(s) }),
           el('p.lg-muted', { text: '真實賭場裡，這就是今晚結束的時候。' }),
           el('div.lg-broke__actions', [
@@ -5430,6 +5515,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
       bank: LG.bank, stats: LG.stats,
       limits, denoms: def.denoms || [10, 25, 50, 100, 500, 1000],
       limitsText: limitsText(limits),
+      limitsLabel,
       get hints() { return hintsOn(); },
       isReal, isPractice, isTutorial,
       root: section,
@@ -5454,15 +5540,16 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
       /**
        * 下注時段。真實：「請下注」→ 倒數 seconds 秒 →「停止下注」→ bets.lock() → onClose。
        * 練習/教學：「請下注」+ 顯示「發牌 Deal」按鈕（放在 [data-deal-slot] 或 .lg-actions，否則桌面下方），按下 → onClose。
-       * @param {{seconds?:number, onClose:Function, bets?:LG.Bets, label?:string, validate?:() => true|string, onTick?:Function}} o
+       * @param {{seconds?:number, onClose:Function, bets?:LG.Bets, label?:string, validate?:() => true|string, onTick?:Function, closeAt?:number, onNoMoreBets?:Function}} o
        *  bets：練習模式按「發牌」前先 bets.validate()；兩種模式關閉時自動 bets.lock()。
        *  onClose({auto, ok, validation})：真實模式倒數結束 auto=true；ok=false 代表下注不合法（遊戲自行處理）。
+       *  closeAt（真實模式）：倒數剩 N 秒時先喊「No more bets」並 bets.lock()、呼叫 onNoMoreBets()；倒數繼續跑到 0 才 onClose（例：輪盤末 5 秒）。
        * @returns {{cancel(), close(), isOpen():boolean}}
        */
       bettingWindow(o = {}) {
         if (st.win) st.win.cancel();
         const seconds = o.seconds ?? def.countdown ?? 15;
-        let closed = false, cd = null, btn = null;
+        let closed = false, cd = null, btn = null, early = false;
         const h = {
           cancel() { closed = true; if (cd) cd.cancel(); if (btn) btn.remove(); if (st.win === h) st.win = null; },
           close() { fire(false); },
@@ -5472,7 +5559,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
           if (closed || !st.alive) return;
           const validation = o.bets ? o.bets.validate() : { ok: true, errors: [], zh: '' };
           h.cancel();
-          ctx.dealer.say('停止下注', 'No more bets');
+          if (!early) ctx.dealer.say('停止下注', 'No more bets');
           if (o.bets) o.bets.lock();
           if (o.onClose) o.onClose({ auto, ok: validation.ok, validation });
         };
@@ -5481,7 +5568,16 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
           ready.then(() => {
             if (closed || !st.alive) return;
             ctx.dealer.say('請下注', 'Place your bets');
-            cd = LG.ui.countdown(seconds, { onTick: o.onTick, onDone: () => fire(true) });
+            const onTick = (n) => {
+              if (o.closeAt && !early && n <= o.closeAt) {
+                early = true;
+                ctx.dealer.say('停止下注', 'No more bets');
+                if (o.bets) o.bets.lock();
+                if (o.onNoMoreBets) o.onNoMoreBets();
+              }
+              if (o.onTick) o.onTick(n);
+            };
+            cd = LG.ui.countdown(seconds, { onTick, onDone: () => fire(true) });
           });
         } else {
           ctx.dealer.say('請下注', 'Place your bets');
@@ -5505,19 +5601,23 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
         if (isReal) LG.stats.session.record(r);
       },
 
-      /** 餘額 < 最低注：真實 → 「籌碼用完」覆蓋層（暫停自動下一局）；練習 → 提示可重置。回傳是否破產 */
-      checkBroke() {
+      /**
+       * 餘額 < 門檻：真實 → 「籌碼用完」覆蓋層（暫停自動下一局）；練習 → 提示可重置。回傳是否破產。
+       * @param {number} [minNeeded] 開一局實際需要的最低金額（例：三公需保留 3 倍、UTH 需 Ante + Blind）；預設最低注，且不低於最低注。
+       */
+      checkBroke(minNeeded) {
         if (isTutorial || !st.alive) return false;
-        if (LG.bank.balance() >= limits.min - 1e-9) { st.practiceWarned = false; return false; }
+        const need = Math.max(limits.min, Number(minNeeded) || 0);
+        if (LG.bank.balance() >= need - 1e-9) { st.practiceWarned = false; return false; }
         if (isReal) {
-          if (!st.broke) { st.broke = true; brokeOverlay(); }
+          if (!st.broke) { st.broke = true; brokeOverlay(need); }
           return true;
         }
         if (!st.practiceWarned) {
           st.practiceWarned = true;
           LG.ui.modal({
             title: '籌碼不足 <i class="en">Low balance</i>',
-            body: `<p>餘額 ${balText(LG.bank.balance())} 低於最低注 ${fmt(limits.min)}。練習模式可以隨時重置。</p>`,
+            body: `<p>餘額 ${balText(LG.bank.balance())} 低於${need > limits.min ? '開一局需要的' : '最低注'} ${fmt(need, { cents: need < 1 })}。練習模式可以隨時重置。</p>`,
             actions: [
               { label: '稍後', id: 'later' },
               { label: '重置籌碼 RM 1,000', id: 'reset-bank', primary: true, onClick: () => { LG.bank.reset(); st.practiceWarned = false; } },
@@ -5606,8 +5706,8 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
       else {
         st.entry = LG.ui.modal({
           title: '真實模式 <i class="en">Real mode</i>',
-          body: `<p>真實模式：限注 <b>${limitsText(limits)}</b>，倒數 <b>${def.countdown ?? 15} 秒</b>，不會有解說。</p>
-            <ul class="lg-list"><li>荷官說 <b>No more bets</b> 後，籌碼不能再碰。</li><li>結果只顯示輸贏金額。</li><li>籌碼用完就結束（可手動重置）。</li></ul>`,
+          body: `<p>真實模式：${def.limitsLabel ? `<b>${limitsLabel}</b>` : `限注 <b>${limitsText(limits)}</b>`}，${noCountdown ? `<b>不倒數</b>（${def.startHint || '自己按鍵開局'}）` : (def.countdownText || `倒數 <b>${def.countdown ?? 15} 秒</b>`)}，不會有解說。</p>
+            <ul class="lg-list"><li>${noCountdown ? '機台沒有荷官：每次按下就扣注，輸贏立即結算。' : def.category === 'poker-room' ? '跟其他玩家對打：輪到你時要在時限內行動，逾時自動過牌或棄牌。' : '荷官說 <b>No more bets</b> 後，籌碼不能再碰。'}</li><li>結果只顯示輸贏金額。</li><li>籌碼用完就結束（可手動重置）。</li></ul>`,
           dismissable: false,
           actions: [
             { id: 'real-back', label: '回練習', onClick: () => { LG.router.go(R.href(gameId, 'practice', variant)); } },
@@ -5633,8 +5733,10 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
     if (c.win) c.win.cancel();
     if (c.entry) c.entry.close();
     LG.tutorial.stop();
+    LG.ui.dealer.clear();
     try { c.instance && c.instance.unmount && c.instance.unmount(); } catch (e) { console.error('[LG.modes] unmount', c.gameId, e); }
     LG.ui.clearOverlays();
+    if (LG.bank.isSandbox()) LG.bank.sandbox(null);
     if (c.mode === 'real' && !keepSession) return LG.stats.session.end();
     return null;
   }
@@ -5737,16 +5839,34 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
   const RAKE_TEXT = '無莊家優勢，抽水 5%（≤ RM 50）';
   let offs = [];
 
-  const pctStr = (n) => `${Number(n).toFixed(2).replace(/\.?0+$/, '')}%`;
-  const rtpStr = (edge) => `RTP ${(100 - edge).toFixed(2).replace(/\.?0+$/, '')}%`;
+  // 與 00-common.md §4 同格式：桌遊兩位小數（2.50%），老虎機一位（6.0%）
+  const pctStr = (n, def) => `${Number(n).toFixed(def && def.category === 'slots' && !/^video/.test(def.id) ? 1 : 2)}%`;
+  const rtpStr = (edge, def) => `RTP ${pctStr(100 - edge, def)}`;
 
   function edgeLine(def) {
     if (def.category === 'poker-room') return RAKE_TEXT;
     const b = LG.bestEdge(def);
     if (!b) return '';
     const bet = b.bet ? `（${b.bet.zh || ''}）` : '';
-    const rtp = def.category === 'slots' ? ` · ${rtpStr(b.edge)}` : '';
-    return `莊家優勢 ${b.approx ? '≈' : ''}${pctStr(b.edge)}${bet}${rtp}`;
+    const rtp = def.category === 'slots' ? ` · ${rtpStr(b.edge, def)}` : '';
+    return `莊家優勢 ${b.approx ? '≈' : ''}${pctStr(b.edge, def)}${bet}${rtp}`;
+  }
+
+  /** 變體別優勢（variants[i].houseEdge）→ '傳統 1.06% · 免佣 1.46% …'；沒有就空字串 */
+  function variantLine(def) {
+    const list = LG.variantEdges(def).filter((x) => x.best);
+    if (!list.length) return '';
+    return list.map(({ variant, best }) => `${variant.name.zh} ${best.approx ? '≈' : ''}${pctStr(best.edge)}`).join(' · ');
+  }
+  /** 排行榜：與代表值不同的變體 → '免佣 / 老虎：莊（免佣…）1.46%' */
+  function variantDiff(def, b) {
+    const groups = new Map();
+    LG.variantEdges(def).forEach(({ variant, best }) => {
+      if (!best || (best.edge === b.edge && (best.bet && best.bet.zh) === (b.bet && b.bet.zh))) return;
+      const k = `${best.bet ? best.bet.zh : ''} ${best.approx ? '≈' : ''}${pctStr(best.edge)}`;
+      groups.set(k, [...(groups.get(k) || []), variant.name.zh]);
+    });
+    return [...groups].map(([k, names]) => `${names.join(' / ')}：${k}`).join('；');
   }
 
   function ring(pct) {
@@ -5772,6 +5892,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
       ]),
       el('p.lg-gcard__summary', { text: def.summary || '' }),
       el('div.lg-gcard__edge', { text: edgeLine(def) }),
+      variantLine(def) ? el('div.lg-gcard__variants', { html: `變體 <i class="en">Variants</i>：${variantLine(def)}` }) : null,
       el('div.lg-gcard__stats', { html: s.rounds ? `已玩 ${s.rounds} 局 · 淨 <b class="${s.net > 0 ? 'lg-win' : s.net < 0 ? 'lg-lose' : ''}">${LG.money.fmtSigned(s.net)}</b>` : '還沒玩過' }),
       modes,
     ]);
@@ -5795,8 +5916,8 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
     const tbody = el('tbody', rows.map(({ d, b }, i) => el('tr', { dataset: { game: d.id, edge: b.edge } }, [
       el('td.lg-lb__rank', { text: String(i + 1) }),
       el('td', { html: `<a href="${LG.router.href(d.id, 'practice')}">${d.name.zh}</a> <i class="en">${d.name.en}</i>` }),
-      el('td', { html: b.bet ? term(b.bet.zh || '', b.bet.en || '') : '' }),
-      el('td.lg-lb__edge', { html: `${b.approx ? '≈' : ''}${pctStr(b.edge)}${d.category === 'slots' ? `<small>${rtpStr(b.edge)}</small>` : ''}` }),
+      el('td', { html: (b.bet ? term(b.bet.zh || '', b.bet.en || '') : '') + (variantDiff(d, b) ? `<small class="lg-lb__var">${variantDiff(d, b)}</small>` : '') }),
+      el('td.lg-lb__edge', { html: `${b.approx ? '≈' : ''}${pctStr(b.edge, d)}${d.category === 'slots' ? `<small>${rtpStr(b.edge, d)}</small>` : ''}` }),
     ])));
     tbody.appendChild(el('tr.lg-lb__room', { dataset: { game: 'poker-room' } }, [
       el('td.lg-lb__rank', { text: '—' }),
@@ -5867,7 +5988,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
 
   function unmount() { offs.forEach((f) => f()); offs = []; }
 
-  LG.home = { render, unmount, edgeLine };
+  LG.home = { render, unmount, edgeLine, variantLine };
 })();
 
 
@@ -5893,311 +6014,6 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
   if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', boot);
   else boot();
   LG.boot = boot;
-})();
-
-
-/* ==== src/games/_demo.js ==== */
-// ============================================================================
-// 示範遊戲「猜大小 Hi-Lo」（id: _demo）— 遊戲代理的參考範本，整合階段刪除。
-//
-// 規則：荷官抽一張牌（每次獨立抽，等於無限副牌）。
-//   8 以上（8, 9, 10, J, Q, K, A；7/13）→「大 Hi」贏，賠 4:5（0.8 倍）
-//   7 以下（2–7；6/13）              →「小 Lo」贏，賠 11:10（1.1 倍）
-//   兩邊的莊家優勢都是 1/13 × 0.4 ≈ 3.08%（機率高的一邊賠得少）。
-//
-// 這個檔案示範：
-//   1. registerGame 的 def 欄位（含 variants、countdown、logic 供單元測試）
-//   2. create(ctx) → instance：mount / unmount / tutorialSteps / demo
-//   3. 一局流程：ctx.bettingWindow → 扣款 → 發牌 → 結算 → ctx.recordRound → ctx.explain → ctx.nextRound
-//   4. LG.Bets + LG.ui.chipTray + LG.ui.betLayer + LG.ui.betBar 的接法
-//   5. 練習模式提示（ctx.hints / 'hints:change' / ctx.strategyPanel）
-//   6. 咪牌變體（LG.ui.squeezeable）
-//   7. 教學 14 步（四段、3 個 action）
-// ============================================================================
-(() => {
-  const { ui, money } = LG;
-  const { el, term } = ui;
-  const { fmt, round2 } = money;
-
-  // ---------------------------------------------------------------- 規則常數（集中管理）
-  const RANKS = '23456789TJQKA';
-  const SUITS = 'SHDC';
-  const HI_MIN = 8;                     // 牌值 ≥ 8 為「大」
-  const PAYS = { hi: 0.8, lo: 1.1 };    // 淨賠倍數
-  const T = {                           // 文案集中：中文 / 英文 / 賠率
-    hi: { zh: '大', en: 'Hi', odds: '4:5', rule: '8 以上' },
-    lo: { zh: '小', en: 'Lo', odds: '11:10', rule: '7 以下' },
-  };
-
-  // ---------------------------------------------------------------- 純邏輯（可在 Node 單元測試）
-  const rankValue = (r) => RANKS.indexOf(r) + 2;           // 2..14（A = 14）
-  const outcomeOf = (card) => (rankValue(card.rank) >= HI_MIN ? 'hi' : 'lo');
-  const cardLabel = (c) => `${c.rank === 'T' ? '10' : c.rank}${ui.SUIT[c.suit].symbol}`;
-
-  function drawCard() {
-    const rank = LG.rng.pick([...RANKS]);
-    const suit = LG.rng.pick([...SUITS]);
-    return { rank, suit, id: rank + suit };
-  }
-
-  /**
-   * 結算。entries = bets.entries()（[[spotId, stake]]）
-   * @returns {{outcome, wagered, returned, net, lines:[{spot, stake, result, pay, formula}]}}
-   *   returned = 拿回金額（含本金），net = returned − wagered
-   */
-  function settle(entries, card) {
-    const outcome = outcomeOf(card);
-    let wagered = 0, returned = 0;
-    const lines = entries.map(([spot, stake]) => {
-      wagered += stake;
-      if (spot === outcome) {
-        const pay = round2(stake * PAYS[spot]);
-        returned += stake + pay;
-        return { spot, stake, result: 'win', pay,
-          formula: `${T[spot].zh} ${fmt(stake)} × ${PAYS[spot]} = +${fmt(pay)}（拿回 ${fmt(stake + pay)}）` };
-      }
-      return { spot, stake, result: 'lose', pay: -stake, formula: `${T[spot].zh} ${fmt(stake)} → −${fmt(stake)}` };
-    });
-    wagered = round2(wagered); returned = round2(returned);
-    return { outcome, wagered, returned, net: round2(returned - wagered), lines };
-  }
-
-  // ---------------------------------------------------------------- 註冊
-  LG.registerGame({
-    id: '_demo',
-    category: 'table',
-    order: 99,
-    demo: true,                                   // 擴充欄位：首頁標「示範」
-    name: { zh: '猜大小', en: 'Hi-Lo (Demo)' },
-    summary: '抽一張牌，猜 8 以上還是 7 以下。框架示範用。',
-    houseEdge: [
-      { bet: { zh: '大', en: 'Hi' }, edge: 3.08, best: true },
-      { bet: { zh: '小', en: 'Lo' }, edge: 3.08 },
-    ],
-    limits: { real: { min: 25, max: 500 }, practice: { min: 10, max: 100000 } },
-    denoms: [10, 25, 50, 100, 500, 1000],
-    countdown: 10,                                // 擴充欄位：真實模式倒數秒數（進場說明用）
-    variants: [
-      { id: 'classic', name: { zh: '標準', en: 'Classic' } },
-      { id: 'squeeze', name: { zh: '咪牌', en: 'Squeeze' } },
-    ],
-    logic: { settle, outcomeOf, rankValue, PAYS },  // 擴充欄位：給單元測試用
-
-    create(ctx) {
-      // ---- 狀態（每次 create 都是新的；切換模式/變體會重新 create）
-      const state = { phase: 'idle', card: null, staked: 0, rounds: 0 };
-      const bets = new LG.Bets({
-        min: ctx.limits.min, max: ctx.limits.max,
-        labels: { hi: '大 Hi', lo: '小 Lo' },
-      });
-      let root, tableEl, cardSlot, hintEl, tray, layer, bar;
-
-      // ---- 桌面：一次建好，之後只更新牌區與籌碼堆
-      function spot(id) {
-        return el('div.lg-spot.demo-spot', { dataset: { bet: id } }, [
-          el('span.lg-spot__zh', { text: T[id].zh }),
-          el('span.lg-spot__en', { text: T[id].en }),
-          el('span.lg-spot__odds', { text: T[id].odds }),
-          el('span.demo-spot__rule', { text: T[id].rule }),
-        ]);
-      }
-      function buildTable() {
-        tableEl = el('div.lg-table.demo-table', [
-          el('div.lg-table__label', { text: 'Dealer 荷官' }),
-          cardSlot = el('div.lg-hand.demo-cardslot', { dataset: { role: 'card' } }),
-          el('div.demo-rule', { html: `8 以上 = 大 <i class="en">Hi</i> · 7 以下 = 小 <i class="en">Lo</i>` }),
-          el('div.demo-spots', [spot('hi'), spot('lo')]),
-        ]);
-        const actions = el('div.lg-actions', { dataset: { dealSlot: '' } }); // 框架把「發牌 Deal」按鈕放這裡
-        const chips = el('div');
-        const barEl = el('div');
-        hintEl = el('div.lg-hint.demo-hint', { hidden: true });
-        root.append(tableEl, hintEl, actions, chips, barEl);
-
-        tray = ui.chipTray(chips, { denoms: ctx.denoms, selected: ctx.isReal ? 25 : 10 });
-        layer = ui.betLayer(tableEl, { bets, chipTray: tray, gameId: ctx.gameId });
-        bar = ui.betBar(barEl, { bets, layer });
-        showCard(null);
-      }
-
-      /** 牌區：null = 蓋著的空位 */
-      function showCard(card, { faceDown = false } = {}) {
-        cardSlot.innerHTML = '';
-        const c = ui.card(card, { faceDown: faceDown || !card, size: 'lg' });
-        cardSlot.appendChild(c);
-        return c;
-      }
-      function markSpots(outcome) {
-        tableEl.querySelectorAll('[data-bet]').forEach((s) => {
-          s.classList.toggle('is-win', !!outcome && s.dataset.bet === outcome);
-          s.classList.toggle('is-lose', !!outcome && s.dataset.bet !== outcome);
-        });
-      }
-
-      // ---- 練習提示
-      function paintHints() {
-        hintEl.hidden = !ctx.hints;
-        hintEl.innerHTML = '提示：大、小的莊家優勢一樣（3.08%）。大比較常中，但只賠 0.8 倍。<b>不要兩邊同時押</b>——一定虧。';
-      }
-
-      // ---- 一局流程
-      function startRound() {
-        if (!ctx.alive()) return;
-        state.phase = 'betting';
-        markSpots(null);
-        showCard(null);
-        // 真實：倒數 → No more bets；練習/教學：顯示「發牌」按鈕。關閉時框架會 bets.lock()
-        ctx.bettingWindow({ bets, onClose: onNoMoreBets });
-      }
-
-      async function onNoMoreBets({ ok, validation }) {
-        if (!ok) {
-          // 真實模式倒數結束但沒下注 / 不合法 → 這局不發牌，解鎖等下一局
-          bets.unlock();
-          if (bets.total() > 0) ui.toast(validation.zh, { type: 'warn' });
-          ctx.nextRound(startRound);
-          return;
-        }
-        // No more bets 後籌碼才真正離手：扣款
-        state.staked = bets.total();
-        ctx.bank.debit(state.staked);
-        state.phase = 'dealing';
-        ctx.dealer.say('發牌', 'Dealing');
-        const card = drawCard();
-        await revealCard(card);
-        if (!ctx.alive()) return;           // 使用者中途離開
-        finishRound(card);
-      }
-
-      function revealCard(card) {
-        const cEl = showCard(card, { faceDown: true });
-        if (ctx.variant === 'squeeze') {
-          ctx.dealer.say('請開牌', 'Card please');
-          return new Promise((resolve) => ui.squeezeable(cEl, card, { onRevealed: () => resolve() }));
-        }
-        return ctx.wait(350).then(() => ui.flip(cEl, card));
-      }
-
-      function finishRound(card) {
-        state.card = card;
-        const r = settle(bets.entries(), card);
-        ctx.bank.credit(r.returned);          // 拿回（含本金）
-        state.staked = 0;
-        markSpots(r.outcome);
-        ctx.dealer.say(`${cardLabel(card)}，${T[r.outcome].zh}！`, `${T[r.outcome].en} wins`);
-
-        ctx.recordRound({ wagered: r.wagered, net: r.net, outcome: r.net > 0 ? 'win' : r.net < 0 ? 'lose' : 'push' });
-        ctx.explain({                          // 練習/教學 → resultPanel；真實 → 只閃金額
-          hand: `荷官抽到 <b>${cardLabel(card)}</b>（牌值 ${rankValue(card.rank)}）`,
-          result: `${T[r.outcome].zh} <i class="en">${T[r.outcome].en.toUpperCase()} WINS</i>`,
-          formula: r.lines.map((l) => l.formula).join('<br>') + `<br>淨 <b>${money.fmtSigned(r.net)}</b>`,
-          why: `${rankValue(card.rank)} ${r.outcome === 'hi' ? '≥ 8 所以是大' : '≤ 7 所以是小'}。`
-            + (r.outcome === 'hi' ? '大比較常出現（7/13），所以只賠 0.8 倍。' : '小比較少出現（6/13），所以賠 1.1 倍。'),
-        });
-
-        state.rounds += 1;
-        state.phase = 'settled';
-        bets.unlock();
-        bets.clear();                          // 上一注已存進 bets.last → 「重複上注」可用
-        ctx.checkBroke();                      // 真實模式餘額 < 最低注 → 覆蓋層（nextRound 會等重置）
-        ctx.nextRound(startRound);             // 真實：3 秒後；練習/教學：立即
-      }
-
-      // ---- 教學用：instance.demo.* 讓 step.setup 擺出示範狀態
-      const demo = {
-        showCard(id) { showCard({ rank: id[0], suit: id[1], id }); },
-        showBanner(zh, en) { ctx.dealer.say(zh, en); },
-        ensureBetting() { if (state.phase !== 'betting') startRound(); },
-      };
-
-      // ---- 教學步驟（14 步：layout 4、flow 4、payout 3、strategy 3；action 3 個）
-      function tutorialSteps() {
-        return [
-          // ===== layout 桌面
-          { id: 'layout-intro', section: 'layout', title: '這段你會學到：桌面',
-            body: '<p>猜大小只有兩個下注格和一個牌位。先認識桌面，再動手。</p>',
-            highlight: ['.demo-table'] },
-          { id: 'layout-hi', section: 'layout', title: `大 <i class="en">Hi</i> 下注格`,
-            body: '<p>牌值 <b>8 以上</b>（8、9、10、J、Q、K、A）算大。格子上的 <b>4:5</b> 是賠率。</p>',
-            highlight: ['[data-bet="hi"]'] },
-          { id: 'layout-lo', section: 'layout', title: `小 <i class="en">Lo</i> 下注格`,
-            body: '<p>牌值 <b>7 以下</b>（2–7）算小，賠率 <b>11:10</b>。</p>',
-            highlight: ['[data-bet="lo"]'] },
-          { id: 'layout-chips', section: 'layout', title: `籌碼 <i class="en">Chips</i>`,
-            body: '<p>顏色代表面額：10 藍、25 綠、50 橙、100 黑、500 紫、1000 黃。現場顏色可能不同，看面額。</p>',
-            highlight: ['.lg-chips'],
-            action: { label: '點選綠色的 RM 25 籌碼', check: (inst) => inst.tray().selected() === 25 || '點一下「25」那枚籌碼' } },
-          // ===== flow 流程
-          { id: 'flow-intro', section: 'flow', title: '這段你會學到：一局怎麼進行',
-            body: `<p>荷官說 <b>請下注 <i class="en">Place your bets</i></b> → 你放籌碼 → 發牌 → 派彩。</p>`,
-            highlight: ['.lg-dealer-banner'],
-            setup: (inst) => { inst.demo.ensureBetting(); inst.demo.showBanner('請下注', 'Place your bets'); } },
-          { id: 'flow-place', section: 'flow', title: '放籌碼',
-            body: '<p>點下注格放一枚目前選的籌碼；長按或右鍵拿回一枚。</p>',
-            highlight: ['[data-bet="hi"]', '.lg-chips'],
-            setup: (inst) => inst.demo.ensureBetting(),
-            action: { label: '在「大 HI」放 RM 25', check: (inst) => inst.bets.get('hi') >= 25 || `目前「大」上有 ${fmt(inst.bets.get('hi'))}` } },
-          { id: 'flow-deal', section: 'flow', title: `發牌 <i class="en">Deal</i>`,
-            body: '<p>練習時按「發牌」開始；真實模式是倒數結束自動開始。</p>',
-            highlight: ['[data-action="deal"]'],
-            setup: (inst) => inst.demo.ensureBetting(),
-            action: { label: '按「發牌 Deal」玩一局', check: (inst) => inst.state.rounds > 0 || '先放籌碼，再按發牌' } },
-          { id: 'flow-no-more-bets', section: 'flow', title: `停止下注 <i class="en">No more bets</i>`,
-            body: '<p>荷官說 <b>No more bets</b> 之後，手放桌下——加、減、移動籌碼都不行，等派彩完成。</p>',
-            highlight: ['.lg-dealer-banner', '.demo-spots'],
-            setup: (inst) => inst.demo.showBanner('停止下注', 'No more bets') },
-          // ===== payout 賠率
-          { id: 'payout-intro', section: 'payout', title: '這段你會學到：賠率怎麼算',
-            body: '<p><b>4:5</b> 表示押 5 贏 4；<b>11:10</b> 表示押 10 贏 11。贏了會拿回本金 + 彩金。</p>',
-            highlight: ['.lg-spot__odds'] },
-          { id: 'payout-hi', section: 'payout', title: '大贏的例子',
-            body: '<p>押大 RM 100，開 Q：<br><b>RM 100 × 0.8 = RM 80</b>（淨贏）<br>拿回 RM 180（含本金）。</p>',
-            highlight: ['[data-bet="hi"]', '.demo-cardslot'],
-            setup: (inst) => inst.demo.showCard('QH') },
-          { id: 'payout-lo', section: 'payout', title: '小贏的例子',
-            body: '<p>押小 RM 100，開 5：<br><b>RM 100 × 1.1 = RM 110</b>（淨贏）<br>拿回 RM 210（含本金）。</p>',
-            highlight: ['[data-bet="lo"]', '.demo-cardslot'],
-            setup: (inst) => inst.demo.showCard('5S') },
-          // ===== strategy 策略
-          { id: 'strategy-edge', section: 'strategy', title: `莊家優勢 <i class="en">House edge</i>`,
-            body: '<table class="lg-datatable"><tr><th>注</th><th>中獎率</th><th>優勢</th></tr><tr><td>大</td><td>7/13</td><td>3.08%</td></tr><tr><td>小</td><td>6/13</td><td>3.08%</td></tr></table><p>長期每押 RM 100 平均輸 RM 3.08。</p>',
-            highlight: null },
-          { id: 'strategy-bet', section: 'strategy', title: '該押 / 別押',
-            body: '<p>該押：大或小擇一，優勢一樣。<br>別押：<b>兩邊同時押</b>——一定有一邊輸，淨額必虧。</p>',
-            highlight: ['.demo-spots'] },
-          { id: 'strategy-budget', section: 'strategy', title: '預算',
-            body: '<p>今晚只帶 RM 500，輸完就走。上一局的結果不會影響下一張牌。</p>',
-            highlight: ['.lg-topbar .lg-balance'] },
-        ];
-      }
-
-      // ---- instance
-      return {
-        bets,                                   // 教學 action.check 讀取
-        state,
-        tray: () => tray,
-        demo,
-        mount(el0) {
-          root = el0;
-          buildTable();
-          paintHints();
-          ctx.on('hints:change', paintHints);   // ctx.on 會在卸載時自動解除
-          if (ctx.isPractice) {
-            ctx.strategyPanel(ui.table([['注', '賠率', '優勢'], ['大 Hi', '4:5', '3.08%'], ['小 Lo', '11:10', '3.08%']], { caption: '兩邊優勢相同' }));
-          }
-          root.dataset.ready = '1';
-          startRound();
-        },
-        unmount() {
-          // 局中離開：退回已扣的注金（ctx.later/wait 的計時器由框架清除）
-          if (state.staked > 0) { ctx.bank.credit(state.staked); state.staked = 0; }
-          if (layer) layer.destroy();
-          if (bar) bar.destroy();
-        },
-        tutorialSteps,
-      };
-    },
-  });
 })();
 
 
@@ -6376,6 +6192,25 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
   /** 教學示範用的路單（固定，不是預測） */
   const DEMO_ROAD = 'B P P T B B P B P B B P T P B B P P B'.split(' ').map((o, i) => ({ o, pp: i === 4, bp: i === 9, p: 0, b: 0 }));
 
+  /** 變體別優勢（variants[i].houseEdge；首頁卡片/排行榜顯示變體資訊用）。best = 00-common.md 該變體的代表值 */
+  const HE = {
+    bankerComm: { bet: { zh: '莊（抽 5% 佣）', en: 'Banker' }, edge: EDGE.bankerComm },
+    bankerNoComm: { bet: { zh: '莊（免佣，6 點贏賠一半）', en: 'Banker (no commission)' }, edge: EDGE.bankerNoComm },
+    player: { bet: { zh: '閒', en: 'Player' }, edge: EDGE.player },
+    tie: { bet: { zh: '和 8:1', en: 'Tie' }, edge: EDGE.tie },
+    pair: { bet: { zh: '閒對 / 莊對 11:1', en: 'Pair' }, edge: EDGE.pair },
+    super6: { bet: { zh: 'Super 6 12:1', en: 'Super 6' }, edge: EDGE.super6 },
+    tiger: { bet: { zh: '老虎', en: 'Tiger' }, edge: EDGE.tiger, approx: true },
+    bigTiger: { bet: { zh: '大老虎', en: 'Big Tiger' }, edge: EDGE.bigTiger, approx: true },
+    smallTiger: { bet: { zh: '小老虎', en: 'Small Tiger' }, edge: EDGE.smallTiger, approx: true },
+    tigerTie: { bet: { zh: '老虎和', en: 'Tiger Tie' }, edge: EDGE.tigerTie, approx: true },
+    tigerPair: { bet: { zh: '老虎對', en: 'Tiger Pair' }, edge: EDGE.tigerPair, approx: true },
+  };
+  const variantEdges = (v) => {
+    const main = noComm(v) ? HE.bankerNoComm : HE.bankerComm;
+    return [{ ...main, best: true }, HE.player, HE.tie, HE.pair, ...(SIDES[v] || []).map((k) => HE[k])];
+  };
+
   // ---------------------------------------------------------------- 註冊
   LG.registerGame({
     id: 'baccarat',
@@ -6400,10 +6235,10 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
     denoms: [10, 25, 50, 100, 500, 1000],
     countdown: 15,
     variants: [
-      { id: 'classic', name: { zh: '傳統', en: 'Commission' } },
-      { id: 'super6', name: { zh: '免佣', en: 'Super 6' } },
-      { id: 'tiger', name: { zh: '老虎', en: 'Tiger' } },
-      { id: 'squeeze', name: { zh: '咪牌', en: 'Squeeze' } },
+      { id: 'classic', name: { zh: '傳統', en: 'Commission' }, houseEdge: variantEdges('classic') },
+      { id: 'super6', name: { zh: '免佣', en: 'Super 6' }, houseEdge: variantEdges('super6') },
+      { id: 'tiger', name: { zh: '老虎', en: 'Tiger' }, houseEdge: variantEdges('tiger') },
+      { id: 'squeeze', name: { zh: '咪牌', en: 'Squeeze' }, houseEdge: variantEdges('squeeze') },
     ],
     logic: {
       T, EDGE, SPOT_EDGE, SIDES, REAL_RULES, spotsFor, noComm, makeBets, drawReason, bankerRuleText,
@@ -6862,17 +6697,19 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
             setup: (inst) => inst.demo.showCoup('3S 4D', 'KC 7H'),
             action: { label: '選出淨輸贏', check: quizCheck('tie') } },
           { id: 'payout-pair', section: 'payout', title: '對子怎麼判定',
-            body: '<p>只看<b>前兩張</b>、要<b>同點數字母</b>：K♠K♥ 是對子；10 和 K 雖然都算 0 點，但不是對子。莊對 RM 10 中：RM 10 × 11 = RM 110，拿回 RM 120。</p>',
+            body: '<p>只看<b>前兩張</b>、要<b>同點數字母</b>：K♠K♥ 是對子；10 和 K 雖然都算 0 點，但不是對子。莊對 RM 10 中：RM 10 × 11 = RM 110（淨贏），拿回 RM 120。</p>',
             highlight: ['[data-bet="bankerPair"]', '.bac-hand[data-side="banker"]'],
             setup: (inst) => inst.demo.showCoup('TS 9D', 'KS KH') },
           // ===== strategy
-          { id: 'strategy-edge', section: 'strategy', title: `莊家優勢 <i class="en">House edge</i>`,
-            get body() { return `${html(edgeTable())}<p>優勢 1.06% = 長期每押 RM 100 平均輸 RM 1.06。</p>`; },
+          { id: 'strategy-edge', section: 'strategy', title: `這段你會學到：莊家優勢 <i class="en">House edge</i>`,
+            get body() {
+              return `${html(edgeTable())}<p>${nc ? '免佣桌：閒 1.24% = 長期每押 RM 100 平均輸 RM 1.24；莊 1.46% 平均輸 RM 1.46。' : '優勢 1.06% = 長期每押 RM 100 平均輸 RM 1.06。'}</p>`;
+            },
             highlight: null },
-          { id: 'strategy-bet', section: 'strategy', title: '該押：莊',
+          { id: 'strategy-bet', section: 'strategy', title: nc ? '該押：閒（1.24% &lt; 莊 1.46%）' : '該押：莊',
             body: nc ? '<p>傳統桌<b>莊最划算</b>（1.06%）。這張免佣桌莊 6 點只賠一半，莊變 1.46%，<b>閒 1.24% 反而略好</b>——兩者都可以。</p>'
               : '<p><b>莊最划算</b>：優勢 1.06%，比閒的 1.24% 低。莊贏的機率比較高，所以要抽 5% 佣，抽完還是最好。</p>',
-            highlight: ['[data-bet="banker"]'] },
+            highlight: nc ? ['[data-bet="player"]', '[data-bet="banker"]'] : ['[data-bet="banker"]'] },
           { id: 'strategy-avoid', section: 'strategy', title: '別押：和、對子、老虎旁注',
             body: '<p>和 14.36%、對子 10.36%、Super 6 29.98%、老虎旁注約 5–10%。<b>和與對子是給賭場賺的</b>，賠率高只是因為很難中。</p>',
             highlight: ['[data-bet="tie"]', '.bac-pairs'] },
@@ -8032,7 +7869,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
   const T = {
     ante: { zh: '底注', en: 'Ante', odds: '1:1' },
     bet: { zh: '跟注', en: 'Bet', odds: '1:1–100:1', note: '2×Ante・看牌後自動放' },
-    progressive: { zh: '累積獎金', en: 'Progressive', odds: 'RM 5' },
+    progressive: { zh: '累積獎金', en: 'Progressive', odds: 'RM 5 · 同花 RM 50 起' },
     dealer: { zh: '莊家', en: 'Dealer' },
     you: { zh: '你', en: 'You' },
     jackpot: { zh: '獎池', en: 'Jackpot' },
@@ -8066,6 +7903,8 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
   const label = (c) => LG.cards.label(c);
   const labels = (cs) => cs.map(label).join(' ');
   const describe = (ev) => poker.describe(ev);
+  /** 牌型相同時補一句差在哪一張（踢腳 kicker） */
+  const kickerNote = (a, b) => { const k = LG.poker.kicker(a, b); return k ? `（${k}）` : ''; };
 
   /** 莊家合格：A-K 高牌以上（任何一對以上，或最大兩張為 A、K） */
   function qualifies(dealer) {
@@ -8148,12 +7987,12 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
         lines.push(line('ante', ante, 'win', ante, `${nm('ante')} ${fmt(ante)} × 1 = +${fmt(ante)}（拿回 ${fmt(ante * 2)}）`));
         lines.push(line('bet', bet, 'push', 0, `${nm('bet')} ${fmt(bet)} 退回（push）= RM 0`));
       } else if (cmp > 0) {
-        steps.compare = `你的 ${describe(pe)} > 莊的 ${describe(de)} → <b>你贏</b>`;
+        steps.compare = `你的 ${describe(pe)} > 莊的 ${describe(de)}${kickerNote(pe, de)} → <b>你贏</b>`;
         const pay = round2(bet * mult);
         lines.push(line('ante', ante, 'win', ante, `${nm('ante')} ${fmt(ante)} × 1 = +${fmt(ante)}（拿回 ${fmt(ante * 2)}）`));
         lines.push(line('bet', bet, 'win', pay, `${nm('bet')} ${fmt(bet)} × ${mult}（${pe.cat === CAT.HIGH ? 'A-K' : pe.name.zh} ${mult}:1）= +${fmt(pay)}（拿回 ${fmt(bet + pay)}）`));
       } else if (cmp < 0) {
-        steps.compare = `你的 ${describe(pe)} < 莊的 ${describe(de)} → <b>莊贏</b>`;
+        steps.compare = `你的 ${describe(pe)} < 莊的 ${describe(de)}${kickerNote(pe, de)} → <b>莊贏</b>`;
         lines.push(line('ante', ante, 'lose', -ante, `${nm('ante')} ${fmt(ante)} 輸 = −${fmt(ante)}`));
         lines.push(line('bet', bet, 'lose', -bet, `${nm('bet')} ${fmt(bet)} 輸 = −${fmt(bet)}`));
       } else {
@@ -8376,8 +8215,6 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
         if (bets.get('progressive') > 0 && !ctx.isTutorial) { setPool(getPool() + PROG_CONTRIB); paintPool(); }
         state.phase = 'dealing';
         markSpots(null);
-        await ctx.wait(500);                         // 讓「停止下注 No more bets」停留一下
-        if (!ctx.alive()) return;
         ctx.dealer.say('發牌', 'Dealing');
         shoe.shuffle();                              // 1 副牌，每局重洗
         if (state.forced) { shoe.stack(state.forced); state.forced = null; }
@@ -8561,8 +8398,8 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
             highlight: ['[data-bet="progressive"]', '.cstud-jackpot'],
             setup: (inst) => inst.demo.show('7S 7H 7D 7C 2S', 'AC QD 9H 4S 3D') },
           // ===== strategy
-          { id: 'strategy-edge', section: 'strategy', title: '莊家優勢 <i class="en">House edge</i>',
-            body: `<table class="lg-datatable"><tr><th>注</th><th>優勢</th></tr><tr><td>Ante（照策略）</td><td>5.22%</td></tr><tr><td>累積獎金旁注</td><td>約 ${edge}%</td></tr></table><p>旁注優勢很高（獎池低時遠超過 25%）。</p>`,
+          { id: 'strategy-edge', section: 'strategy', title: '這段你會學到：莊家優勢 <i class="en">House edge</i>',
+            body: `<table class="lg-datatable"><tr><th>注</th><th>優勢</th></tr><tr><td>Ante（照策略）</td><td>5.22%</td></tr><tr><td>累積獎金旁注</td><td>約 ${edge}%</td></tr></table><p>旁注優勢很高：以目前獎池約 ${edge}%（獎池 RM 100,000 時約 86%），獎池要漲到約 RM 1.58M 才打平。</p>`,
             highlight: null },
           { id: 'strategy-rules', section: 'strategy', title: '策略三條',
             body: '<p>① 一對以上 → <b>跟注</b><br>② 只有 A-K → 看莊明牌決定（下一步）<br>③ 比 A-K 小 → <b>棄牌</b></p>',
@@ -9042,8 +8879,6 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
         ctx.bank.debit(state.staked);
         state.phase = 'dealing';
         state.lastAction = null;
-        await ctx.wait(500);                   // 荷官說完 No more bets 再發牌
-        if (!ctx.alive()) return;
         ctx.dealer.say(...T.dealing);
         const hand = dealHand(nextShoe());
         state.hand = hand;
@@ -9120,7 +8955,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
         state.phase = 'settled';
         bets.unlock();
         bets.clear();
-        ctx.checkBroke();
+        ctx.checkBroke(3 * ctx.limits.min);          // 最低 Ante + 翻牌後 Call（2× Ante）（CR-3）
         ctx.nextRound(startRound);
       }
 
@@ -9144,6 +8979,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
         const formula = r.lines.map((l) => l.formula).join('<br>') + `<br>淨 <b>${money.fmtSigned(r.net)}</b>`;
         const why = [];
         const pN = handName(r.p), dN = handName(r.d);
+        const kk = (() => { const k = LG.poker.kicker(r.p, r.d); return k ? `（${k}）` : ''; })();   // 牌型相同 → 踢腳
         if (r.outcome === 'fold') {
           why.push('棄牌只輸底注 Ante；翻牌後就不用再放 Call。');
           const alt = settle({ ante: r.lines[0].stake, aa: 0 }, hand, { folded: false });
@@ -9151,9 +8987,9 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
         } else if (r.outcome === 'noqual') {
           why.push(`莊家最佳是 ${dN}，沒到一對 4 → 不合格：Ante 照賠付表（你的${r.p.name.zh} ${antePayOf(r.p.cat)}:1），Call 退回。`);
         } else if (r.outcome === 'win') {
-          why.push(`莊家 ${dN} 合格；你的 ${pN} 比較大 → Ante 照表 ${antePayOf(r.p.cat)}:1、Call 1:1。`);
+          why.push(`莊家 ${dN} 合格；你的 ${pN} 比較大${kk} → Ante 照表 ${antePayOf(r.p.cat)}:1、Call 1:1。`);
         } else if (r.outcome === 'lose') {
-          why.push(`莊家 ${dN} 合格，而且比你的 ${pN} 大 → Ante 和 Call 都輸。`);
+          why.push(`莊家 ${dN} 合格，而且比你的 ${pN} 大${kk} → Ante 和 Call 都輸。`);
         } else {
           why.push('兩邊最佳 5 張一樣大 → 平手，Ante 和 Call 都退回。');
         }
@@ -9485,7 +9321,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
       function spot(id, { zh, en, odds, cls } = {}) {
         const k = kindOf(id);
         const st = STATS[id];
-        const hint = k === 'nim' ? `贏${pct(st.pWin)} 和${pct(st.pPush)}<br>EV −${st.edge.toFixed(2)}%` : `贏${pct(st.pWin)}<br>EV −${st.edge.toFixed(2)}%`;
+        const hint = k === 'nim' ? `贏${pct(st.pWin)}<br>和${pct(st.pPush)}<br>EV −${st.edge.toFixed(2)}%` : `贏${pct(st.pWin)}<br>EV −${st.edge.toFixed(2)}%`;
         return el('div', { class: ['lg-spot', 'ft-spot', `ft-spot--${k}`, cls], dataset: { bet: id }, title: `${labelOf(id)} ${ODDS_TEXT[k]}` }, [
           el('span.lg-spot__zh', { text: zh ?? labelOf(id) }),
           el('span.lg-spot__en', { text: en ?? T[k].en }),
@@ -9759,18 +9595,18 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
             body: '<p>押番 RM 100 贏：<br><b>RM 100 × 3 × 0.95 = RM 285</b>（淨贏）<br>拿回 RM 385（含本金）。</p>',
             highlight: ['.ft-fan'], setup: (inst) => inst.demo.showResult(3, 63) },
           { id: 'payout-nim', section: 'payout', title: '念的和局 <i class="en">Push</i>',
-            body: '<p>押「3念2」RM 100，開 2 → 和局，退回 RM 100，淨 RM 0。開 3 → RM 100 × 2 × 0.95 = RM 190。</p>',
+            body: '<p>押「3念2」RM 100，開 2 → 和局，退回 RM 100，淨 RM 0。開 3 → RM 100 × 2 × 0.95 = RM 190（淨贏），拿回 RM 290。</p>',
             highlight: ['[data-bet="nim-3-2"]'], setup: (inst) => inst.demo.showResult(2, 62) },
           { id: 'payout-ngatan', section: 'payout', title: '三門 1:3',
             body: '<p>押三門 1·2·3 RM 300，開 1：<br><b>RM 300 × 1/3 × 0.95 = RM 95</b>（淨贏）<br>拿回 RM 395。開 4 則輸 RM 300。</p>',
             highlight: ['[data-bet="ngatan-4"]'], setup: (inst) => inst.demo.showResult(1, 61) },
           { id: 'payout-try', section: 'payout', title: '押一個角試試',
-            body: '<p>角押兩個號，贏 1:1：RM 100 × 1 × 0.95 = RM 95。</p>',
+            body: '<p>角押兩個號，贏 1:1：RM 100 × 1 × 0.95 = RM 95（淨贏），拿回 RM 195。</p>',
             highlight: ['.ft-kwok'],
             setup: (inst) => { inst.demo.cover(); inst.demo.ensureBetting(); },
             action: { label: '在任一個「角」放籌碼', check: (inst) => inst.bets.entries().some(([id]) => id.startsWith('kwok-')) || '點四個角落或下方「角 1-3 / 2-4」' } },
           // ===== strategy
-          { id: 'strategy-edge', section: 'strategy', title: '莊家優勢 <i class="en">House edge</i>',
+          { id: 'strategy-edge', section: 'strategy', title: '這段你會學到：莊家優勢 <i class="en">House edge</i>',
             body: `<table class="lg-datatable"><tr><th>注</th><th>賠率</th><th>扣佣後優勢</th></tr>${edgeRows}</table>`,
             highlight: null },
           { id: 'strategy-do', section: 'strategy', title: '該押：念 / 角 / 單雙',
@@ -9962,6 +9798,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
     summary: '7 張分成 5 張高手與 2 張低手，兩手都贏莊家才算贏；約四成是和局。',
     houseEdge: [
       { bet: { zh: '玩家不做莊', en: 'Player never banks' }, edge: 2.84, best: true },
+      { bet: { zh: 'Fortune 旁注（模擬）', en: 'Fortune Bonus' }, edge: 8.6, approx: true },
     ],
     limits: { real: { min: 50, max: 3000 }, practice: { min: 10, max: 100000 } },
     denoms: [10, 25, 50, 100, 500, 1000],
@@ -10300,9 +10137,13 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
         return { ph, pl, dh, dl };
       }
 
-      function sideText(side, you, dealer) {
-        if (side > 0) return `你的「${you}」> 莊的「${dealer}」→ 你贏`;
-        if (side < 0) return `你的「${you}」< 莊的「${dealer}」→ 莊贏`;
+      function sideText(side, you, dealer, evY, evD) {
+        // 牌型相同 → 說明差在哪一張（順子不適用：房規 A-2-3-4-5 是第二大順，不能只看最大張）
+        const C = LG.poker.CATEGORY;
+        const k = side && evY && evD && evY.cat !== C.STRAIGHT && evY.cat !== C.STRAIGHT_FLUSH ? LG.poker.kicker(evY, evD) : '';
+        const kk = k ? `（${k}）` : '';
+        if (side > 0) return `你的「${you}」> 莊的「${dealer}」${kk}→ 你贏`;
+        if (side < 0) return `你的「${you}」< 莊的「${dealer}」${kk}→ 莊贏`;
         return `你和莊都是「${you}」→ 一模一樣（copy）歸莊`;
       }
 
@@ -10340,7 +10181,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
         if (r.cmp.foul) {
           why = `你的低手（${describeLow(ev.pl)}）比高手（${describeHigh(ev.ph)}）大，這叫 Foul，整手直接判輸。`;
         } else {
-          why = `高手：${sideText(r.cmp.high, describeHigh(ev.ph), describeHigh(ev.dh))}。低手：${sideText(r.cmp.low, describeLow(ev.pl), describeLow(ev.dl))}。`
+          why = `高手：${sideText(r.cmp.high, describeHigh(ev.ph), describeHigh(ev.dh), ev.ph, ev.dh)}。低手：${sideText(r.cmp.low, describeLow(ev.pl), describeLow(ev.dl), ev.pl, ev.dl)}。`
             + (res === 'win' ? '兩手都贏才算贏，贏了要付 5% 佣金。' : res === 'push' ? '一贏一輸 = push，本金退回。' : `兩手都沒贏${r.cmp.high === 0 || r.cmp.low === 0 ? '（copy 算莊贏）' : ''} → 輸。`);
         }
         if (!sameIds(P.low, state.hw.low)) why += `<br>房規排法：高手 ${cardsText(state.hw.high)}｜低手 ${cardsText(state.hw.low)}（第 ${state.hw.rule} 條）。`;
@@ -11258,7 +11099,10 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
         const odd = main.net % w.length;
         if (odd) why.push(`除不盡的 ${fmt(odd)} 奇數籌碼給按鈕左側第一位（${name(w[0])}）。`);
       } else if (losers.length) {
-        why.push(`${name(w[0])}的 ${LG.poker.describe(wh)} 大過 ${losers.map((x) => `${name(x)}的 ${LG.poker.describe(r.hands[x])}`).join('、')}。`);
+        why.push(`${name(w[0])}的 ${LG.poker.describe(wh)} 大過 ${losers.map((x) => {
+          const k = LG.poker.kicker(wh, r.hands[x]);   // 牌型相同 → 說明差在哪一張
+          return `${name(x)}的 ${LG.poker.describe(r.hands[x])}${k ? `（${k}）` : ''}`;
+        }).join('、')}。`);
       }
       if (r.pots.length > 1) why.push('有人全下 <i class="en">All-in</i> 金額較小：他只能贏他跟得起的主池，多出的錢另成邊池。');
     } else {
@@ -11320,6 +11164,8 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
     // 撲克室沒有「限注」：min/max 用買入範圍（checkBroke 以 RM 400 判斷能不能再買入）
     limits: { real: { min: RULES.buyInMin, max: RULES.buyInMax }, practice: { min: RULES.buyInMin, max: RULES.buyInMax } },
     countdown: RULES.actSeconds,
+    countdownText: `每次輪到你行動倒數 <b>${RULES.actSeconds} 秒</b>`,
+    limitsLabel: `買入 RM ${RULES.buyInMin}–${LG.money.fmt(RULES.buyInMax).replace('RM ', '')} · 盲注 RM ${RULES.sb}/${RULES.bb}`,
     logic,
 
     create(ctx) {
@@ -11986,7 +11832,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
             body: '<p>A 全下 100，B、C 各 300。<br>主池 = RM 100 × 3 = <b>RM 300</b>（A、B、C 爭）<br>邊池 = RM 200 × 2 = <b>RM 400</b>（只有 B、C 爭）</p>',
             highlight: ['.pr-pot'] },
           // ===== strategy 策略（6 步）
-          { id: 'strategy-edge', section: 'strategy', title: '莊家優勢？ <i class="en">House edge</i>',
+          { id: 'strategy-edge', section: 'strategy', title: '這段你會學到：撲克室有莊家優勢嗎？ <i class="en">House edge</i>',
             body: '<table class="lg-datatable"><tr><th>項目</th><th>數字</th></tr><tr><td>莊家優勢</td><td>無（跟玩家比）</td></tr><tr><td>抽水</td><td>5%，上限 RM 50</td></tr><tr><td>沒翻牌</td><td>不抽</td></tr></table><p>贏錢要靠比對手打得好。</p>',
             highlight: null },
           { id: 'strategy-hands', section: 'strategy', title: '起手牌表 <i class="en">Starting hands</i>',
@@ -12076,8 +11922,8 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
       black: { zh: '黑', en: 'Black' },
       odd: { zh: '單', en: 'Odd' },
       even: { zh: '雙', en: 'Even' },
-      low: { zh: '小', en: '1–18' },
-      high: { zh: '大', en: '19–36' },
+      low: { zh: '小', en: '1–18', label: '1–18 LOW' },
+      high: { zh: '大', en: '19–36', label: '19–36 HIGH' },
     },
     dozenEn: ['1st 12', '2nd 12', '3rd 12'],
     colEn: '2 to 1',
@@ -12339,7 +12185,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
           cell(`dozen-${d}`, ['rl-out', 'rl-dozen'], gridVars([2 + 4 * (d - 1), 2, 4], [4, 2 + 4 * (d - 1), 1, 4]), `第${d}打`, T.dozenEn[d - 1])));
         EVEN_ORDER.forEach((id, i) => {
           const o = T.outside[id];
-          board.appendChild(cell(id, ['rl-out', 'rl-even', `rl-even--${id}`], gridVars([2 + 2 * i, 1, 2], [5, 2 + 2 * i, 1, 2]), o.zh, o.en));
+          board.appendChild(cell(id, ['rl-out', 'rl-even', `rl-even--${id}`], gridVars([2 + 2 * i, 1, 2], [5, 2 + 2 * i, 1, 2]), o.zh, o.label || o.en));
         });
         // 格線熱區
         const hot = el('div.rl-hot', { style: gridVars([1, 3, 14, 3], [1, 1, 3, 14]) });
@@ -12538,19 +12384,19 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
         state.spin = null;
         if (real) { clearMarks(); removeDolly(); }   // 荷官拿走 dolly 後才能再下注
         bets.unlock();
-        ctx.bettingWindow({ bets, seconds: COUNTDOWN, label: T.spinBtn, onTick: real ? onTick : undefined, onClose: onNoMoreBets });
+        // 真實：closeAt → 剩 5 秒時框架喊 No more bets 並鎖注，倒數跑完才 onClose
+        ctx.bettingWindow({ bets, seconds: COUNTDOWN, label: T.spinBtn, onTick: real ? onTick : undefined, onClose: onNoMoreBets,
+          closeAt: real ? NMB_AT : undefined, onNoMoreBets: callNoMoreBets });
       }
       function onTick(n) {
         if (state.phase !== 'betting') return;
         if (n <= BALL_AT && !state.ballLaunched) { state.ballLaunched = true; launchBall(); }
-        if (n <= NMB_AT) callNoMoreBets();
       }
-      /** 真實模式：倒數剩 5 秒喊 No more bets，球開始減速落格 */
+      /** 真實模式：倒數剩 5 秒（框架已喊 No more bets 並鎖注），球開始減速落格 */
       function callNoMoreBets() {
         if (state.phase !== 'betting') return;
+        if (!state.ballLaunched) { state.ballLaunched = true; launchBall(); }
         state.phase = 'closing';
-        ctx.dealer.say('停止下注', 'No more bets');
-        bets.lock();
         state.result = roll();
         state.spin = land(state.result);
       }
@@ -13300,7 +13146,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
             setup: (inst) => { inst.demo.clearLights(); inst.demo.ensureBetting(); },
             action: { label: '在任一個「單點」格放籌碼', check: (inst) => N6.some((n) => inst.bets.get(`single-${n}`) > 0) || '點下方任一顆骰子的單點格' } },
           // ===== strategy
-          { id: 'strategy-edge', section: 'strategy', title: '莊家優勢 <i class="en">House edge</i>',
+          { id: 'strategy-edge', section: 'strategy', title: '這段你會學到：莊家優勢 <i class="en">House edge</i>',
             body: `<table class="lg-datatable"><tr><th>注</th><th>賠率</th><th>優勢</th></tr>${edgeRows}</table>`,
             highlight: null },
           { id: 'strategy-do', section: 'strategy', title: '該押：大小 / 單雙',
@@ -13385,7 +13231,6 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
     noMoney: '餘額不足，降低面額或注數',
     overMax: (max) => `每轉最高 ${cents(max)}`,
     underMin: (min) => `每轉最低 ${cents(min)}`,
-    realIntro: (lim) => `真實模式：每轉 <b>${lim}</b>，<b>沒有倒數</b>，按 SPIN 就轉，只顯示輸贏金額。`,
     noWin: (bet) => `未中獎，本次投入 ${cents(bet)}`,
     hint: '提示：RTP 90% = 每押 RM 100，長期平均拿回 RM 90。押大押小，比例都一樣；每一轉都是獨立的，沒有「快出了」。',
   };
@@ -13487,6 +13332,9 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
     summary: '只有一條線、一種「發」字：看懂老虎機最簡單的一台。',
     houseEdge: [{ bet: { zh: '總體', en: 'Overall' }, edge: 10.0, best: true }],
     limits: { real: { min: 0.1, max: 25 }, practice: { min: 0.1, max: 25 } },
+    countdown: 0,                 // 老虎機不倒數：核心進場 modal 顯示「不倒數」
+    startHint: '按 SPIN 就轉，只顯示輸贏金額',
+    limitsLabel: (l) => `每轉 ${LG.money.fmt(l.min, { cents: true })} – ${LG.money.fmt(l.max, { cents: true })}`,
     logic: { STRIPS, SYMBOLS, PAYS, CREDIT_VALUES, CREDITS, evalLine, evalGrid, comboStats, simulate },
 
     create(ctx) {
@@ -13720,7 +13568,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
             body: '<p>押 RM 0.50 中一個發：RM 0.50 × 1 = RM 0.50。<br>拿回的剛好是本金，<b>淨贏 RM 0</b>。燈會亮，但你沒贏。</p>',
             highlight: ['.sc-reelwrap'], setup: () => demo.setGrid('XBX', 'RXX', 'XXG') },
           // ===== strategy
-          { id: 'strategy-rtp', section: 'strategy', title: `RTP 是什麼 <i class="en">Return to Player</i>`,
+          { id: 'strategy-rtp', section: 'strategy', title: `這段你會學到：RTP 是什麼 <i class="en">Return to Player</i>`,
             body: '<table class="lg-datatable"><tr><th>RTP</th><th>莊家優勢</th></tr><tr><td>90%</td><td>10%</td></tr></table><p>每押 RM 100，長期平均拿回 RM 90、輸 RM 10。</p>',
             highlight: null, setup: () => demo.clear() },
           { id: 'strategy-size', section: 'strategy', title: '押大不改變比例',
@@ -13760,12 +13608,6 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
               ['合計', '', `中獎 ${(st.hit * 100).toFixed(1)}%`, `${(st.rtp * 100).toFixed(1)}%`]], { caption: 'RTP 90% 從哪裡來' }));
           }
           if (ctx.isReal) {
-            // 核心進場 modal 寫「倒數 N 秒」，老虎機沒有倒數 → 改寫文字（見 change-request CR-1）
-            Promise.resolve().then(() => {
-              const b = document.querySelector('[data-action="real-start"]');
-              const p = b && b.closest('.lg-modal') && b.closest('.lg-modal').querySelector('.lg-modal__body p');
-              if (p) p.innerHTML = T.realIntro(`${cents(ctx.limits.min)} – ${cents(ctx.limits.max)}`);
-            });
             ctx.ready.then(() => { ready = true; paintSpin(); });
           }
           root.dataset.ready = '1';
@@ -14164,6 +14006,9 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
     summary: T.summary,
     houseEdge: [{ bet: { zh: '總體（RTP 94.5%）', en: 'Overall' }, edge: 5.5, best: true }],
     limits: { real: { min: 2, max: 100 }, practice: { min: 2, max: 100 } },
+    countdown: 0,                 // 老虎機不倒數：核心進場 modal 顯示「不倒數」
+    startHint: '按旋轉 SPIN 就轉，只顯示輸贏金額',
+    limitsLabel: (l) => `每轉總注 ${LG.money.fmt(l.min, { cents: true })} – ${LG.money.fmt(l.max, { cents: true })}（20 線）`,
     logic: {
       SYMS, PAYTABLE, STRIPS, STRIP_SPEC, LINES, ORB_DIST, SEEDS, GROWTH, TRIGGER, RESPINS, RESPIN_ORB_P, MINOR_MULT, REF_BET,
       buildStrip, interleave, drawOrbValue, spinBase, orbList, isTrigger, evalBase, runHoldSpin, orbAmount, featureTotal, playSpin,
@@ -14795,6 +14640,9 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
     summary: T.summary,
     houseEdge: [{ bet: { zh: '總體（最大注，RTP 92%）', en: 'Overall (max bet)' }, edge: 8.0, best: true }],
     limits: { real: { min: 2, max: 100 }, practice: { min: 2, max: 100 } },
+    countdown: 0,                 // 老虎機不倒數：核心進場 modal 顯示「不倒數」
+    startHint: '按旋轉 SPIN 就轉，只顯示輸贏金額',
+    limitsLabel: (l) => `每轉總注 ${LG.money.fmt(l.min, { cents: true })} – ${LG.money.fmt(l.max, { cents: true })}（20 線）`,
     logic: {
       SYMS, PAYTABLE, STRIPS, STRIP_SPEC, LINES, SEEDS, GROWTH, WHEEL, MAX_BET, LINE_BETS, TRIGGER, LEVELS,
       interleave, buildStrip, isMaxBet, wheelSegments, payRatio, jackpotPrize, evalBase, jpCount, isTrigger, playSpin,
@@ -15191,7 +15039,6 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
     noMoney: '餘額不足，降低每線注或線數',
     overMax: (max) => `每轉最高 ${cents(max)}`,
     underMin: (min) => `每轉最低 ${cents(min)}`,
-    realIntro: (lim) => `真實模式：每轉 <b>${lim}</b>（固定 20 線），<b>沒有倒數</b>，按 SPIN 就轉，只顯示輸贏金額。`,
     noWin: (bet) => `未中獎，本次投入 ${cents(bet)}`,
   };
 
@@ -15340,6 +15187,9 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
     summary: '財神與龍：20 條線、百搭、金幣免費轉——現代老虎機的標準配備。',
     houseEdge: [{ bet: { zh: '總體', en: 'Overall' }, edge: 6.0, best: true }],
     limits: { real: { min: 2, max: 100 }, practice: { min: 0.1, max: 100 } },
+    countdown: 0,                 // 老虎機不倒數：核心進場 modal 顯示「不倒數」
+    startHint: '按 SPIN 就轉，只顯示輸贏金額',
+    limitsLabel: (l, mode) => `每轉 ${LG.money.fmt(l.min, { cents: true })} – ${LG.money.fmt(l.max, { cents: true })}${mode === 'real' ? '（固定 20 線）' : ''}`,
     logic: { STRIPS, SYMBOLS, PAYTABLE, FREE_SPINS, SCATTER_MULT, LINE_BETS, LINE_OPTS, WILD, SCATTER, evalSpin, spinValue, simulate, exactRTP },
 
     create(ctx) {
@@ -15682,7 +15532,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
             body: '<p>中線 元寶・龍・元寶 = 3 個元寶：<br><b>25 × RM 0.10 = RM 2.50</b>。龍不會另外賠。</p>',
             highlight: ['.sv-reels'], setup: () => demo.setGrid(G_WILD) },
           // ===== strategy
-          { id: 'strategy-rtp', section: 'strategy', title: `RTP 是什麼 <i class="en">Return to Player</i>`,
+          { id: 'strategy-rtp', section: 'strategy', title: `這段你會學到：RTP 是什麼 <i class="en">Return to Player</i>`,
             body: '<table class="lg-datatable"><tr><th>RTP</th><th>莊家優勢</th></tr><tr><td>94%</td><td>6%</td></tr></table><p>每押 RM 100，長期平均拿回 RM 94。</p>',
             highlight: null, setup: () => demo.clear() },
           { id: 'strategy-volatility', section: 'strategy', title: `波動 <i class="en">Volatility</i>`,
@@ -15730,11 +15580,6 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
             ], { caption: `免費轉平均每 ${Math.round(exact.triggerEvery)} 轉觸發一次` }));
           }
           if (ctx.isReal) {
-            Promise.resolve().then(() => {
-              const b = document.querySelector('[data-action="real-start"]');
-              const p = b && b.closest('.lg-modal') && b.closest('.lg-modal').querySelector('.lg-modal__body p');
-              if (p) p.innerHTML = T.realIntro(`${cents(ctx.limits.min)} – ${cents(ctx.limits.max)}`);
-            });
             ctx.ready.then(() => { ready = true; paintSpin(); });
           }
           root.dataset.ready = '1';
@@ -15800,6 +15645,8 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
   const label = (c) => LG.cards.label(c);
   const labels = (cs) => cs.map(label).join(' ');
   const describe = (ev) => poker.describe(ev);
+  /** 牌型相同時補一句差在哪一張（踢腳 kicker） */
+  const kickerNote = (a, b) => { const k = LG.poker.kicker(a, b); return k ? `（${k}）` : ''; };
   const RZ = { 14: 'A', 13: 'K', 12: 'Q', 11: 'J', 10: '10' };
   const rz = (r) => RZ[r] || String(r);
 
@@ -15852,10 +15699,10 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
           steps.compare = '莊不合格 → 不比牌：Ante 賠 1:1、Play 退回';
           lines.push(win('ante', ante), push('play', play));
         } else if (cmp > 0) {
-          steps.compare = `你的 ${describe(pe)} > 莊的 ${describe(de)} → <b>你贏</b>`;
+          steps.compare = `你的 ${describe(pe)} > 莊的 ${describe(de)}${kickerNote(pe, de)} → <b>你贏</b>`;
           lines.push(win('ante', ante), win('play', play));
         } else if (cmp < 0) {
-          steps.compare = `你的 ${describe(pe)} < 莊的 ${describe(de)} → <b>莊贏</b>`;
+          steps.compare = `你的 ${describe(pe)} < 莊的 ${describe(de)}${kickerNote(pe, de)} → <b>莊贏</b>`;
           lines.push(lose('ante', ante), lose('play', play));
         } else {
           steps.compare = `雙方同為 ${describe(pe)} → <b>平手</b> <i class="en">Push</i>`;
@@ -16053,8 +15900,6 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
         ctx.bank.debit(state.staked);
         state.phase = 'dealing';
         markSpots(null);
-        await ctx.wait(500);                         // 讓「停止下注 No more bets」停留一下
-        if (!ctx.alive()) return;
         ctx.dealer.say('發牌', 'Dealing');
         shoe.shuffle();
         if (state.forced) { shoe.stack(state.forced); state.forced = null; }
@@ -16237,7 +16082,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
             highlight: ['.tcp-pay--pp'],
             setup: (inst) => inst.demo.show('5S 6H 7D', '2H 9H KH') },
           // ===== strategy
-          { id: 'strategy-edge', section: 'strategy', title: '莊家優勢 <i class="en">House edge</i>',
+          { id: 'strategy-edge', section: 'strategy', title: '這段你會學到：莊家優勢 <i class="en">House edge</i>',
             body: '<table class="lg-datatable"><tr><th>注</th><th>優勢</th></tr><tr><td>Pair Plus（1-4-6-30-40）</td><td>2.32%</td></tr><tr><td>Ante/Play（Q-6-4）</td><td>3.37%</td></tr></table>',
             highlight: null },
           { id: 'strategy-q64', section: 'strategy', title: 'Q-6-4 規則',
@@ -16286,11 +16131,12 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
 // ============================================================================
 // 三公 Three Pictures（id: three-pictures）— 規格：docs/05-game-rules/three-pictures.md
 // 1 副牌每局重洗；莊家與 3 個位置各 3 張。玩家可同時押多個位置，每個位置獨立與莊比。
-// 牌型：三公 > 9 > 8 > … > 0；同點比公數；再比最高單張（K>Q>J>10>…>A）；全同 → 莊贏。
+// 牌型：三公 > 9 > 8 > … > 0；同點比公數；點數與公數全同 → 莊贏（B 方案：不比最高單張）。
 // 玩家贏：三公 3:1、9 點 2:1、其他 1:1。
 // 莊贏：玩家輸「莊家牌型倍數」（莊三公輸 3 倍、莊 9 點輸 2 倍、其他輸 1 倍）。
-//   ↑ 與規格 §2「莊勝輸 1 倍」不同：照規格字面玩家反而有 +10.5% 優勢（精確枚舉），
-//     見 docs/change-requests/three-pictures.md CR-1。RULES.bankerMultiplier 可切回規格字面。
+//   精確枚舉（407,170,400 種組合）：主注莊家優勢 4.17%、和局歸莊率 3.78%。
+//   若莊勝一律只收 1 倍（bankerMultiplier=false），同一比牌規則下玩家反有 +7.42% 優勢，
+//   見 docs/change-requests/three-pictures.md 與 README 協調者決議的整合備註。
 // ============================================================================
 (() => {
   const { ui, money } = LG;
@@ -16299,12 +16145,12 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
 
   // ---------------------------------------------------------------- 規則常數
   const RULES = {
-    bankerMultiplier: true,   // 莊贏時玩家輸莊家牌型倍數（CR-1）
+    bankerMultiplier: true,   // 莊贏時玩家輸莊家牌型倍數（見檔頭說明；false 會變成玩家優勢）
     maxLossMult: 3,           // 下注時需保留 3 倍注額（莊三公輸 3 倍）
   };
-  /** Monte Carlo 主注優勢（%）：LG.rng.seed(20260927); logic.simulate(40,000,000) → 0.8905%（精確枚舉 0.8935%），見 change-request */
-  const MC_EDGE = 0.89;
-  const RANK_ORDER = 'A23456789TJQK';           // 比最高單張：K 最大、A 最小
+  /** 主注優勢（%）：精確枚舉 4.1713%；Monte Carlo LG.rng.seed(123); simulate(1,000,000) 見單元測試 [slow] */
+  const MC_EDGE = 4.17;
+  const RANK_ORDER = 'A23456789TJQK';
   const SEATS = [1, 2, 3];
   const YOU = 2;
   const EN_NUM = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
@@ -16329,7 +16175,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
   const rankText = (r) => (r === 'T' ? '10' : r);
   const cardText = (c) => `${rankText(c.rank)}${ui.SUIT ? ui.SUIT[c.suit].symbol : c.suit}`;
 
-  /** 牌型 → {points, pics, three, top, topRank, level, score, mult, name:{zh,en}} */
+  /** 牌型 → {points, pics, three, top, topRank, level, score, mult, name:{zh,en}}（score 只含點數與公數；top 僅供顯示） */
   function evaluate(cards) {
     const pics = cards.filter(isPic).length;
     const points = cards.reduce((s, c) => s + point(c), 0) % 10;
@@ -16338,10 +16184,10 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
     const level = three ? 10 : points;
     const name = three ? { zh: '三公', en: 'Three Pictures' }
       : { zh: `${points} 點${ZH_PICS[pics]}`, en: `${EN_NUM[points]}${pics ? `, ${EN_PICS[pics]}` : ''}` };
-    return { points, pics, three, top, topRank: RANK_ORDER[top - 1], level, score: level * 10000 + pics * 100 + top, mult: three ? 3 : points === 9 ? 2 : 1, name };
+    return { points, pics, three, top, topRank: RANK_ORDER[top - 1], level, score: level * 100 + pics, mult: three ? 3 : points === 9 ? 2 : 1, name };
   }
 
-  /** 位置 vs 莊：→ {win:boolean, by:'level'|'pics'|'top'|'tie', why} */
+  /** 位置 vs 莊：→ {win:boolean, by:'level'|'pics'|'tie', why} */
   function compare(p, b) {
     const win = p.score > b.score;
     let by, why;
@@ -16351,12 +16197,9 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
     } else if (p.pics !== b.pics) {
       by = 'pics';
       why = `同 ${p.three ? '三公' : p.points + ' 點'}，比公數：${p.pics} 公 ${win ? '>' : '<'} ${b.pics} 公`;
-    } else if (p.top !== b.top) {
-      by = 'top';
-      why = `點數與公數都一樣，比最高單張：${rankText(p.topRank)} ${win ? '>' : '<'} ${rankText(b.topRank)}`;
     } else {
       by = 'tie';
-      why = `點數、公數、最高單張（${rankText(p.topRank)}）全同 → 和局歸莊`;
+      why = `點數與公數都一樣（${p.name.zh}）→ 和局歸莊`;
     }
     return { win, by, why };
   }
@@ -16641,10 +16484,8 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
         state.phase = 'settled';
         bets.unlock();
         bets.clear();
-        ctx.checkBroke();
-        if (ctx.isReal && RULES.bankerMultiplier && ctx.bank.balance() >= ctx.limits.min && ctx.bank.balance() < ctx.limits.min * RULES.maxLossMult) {
-          ui.toast(`餘額不足最低注的 3 倍保留（${fmt(ctx.limits.min * RULES.maxLossMult)}），無法再下注`, { type: 'warn', ms: 3000 });
-        }
+        // 下最低注需保留 3 倍（莊三公輸 3 倍）→ 破產門檻 = 最低注 × 3
+        ctx.checkBroke(RULES.bankerMultiplier ? round2(ctx.limits.min * RULES.maxLossMult) : ctx.limits.min);
         ctx.nextRound(startRound);
       }
 
@@ -16721,7 +16562,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
             body: '<p>K-Q-J 三張都是公 = <b>三公</b>，比 9 點還大。押 RM 100：<b>RM 100 × 3 = RM 300</b>，拿回 RM 400。</p>',
             highlight: ['[data-seat-box="3"]'] },
           { id: 'payout-compare', section: 'payout', title: '同點怎麼比',
-            body: '<p>同點數 → 公多的贏；再同 → 比最高單張（K 最大、A 最小）；全部一樣 → <b>莊贏</b>。</p>',
+            body: '<p>同點數 → 公多的贏；點數和公數都一樣 → <b>莊贏</b>（不比單張大小）。</p>',
             highlight: ['.tp-seats'],
             setup: (inst) => inst.demo.showHands(H('8S KH TC', 'QD 8H JC', '9C 9D KS', '4H 4D QS')) },
           { id: 'payout-banker-mult', section: 'payout', title: '莊家拿 9 點或三公',
@@ -16733,8 +16574,8 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
             setup: (inst) => { inst.demo.clear(); inst.demo.ensureBetting(); },
             action: { label: '在位置 1 或位置 3 放籌碼', check: (inst) => inst.bets.get('seat-1') > 0 || inst.bets.get('seat-3') > 0 || '點位置 1 或 3 的下注格' } },
           // ===== strategy
-          { id: 'strategy-edge', section: 'strategy', title: '莊家優勢 <i class="en">House edge</i>',
-            body: `<table class="lg-datatable"><tr><th>注</th><th>優勢</th></tr><tr><td>押任一位置</td><td>≈ ${MC_EDGE}%（模擬值）</td></tr></table><p>由電腦模擬 4,000 萬局算出。</p>`,
+          { id: 'strategy-edge', section: 'strategy', title: '這段你會學到：莊家優勢 <i class="en">House edge</i>',
+            body: `<table class="lg-datatable"><tr><th>注</th><th>優勢</th></tr><tr><td>押任一位置</td><td>≈ ${MC_EDGE}%</td></tr></table><p>精確列舉全部 4 億多種發牌組合算出 4.17%（電腦模擬 100 萬局也約 4.2%）。</p>`,
             highlight: null },
           { id: 'strategy-no-choice', section: 'strategy', title: '沒有決策，純運氣',
             body: '<p>三公發完牌就定輸贏，你不能補牌也不能換牌。沒有「技巧」可以降低優勢。</p>',
@@ -17270,7 +17111,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
           hintEl.innerHTML = `建議：<b>${term(T.actions[adv.action].zh, T.actions[adv.action].en)}</b>——${adv.why}`;
           hintEl.dataset.advice = adv.action;
         } else {
-          hintEl.innerHTML = '提示：放 Ante 時 Blind 會自動同額。好牌翻牌前就 4×；Trips 旁注優勢 3.5%，比 Ante 高。';
+          hintEl.innerHTML = '提示：放 Ante 時 Blind 會自動同額。好牌翻牌前就 4×；Trips 旁注優勢 3.50%，比 Ante 高。';
           delete hintEl.dataset.advice;
         }
       }
@@ -17309,8 +17150,6 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
         ctx.bank.debit(state.staked);
         state.phase = 'dealing';
         state.lastAction = null;
-        await ctx.wait(500);                   // 荷官說完 No more bets 再發牌
-        if (!ctx.alive()) return;
         ctx.dealer.say('發牌', 'Dealing');
         const hand = dealHand(nextShoe());
         state.hand = hand;
@@ -17406,7 +17245,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
         state.phase = 'settled';
         bets.unlock();
         bets.clear();
-        ctx.checkBroke();
+        ctx.checkBroke(2 * ctx.limits.min);          // 每局最少 Ante + Blind（CR-4）
         ctx.nextRound(startRound);
       }
 
@@ -17429,17 +17268,18 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
         };
         const formula = r.lines.map((l) => l.formula).join('<br>') + `<br>淨 <b>${money.fmtSigned(r.net)}</b>`;
         const pN = handName(r.p), dN = handName(r.d);
+        const kk = (() => { const k = LG.poker.kicker(r.p, r.d); return k ? `（${k}）` : ''; })();   // 牌型相同 → 踢腳
         const why = [];
         if (r.outcome === 'fold') {
           why.push('棄牌輸 Ante + Blind（Trips 照算）。');
           const alt = settle({ ante: state.stakes.ante, blind: state.stakes.blind, play: state.stakes.ante }, hand, { playMult: 1 });
           why.push(`如果河牌加注 1×：你 ${pN} vs 莊 ${dN}，主注合計會是 ${money.fmtSigned(alt.net)}。`);
         } else if (r.outcome === 'win') {
-          why.push(`你的 ${pN} 大於莊的 ${dN} → Play 1:1。`);
+          why.push(`你的 ${pN} 大於莊的 ${dN}${kk} → Play 1:1。`);
           why.push(r.qual ? '莊家有一對以上（合格）→ Ante 1:1。' : '莊家沒有一對（不合格）→ Ante 退回。');
           why.push(BLIND_PAY[r.p.cat] ? `Blind：你是${r.p.name.zh} → ${oddsTxt(BLIND_PAY[r.p.cat])}。` : 'Blind 只有順子以上才賠，你贏但沒到順子 → 退回。');
         } else if (r.outcome === 'lose') {
-          why.push(`莊的 ${dN} 大於你的 ${pN} → Blind、Play 都輸；${r.qual ? 'Ante 也輸' : '莊不合格，Ante 退回'}。`);
+          why.push(`莊的 ${dN} 大於你的 ${pN}${kk} → Blind、Play 都輸；${r.qual ? 'Ante 也輸' : '莊不合格，Ante 退回'}。`);
         } else {
           why.push('兩邊最佳 5 張一樣大 → 平手，全部退回。');
         }
@@ -17558,7 +17398,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
             highlight: ['[data-bet="blind"]', '.uth-row--player'],
             setup: (inst) => inst.demo.show({ player: 'AS KD', dealer: '9C 9H', board: 'KS 7D 2C 5H JS' }) },
           { id: 'payout-noqual', section: 'payout', title: '莊不合格 + 你順子',
-            body: '<p>Ante/Blind 各 50、Play 100（2×）。莊沒有對子：<br>Ante 退回；Play <b>RM 100 × 1 = RM 100</b>；Blind 順子 <b>RM 50 × 1 = RM 50</b>。淨贏 RM 150。</p>',
+            body: '<p>Ante/Blind 各 50、Play 100（2×）。莊沒有對子：<br>Ante 退回；Play <b>RM 100 × 1 = RM 100</b>；Blind 順子 <b>RM 50 × 1 = RM 50</b>。淨贏 RM 150，拿回 RM 350（含本金 RM 200）。</p>',
             highlight: ['.uth-row--dealer', '[data-bet="ante"]'],
             setup: (inst) => inst.demo.show({ player: '9S 8D', dealer: 'AC 4H', board: 'TH 7C 6S 2D KH' }) },
           { id: 'payout-lose', section: 'payout', title: '莊家贏：全部輸',
@@ -17896,7 +17736,9 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
       { bet: { zh: 'Jacks or Better 9/6 最佳策略', en: '9/6 optimal strategy' }, edge: 0.46, best: true },
     ],
     limits: { real: { min: 0.2, max: 25 }, practice: { min: 0.2, max: 25 } },
-    countdown: 0,              // 視訊撲克不倒數（玩家自己按 DEAL）
+    countdown: 0,              // 視訊撲克不倒數（玩家自己按 DEAL）：核心進場 modal 顯示「不倒數」
+    startHint: '自己按 DEAL 發牌',
+    limitsLabel: (l) => `每手 ${LG.money.fmt(l.min, { cents: true })} – ${LG.money.fmt(l.max, { cents: true })}（每枚 RM 0.20–5 × 1–5 枚）`,
     logic: { PAYTABLE, COIN_VALUES, MAX_COINS, perCoin, coinsWon, handKey, handKeyFromScore, payout, suggestHold, classifyHold, evHold, hintText, RULE_TEXT },
 
     create(ctx) {
@@ -18242,7 +18084,9 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
 
       // ---- 教學步驟（layout 5、flow 5、payout 3、strategy 7；action 8 個）
       function tutorialSteps() {
-        const rules = RULE_TEXT.slice(1).map((r) => `<li>${r.zh}</li>`).join('');
+        const li = (r) => `<li>${r.zh}</li>`;
+        const rulesA = RULE_TEXT.slice(1, 8).map(li).join('');     // 1–7：已成牌與強聽牌
+        const rulesB = RULE_TEXT.slice(8).map(li).join('');        // 8–15：弱聽牌與高牌
         return [
           // ===== layout
           { id: 'layout-intro', section: 'layout', title: '這段你會學到：機台畫面',
@@ -18311,8 +18155,11 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
           { id: 'strategy-96', section: 'strategy', title: '別玩：8/5 以下的機台',
             body: '<p>看<b>葫蘆</b>和<b>同花</b>每枚賠多少：9/6 = 99.54%；8/5 = 97.30%；7/5 = 96.15%；6/5 = 95.00%。坐下前先看這兩列，不是 9/6 就換一台。</p>',
             highlight: ['.vp-paytable tr[data-hand="fh"]', '.vp-paytable tr[data-hand="flush"]'] },
-          { id: 'strategy-table', section: 'strategy', title: '持牌策略表 15 條',
-            body: `<p>由上往下，第一條符合就照做：</p><ol class="vp-rules">${rules}</ol>`,
+          { id: 'strategy-table', section: 'strategy', title: '持牌策略表 15 條（1–7）',
+            body: `<p>由上往下，第一條符合就照做：</p><ol class="vp-rules">${rulesA}</ol>`,
+            highlight: null },
+          { id: 'strategy-table-2', section: 'strategy', title: '持牌策略表 15 條（8–15）',
+            body: `<p>前 7 條都不符合，再往下看：</p><ol class="vp-rules" start="8">${rulesB}</ol>`,
             highlight: null },
           { id: 'strategy-q1', section: 'strategy', title: '互動題 1：拆不拆對子？',
             body: '<p>10♠ J♠ Q♠ K♠ K♦——你有一對 K，也有四張同花色的皇家牌。你會留哪幾張？</p>',
@@ -18347,11 +18194,6 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
           }
           if (ctx.isReal) {
             ctx.ready.then(() => { state.ready = true; });
-            // 進場 modal 由框架在 mount 後建立，預設寫「倒數 N 秒」；視訊撲克不倒數 → 改寫文字（見 change-request CR-VP1）
-            ctx.later(() => {
-              const p = document.querySelector('.lg-modal .lg-modal__body p');
-              if (p) p.innerHTML = p.innerHTML.replace(/倒數 <b>\d+ 秒<\/b>/, '<b>不倒數</b>（自己按 DEAL 發牌）');
-            }, 0);
           }
           root.dataset.ready = '1';
         },

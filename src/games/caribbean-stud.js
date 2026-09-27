@@ -40,7 +40,7 @@
   const T = {
     ante: { zh: '底注', en: 'Ante', odds: '1:1' },
     bet: { zh: '跟注', en: 'Bet', odds: '1:1–100:1', note: '2×Ante・看牌後自動放' },
-    progressive: { zh: '累積獎金', en: 'Progressive', odds: 'RM 5' },
+    progressive: { zh: '累積獎金', en: 'Progressive', odds: 'RM 5 · 同花 RM 50 起' },
     dealer: { zh: '莊家', en: 'Dealer' },
     you: { zh: '你', en: 'You' },
     jackpot: { zh: '獎池', en: 'Jackpot' },
@@ -74,6 +74,8 @@
   const label = (c) => LG.cards.label(c);
   const labels = (cs) => cs.map(label).join(' ');
   const describe = (ev) => poker.describe(ev);
+  /** 牌型相同時補一句差在哪一張（踢腳 kicker） */
+  const kickerNote = (a, b) => { const k = LG.poker.kicker(a, b); return k ? `（${k}）` : ''; };
 
   /** 莊家合格：A-K 高牌以上（任何一對以上，或最大兩張為 A、K） */
   function qualifies(dealer) {
@@ -156,12 +158,12 @@
         lines.push(line('ante', ante, 'win', ante, `${nm('ante')} ${fmt(ante)} × 1 = +${fmt(ante)}（拿回 ${fmt(ante * 2)}）`));
         lines.push(line('bet', bet, 'push', 0, `${nm('bet')} ${fmt(bet)} 退回（push）= RM 0`));
       } else if (cmp > 0) {
-        steps.compare = `你的 ${describe(pe)} > 莊的 ${describe(de)} → <b>你贏</b>`;
+        steps.compare = `你的 ${describe(pe)} > 莊的 ${describe(de)}${kickerNote(pe, de)} → <b>你贏</b>`;
         const pay = round2(bet * mult);
         lines.push(line('ante', ante, 'win', ante, `${nm('ante')} ${fmt(ante)} × 1 = +${fmt(ante)}（拿回 ${fmt(ante * 2)}）`));
         lines.push(line('bet', bet, 'win', pay, `${nm('bet')} ${fmt(bet)} × ${mult}（${pe.cat === CAT.HIGH ? 'A-K' : pe.name.zh} ${mult}:1）= +${fmt(pay)}（拿回 ${fmt(bet + pay)}）`));
       } else if (cmp < 0) {
-        steps.compare = `你的 ${describe(pe)} < 莊的 ${describe(de)} → <b>莊贏</b>`;
+        steps.compare = `你的 ${describe(pe)} < 莊的 ${describe(de)}${kickerNote(pe, de)} → <b>莊贏</b>`;
         lines.push(line('ante', ante, 'lose', -ante, `${nm('ante')} ${fmt(ante)} 輸 = −${fmt(ante)}`));
         lines.push(line('bet', bet, 'lose', -bet, `${nm('bet')} ${fmt(bet)} 輸 = −${fmt(bet)}`));
       } else {
@@ -384,8 +386,6 @@
         if (bets.get('progressive') > 0 && !ctx.isTutorial) { setPool(getPool() + PROG_CONTRIB); paintPool(); }
         state.phase = 'dealing';
         markSpots(null);
-        await ctx.wait(500);                         // 讓「停止下注 No more bets」停留一下
-        if (!ctx.alive()) return;
         ctx.dealer.say('發牌', 'Dealing');
         shoe.shuffle();                              // 1 副牌，每局重洗
         if (state.forced) { shoe.stack(state.forced); state.forced = null; }
@@ -569,8 +569,8 @@
             highlight: ['[data-bet="progressive"]', '.cstud-jackpot'],
             setup: (inst) => inst.demo.show('7S 7H 7D 7C 2S', 'AC QD 9H 4S 3D') },
           // ===== strategy
-          { id: 'strategy-edge', section: 'strategy', title: '莊家優勢 <i class="en">House edge</i>',
-            body: `<table class="lg-datatable"><tr><th>注</th><th>優勢</th></tr><tr><td>Ante（照策略）</td><td>5.22%</td></tr><tr><td>累積獎金旁注</td><td>約 ${edge}%</td></tr></table><p>旁注優勢很高（獎池低時遠超過 25%）。</p>`,
+          { id: 'strategy-edge', section: 'strategy', title: '這段你會學到：莊家優勢 <i class="en">House edge</i>',
+            body: `<table class="lg-datatable"><tr><th>注</th><th>優勢</th></tr><tr><td>Ante（照策略）</td><td>5.22%</td></tr><tr><td>累積獎金旁注</td><td>約 ${edge}%</td></tr></table><p>旁注優勢很高：以目前獎池約 ${edge}%（獎池 RM 100,000 時約 86%），獎池要漲到約 RM 1.58M 才打平。</p>`,
             highlight: null },
           { id: 'strategy-rules', section: 'strategy', title: '策略三條',
             body: '<p>① 一對以上 → <b>跟注</b><br>② 只有 A-K → 看莊明牌決定（下一步）<br>③ 比 A-K 小 → <b>棄牌</b></p>',

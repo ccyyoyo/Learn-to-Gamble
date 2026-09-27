@@ -378,6 +378,9 @@
     summary: T.summary,
     houseEdge: [{ bet: { zh: '總體（RTP 94.5%）', en: 'Overall' }, edge: 5.5, best: true }],
     limits: { real: { min: 2, max: 100 }, practice: { min: 2, max: 100 } },
+    countdown: 0,                 // 老虎機不倒數：核心進場 modal 顯示「不倒數」
+    startHint: '按旋轉 SPIN 就轉，只顯示輸贏金額',
+    limitsLabel: (l) => `每轉總注 ${LG.money.fmt(l.min, { cents: true })} – ${LG.money.fmt(l.max, { cents: true })}（20 線）`,
     logic: {
       SYMS, PAYTABLE, STRIPS, STRIP_SPEC, LINES, ORB_DIST, SEEDS, GROWTH, TRIGGER, RESPINS, RESPIN_ORB_P, MINOR_MULT, REF_BET,
       buildStrip, interleave, drawOrbValue, spinBase, orbList, isTrigger, evalBase, runHoldSpin, orbAmount, featureTotal, playSpin,

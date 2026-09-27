@@ -43,7 +43,7 @@
 .ft-fan__num { font-size: 1.6em; line-height: 1; color: var(--gold); font-family: Georgia, serif; }
 .ft-kwok { border-style: dashed; }
 .ft-spot--nim { border-width: 1.5px; }
-.ft-spot__hint { display: none; font-size: .5em; color: var(--push); line-height: 1.2; white-space: nowrap; }
+.ft-spot__hint { display: none; font-size: .5em; color: var(--push); line-height: 1.2; max-width: 100%; overflow-wrap: anywhere; }
 .ft-show-hints .ft-spot__hint { display: block; }
 .ft-spot.ft-push { border-color: var(--push); box-shadow: 0 0 0 2px var(--push); }
 

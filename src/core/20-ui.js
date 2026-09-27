@@ -372,29 +372,58 @@
     if (!b && doc.body) { b = el('div.lg-dealer-banner.is-floating'); doc.body.appendChild(b); }
     return b;
   }
+  // 「No more bets」至少停留 HOLD_MS（×LG.speed），期間的新口令排隊依序顯示（最後一句留在橫幅上）。
+  const HOLD_MS = 600;
+  let holdUntil = 0, holdTimer = 0;
+  const queue = [];
+  const now = () => Date.now();
+  function flushQueue() {
+    holdTimer = 0;
+    while (queue.length) {
+      const wait = holdUntil - now();
+      if (wait > 0) { holdTimer = setTimeout(flushQueue, wait); return; }
+      const args = queue.shift();
+      show(...args);
+    }
+  }
+  function show(zh, en, { speak = false, hold } = {}) {
+    const b = banner();
+    if (!b) return;
+    const ms = hold ?? (/^no more bets/i.test(String(en)) ? HOLD_MS : 0);
+    if (ms > 0) holdUntil = now() + LG.ms(ms);
+    b.innerHTML = `<span class="lg-dealer-banner__zh">${zh}</span>${en ? `<span class="lg-dealer-banner__en">${en}</span>` : ''}`;
+    b.dataset.zh = String(zh).replace(/<[^>]+>/g, '');
+    b.dataset.en = String(en).replace(/<[^>]+>/g, '');
+    b.classList.add('is-active');
+    b.classList.remove('is-pulse');
+    void b.offsetWidth; // 重新觸發動畫
+    b.classList.add('is-pulse');
+    const ss = globalThis.speechSynthesis;
+    if (speak && en && ss && globalThis.SpeechSynthesisUtterance) {
+      try {
+        ss.cancel();
+        const u = new globalThis.SpeechSynthesisUtterance(b.dataset.en);
+        u.lang = 'en-US'; u.rate = 1;
+        ss.speak(u);
+      } catch { /* 沒有語音也沒關係 */ }
+    }
+  }
   const dealer = {
-    /** 荷官口令橫幅（中/英兩行）；speak=true 時用 speechSynthesis 念英文 */
-    say(zh, en = '', { speak = false } = {}) {
-      const b = banner();
-      if (!b) return;
-      b.innerHTML = `<span class="lg-dealer-banner__zh">${zh}</span>${en ? `<span class="lg-dealer-banner__en">${en}</span>` : ''}`;
-      b.dataset.zh = String(zh).replace(/<[^>]+>/g, '');
-      b.dataset.en = String(en).replace(/<[^>]+>/g, '');
-      b.classList.add('is-active');
-      b.classList.remove('is-pulse');
-      void b.offsetWidth; // 重新觸發動畫
-      b.classList.add('is-pulse');
-      const ss = globalThis.speechSynthesis;
-      if (speak && en && ss && globalThis.SpeechSynthesisUtterance) {
-        try {
-          ss.cancel();
-          const u = new globalThis.SpeechSynthesisUtterance(b.dataset.en);
-          u.lang = 'en-US'; u.rate = 1;
-          ss.speak(u);
-        } catch { /* 沒有語音也沒關係 */ }
+    /**
+     * 荷官口令橫幅（中/英兩行）；speak=true 時用 speechSynthesis 念英文。
+     * hold：這句至少停留幾毫秒（×LG.speed）再被下一句蓋掉；預設「No more bets」600ms，其餘 0。
+     */
+    say(zh, en = '', opts = {}) {
+      if (queue.length || holdUntil > now()) {
+        queue.push([zh, en, opts]);
+        if (!holdTimer) holdTimer = setTimeout(flushQueue, Math.max(0, holdUntil - now()));
+        return;
       }
+      show(zh, en, opts);
     },
     clear() {
+      queue.length = 0; holdUntil = 0;
+      if (holdTimer) { clearTimeout(holdTimer); holdTimer = 0; }
       const b = doc.querySelector('.lg-dealer-banner');
       if (!b) return;
       b.classList.remove('is-active', 'is-pulse');
@@ -624,11 +653,17 @@
   function actionBar(container, items = []) {
     container.classList.add('lg-actions');
     const map = new Map();
+    const own = new WeakMap();
     const paint = (b, it) => {
       b.innerHTML = it.en ? term(it.label, it.en) : String(it.label ?? '');
       b.disabled = !!it.disabled;
       b.hidden = !!it.hidden;
-      b.className = ['lg-btn', it.primary && 'lg-btn--primary', it.danger && 'lg-btn--danger', it.className].filter(Boolean).join(' ');
+      // 只替換動作列自己加的 class，保留外部加上的（例如教學高亮 .lg-spot--hl、.lg-dimmed）
+      const next = ['lg-btn', it.primary && 'lg-btn--primary', it.danger && 'lg-btn--danger', ...String(it.className || '').split(/\s+/)].filter(Boolean);
+      const prev = own.get(b) || [];
+      prev.forEach((c) => { if (!next.includes(c)) b.classList.remove(c); });
+      next.forEach((c) => b.classList.add(c));
+      own.set(b, next);
     };
     const api = {
       el: container,

@@ -36,7 +36,7 @@ test('三公 點數與牌型：K-Q-J = 三公；K-9-Q = 9 點兩公；5-5-A = 1 
   assert.equal(E('8S KH 3C').points, 1);
 });
 
-test('三公 比牌：三公 > 9 > … > 0；同 8 點兩公 > 一公；再比最高單張；完全同 → 莊勝', () => {
+test('三公 比牌：三公 > 9 > … > 0；同 8 點兩公 > 一公；點數與公數全同 → 莊勝（不比最高單張）', () => {
   assert.equal(compare(E('JS QH KD'), E('9S TH KD')).win, true, '三公 > 9 點');
   assert.equal(compare(E('9S TH KD'), E('JS QH KD')).win, false);
   assert.equal(compare(E('9S TH 2D'), E('8S TH 2D')).win, true);
@@ -44,12 +44,15 @@ test('三公 比牌：三公 > 9 > … > 0；同 8 點兩公 > 一公；再比�
   let r = compare(E('QD 8H JC'), E('8S KH TC'));
   assert.deepEqual([r.win, r.by], [true, 'pics'], '同 8 點：兩公 > 一公');
   r = compare(E('4H 4D QS'), E('8S KH TC'));
-  assert.deepEqual([r.win, r.by], [false, 'top'], '同 8 點一公：Q < K');
+  assert.deepEqual([r.win, r.by], [false, 'tie'], '同 8 點一公：不比單張 → 莊勝');
+  r = compare(E('8S KH TC'), E('4H 4D QS'));
+  assert.deepEqual([r.win, r.by], [false, 'tie'], '同 8 點一公：玩家單張較大也不贏');
   r = compare(E('9C 9D KS'), E('8S KH TC'));
   assert.deepEqual([r.win, r.by], [false, 'tie'], '完全同 → 莊勝');
   r = compare(E('KS QS JS'), E('KH QH JH'));
   assert.deepEqual([r.win, r.by], [false, 'tie'], '三公對三公同最高 → 莊勝');
-  assert.equal(compare(E('KS QS JS'), E('QH QD JH')).win, true, '三公比最高單張 K > Q');
+  r = compare(E('KS QS JS'), E('QH QD JH'));
+  assert.deepEqual([r.win, r.by], [false, 'tie'], '三公對三公 → 莊勝');
 });
 
 test('三公 賠付：三公 3:1、9 點 2:1、其他 1:1；莊 9 點/三公輸 2/3 倍', () => {
@@ -83,10 +86,10 @@ test('三公 Monte Carlo 100 萬局 [slow]', { skip: process.env.npm_lifecycle_e
   const r = simulate(1000000);
   LG.rng.seed(null);
   assert.equal(r.rounds, 1000000);
-  // 精確枚舉 0.8935%；100 萬局標準誤約 0.12%
-  assert.ok(r.edge > 0 && r.edge < 6, `優勢 ${r.edge}% 應為正且 < 6%`);
+  // 精確枚舉 4.1713%、和局率 3.776%；100 萬局標準誤約 0.12%
+  assert.ok(r.edge > 3.5 && r.edge < 5, `優勢 ${r.edge}% 應約 4.2%（3.5–5）`);
   assert.ok(Math.abs(r.edge - MC_EDGE) < 0.4, `模擬 ${r.edge.toFixed(3)}% vs houseEdge ${MC_EDGE}%`);
-  assert.ok(r.tieToBanker > 0.005 && r.tieToBanker < 0.012, `和局率 ${r.tieToBanker}`);
+  assert.ok(r.tieToBanker > 0.033 && r.tieToBanker < 0.043, `和局率 ${r.tieToBanker}`);
 });
 
 test('三公 教學步驟符合規範（≥12 步、四段、≥3 action）', () => {

@@ -35,8 +35,8 @@
       black: { zh: '黑', en: 'Black' },
       odd: { zh: '單', en: 'Odd' },
       even: { zh: '雙', en: 'Even' },
-      low: { zh: '小', en: '1–18' },
-      high: { zh: '大', en: '19–36' },
+      low: { zh: '小', en: '1–18', label: '1–18 LOW' },
+      high: { zh: '大', en: '19–36', label: '19–36 HIGH' },
     },
     dozenEn: ['1st 12', '2nd 12', '3rd 12'],
     colEn: '2 to 1',
@@ -298,7 +298,7 @@
           cell(`dozen-${d}`, ['rl-out', 'rl-dozen'], gridVars([2 + 4 * (d - 1), 2, 4], [4, 2 + 4 * (d - 1), 1, 4]), `第${d}打`, T.dozenEn[d - 1])));
         EVEN_ORDER.forEach((id, i) => {
           const o = T.outside[id];
-          board.appendChild(cell(id, ['rl-out', 'rl-even', `rl-even--${id}`], gridVars([2 + 2 * i, 1, 2], [5, 2 + 2 * i, 1, 2]), o.zh, o.en));
+          board.appendChild(cell(id, ['rl-out', 'rl-even', `rl-even--${id}`], gridVars([2 + 2 * i, 1, 2], [5, 2 + 2 * i, 1, 2]), o.zh, o.label || o.en));
         });
         // 格線熱區
         const hot = el('div.rl-hot', { style: gridVars([1, 3, 14, 3], [1, 1, 3, 14]) });
@@ -497,19 +497,19 @@
         state.spin = null;
         if (real) { clearMarks(); removeDolly(); }   // 荷官拿走 dolly 後才能再下注
         bets.unlock();
-        ctx.bettingWindow({ bets, seconds: COUNTDOWN, label: T.spinBtn, onTick: real ? onTick : undefined, onClose: onNoMoreBets });
+        // 真實：closeAt → 剩 5 秒時框架喊 No more bets 並鎖注，倒數跑完才 onClose
+        ctx.bettingWindow({ bets, seconds: COUNTDOWN, label: T.spinBtn, onTick: real ? onTick : undefined, onClose: onNoMoreBets,
+          closeAt: real ? NMB_AT : undefined, onNoMoreBets: callNoMoreBets });
       }
       function onTick(n) {
         if (state.phase !== 'betting') return;
         if (n <= BALL_AT && !state.ballLaunched) { state.ballLaunched = true; launchBall(); }
-        if (n <= NMB_AT) callNoMoreBets();
       }
-      /** 真實模式：倒數剩 5 秒喊 No more bets，球開始減速落格 */
+      /** 真實模式：倒數剩 5 秒（框架已喊 No more bets 並鎖注），球開始減速落格 */
       function callNoMoreBets() {
         if (state.phase !== 'betting') return;
+        if (!state.ballLaunched) { state.ballLaunched = true; launchBall(); }
         state.phase = 'closing';
-        ctx.dealer.say('停止下注', 'No more bets');
-        bets.lock();
         state.result = roll();
         state.spin = land(state.result);
       }

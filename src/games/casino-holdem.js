@@ -432,8 +432,6 @@
         ctx.bank.debit(state.staked);
         state.phase = 'dealing';
         state.lastAction = null;
-        await ctx.wait(500);                   // 荷官說完 No more bets 再發牌
-        if (!ctx.alive()) return;
         ctx.dealer.say(...T.dealing);
         const hand = dealHand(nextShoe());
         state.hand = hand;
@@ -510,7 +508,7 @@
         state.phase = 'settled';
         bets.unlock();
         bets.clear();
-        ctx.checkBroke();
+        ctx.checkBroke(3 * ctx.limits.min);          // 最低 Ante + 翻牌後 Call（2× Ante）（CR-3）
         ctx.nextRound(startRound);
       }
 
@@ -534,6 +532,7 @@
         const formula = r.lines.map((l) => l.formula).join('<br>') + `<br>淨 <b>${money.fmtSigned(r.net)}</b>`;
         const why = [];
         const pN = handName(r.p), dN = handName(r.d);
+        const kk = (() => { const k = LG.poker.kicker(r.p, r.d); return k ? `（${k}）` : ''; })();   // 牌型相同 → 踢腳
         if (r.outcome === 'fold') {
           why.push('棄牌只輸底注 Ante；翻牌後就不用再放 Call。');
           const alt = settle({ ante: r.lines[0].stake, aa: 0 }, hand, { folded: false });
@@ -541,9 +540,9 @@
         } else if (r.outcome === 'noqual') {
           why.push(`莊家最佳是 ${dN}，沒到一對 4 → 不合格：Ante 照賠付表（你的${r.p.name.zh} ${antePayOf(r.p.cat)}:1），Call 退回。`);
         } else if (r.outcome === 'win') {
-          why.push(`莊家 ${dN} 合格；你的 ${pN} 比較大 → Ante 照表 ${antePayOf(r.p.cat)}:1、Call 1:1。`);
+          why.push(`莊家 ${dN} 合格；你的 ${pN} 比較大${kk} → Ante 照表 ${antePayOf(r.p.cat)}:1、Call 1:1。`);
         } else if (r.outcome === 'lose') {
-          why.push(`莊家 ${dN} 合格，而且比你的 ${pN} 大 → Ante 和 Call 都輸。`);
+          why.push(`莊家 ${dN} 合格，而且比你的 ${pN} 大${kk} → Ante 和 Call 都輸。`);
         } else {
           why.push('兩邊最佳 5 張一樣大 → 平手，Ante 和 Call 都退回。');
         }

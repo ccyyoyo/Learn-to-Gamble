@@ -91,7 +91,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
 .lg-btn--primary:hover { background: linear-gradient(180deg, #f0d27a, #dfbb58); }
 .lg-btn--ghost { background: transparent; }
 .lg-btn--danger { background: transparent; color: var(--lose); border-color: rgba(255, 92, 92, .5); }
-.lg-btn--sm { min-height: 36px; padding: 4px 12px; font-size: .9em; }
+.lg-btn--sm { min-height: var(--tap); padding: 4px 12px; font-size: .9em; }  /* 觸控目標 ≥ 44px（07-test-plan §4） */
 .lg-btn.is-locked { opacity: .55; }
 .lg-btn.is-shake { animation: lg-shake .35s; }
 @keyframes lg-shake { 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
@@ -107,6 +107,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
 .lg-topbar__back { color: var(--text); text-decoration: none; min-height: var(--tap); display: inline-flex; align-items: center; padding: 0 8px; white-space: nowrap; }
 .lg-topbar__title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .lg-topbar .lg-balance { font-weight: 700; color: var(--gold); white-space: nowrap; }
+.lg-topbar .lg-balance.is-sandbox::before { content: "示範 "; font-size: .72em; font-weight: 600; color: var(--muted); }
 .lg-topbar__menu { min-width: var(--tap); min-height: var(--tap); border: 0; background: transparent; font-size: 22px; cursor: pointer; border-radius: 50%; }
 .lg-modebar { display: flex; align-items: center; gap: 10px; padding: 8px; flex-wrap: wrap; }
 .lg-modebar__limits { font-size: .85em; color: var(--muted); }
@@ -124,10 +125,10 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
 .lg-switch__knob::after { content: ""; position: absolute; left: 2px; top: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform .2s; }
 .lg-switch.is-on .lg-switch__knob { background: var(--win); }
 .lg-switch.is-on .lg-switch__knob::after { transform: translateX(14px); }
-.lg-variantbar { display: flex; gap: 6px; padding: 0 8px 8px; overflow-x: auto; align-items: center; scrollbar-width: none; }
+.lg-variantbar { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 8px 8px; align-items: center; }
 .lg-variantbar__k { color: var(--muted); font-size: .85em; white-space: nowrap; }
 .lg-variantbar__btn {
-  min-height: 36px; padding: 4px 12px; border: 1px solid var(--border); border-radius: 999px;
+  min-height: var(--tap); padding: 4px 12px; border: 1px solid var(--border); border-radius: 999px;
   color: var(--text); text-decoration: none; white-space: nowrap; display: inline-flex; align-items: center; gap: 3px; font-size: .9em;
 }
 .lg-variantbar__btn.is-active { border-color: var(--gold); color: var(--gold); background: rgba(217, 180, 81, .1); }
@@ -315,7 +316,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
 .lg-datatable th { color: var(--muted); font-weight: 600; background: var(--panel-2); position: sticky; top: 0; }
 .lg-datatable tr.is-hl td, .lg-datatable td.is-hl { background: rgba(217, 180, 81, .18); color: var(--gold); }
 .lg-tabs__bar { display: flex; gap: 4px; overflow-x: auto; border-bottom: 1px solid var(--border); }
-.lg-tabs__btn { min-height: 40px; padding: 6px 12px; background: transparent; border: 0; border-bottom: 2px solid transparent; cursor: pointer; white-space: nowrap; color: var(--muted); }
+.lg-tabs__btn { min-height: var(--tap); padding: 6px 12px; background: transparent; border: 0; border-bottom: 2px solid transparent; cursor: pointer; white-space: nowrap; color: var(--muted); }
 .lg-tabs__btn.is-active { color: var(--gold); border-bottom-color: var(--gold); }
 .lg-tabs__panel { padding: 10px 0; }
 
@@ -375,9 +376,10 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
 .lg-flash.is-push { color: var(--push); }
 @keyframes lg-flash { 0% { opacity: 0; transform: translate(-50%, -30%) scale(.8); } 15% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); } 70% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -70%); } }
 
-/* ------------------------------------------------------------ 教學 spotlight */
+/* ------------------------------------------------------------ 教學 spotlight
+   不設 position（絕對定位的熱區被高亮時才不會跑位）；z-index 只對已定位元素或 flex/grid 子項生效 */
 .lg-spot--hl {
-  position: relative; z-index: 5;
+  z-index: 5;
   outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 10px;
   animation: lg-breathe 1.4s ease-in-out infinite;
 }
@@ -442,6 +444,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
 .lg-gcard__en { color: var(--muted); font-size: .82em; }
 .lg-gcard__summary { color: #cfd6dc; font-size: .9em; margin: 0; }
 .lg-gcard__edge { font-size: .85em; color: var(--gold); }
+.lg-gcard__variants { font-size: .78em; color: var(--muted); margin-top: -4px; }
 .lg-gcard__stats { font-size: .82em; color: var(--muted); }
 .lg-gcard__modes { display: flex; gap: 6px; margin-top: 4px; }
 .lg-gcard__modes .lg-btn { flex: 1; padding: 4px 6px; font-size: .85em; }
@@ -455,6 +458,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
 .lg-lb td:first-child, .lg-lb th:first-child { width: 28px; text-align: center; color: var(--muted); }
 .lg-lb__edge { white-space: nowrap; font-weight: 700; color: var(--gold); }
 .lg-lb__edge small { display: block; font-weight: 400; color: var(--muted); font-size: .8em; }
+.lg-lb__var { display: block; color: var(--muted); font-size: .8em; margin-top: 2px; }
 .lg-lb__room td { color: var(--muted); border-top: 2px solid var(--border); }
 .lg-lb__room .lg-lb__edge { white-space: normal; color: var(--accent); font-weight: 600; }
 .lg-lb a { color: var(--text); }
@@ -487,7 +491,7 @@ i.en, .en { font-style: normal; opacity: .75; font-size: .85em; letter-spacing: 
 .lg-betpanel__group { display: flex; flex-direction: column; gap: 2px; }
 .lg-betpanel__k { font-size: .78em; color: var(--muted); }
 .lg-betpanel__stepper { display: flex; align-items: center; gap: 4px; background: var(--panel); border: 1px solid var(--border); border-radius: 999px; padding: 2px; }
-.lg-betpanel__btn { min-width: 36px; padding: 0; font-size: 18px; }
+.lg-betpanel__btn { min-width: var(--tap); padding: 0; font-size: 18px; }
 .lg-betpanel__v { min-width: 64px; text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; }
 .lg-betpanel__max { background: #6a1b1b; border-color: #a33; }
 .lg-betpanel.is-max .lg-betpanel__max { background: var(--lose); color: #fff; }

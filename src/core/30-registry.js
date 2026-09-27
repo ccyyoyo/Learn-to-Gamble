@@ -15,7 +15,8 @@
 
   /**
    * 註冊遊戲。必填：id, category, name{zh,en}, create(ctx)。
-   * 選填擴充：countdown（真實模式倒數秒數，預設 15，用於進場說明）、demo（示範遊戲）。
+   * 選填擴充：countdown（真實模式倒數秒數，預設 15；0 = 不倒數）、limitsLabel（真實模式限注文字，字串或 (limits, mode) => 字串）、
+   * variants[i].houseEdge（變體別優勢）、demo（示範遊戲）。
    */
   LG.registerGame = function registerGame(def) {
     if (!def || !def.id || typeof def.create !== 'function') throw Error('registerGame: 需要 id 與 create(ctx)');
@@ -38,11 +39,23 @@
       .sort((a, b) => (a.order - b.order) || a.id.localeCompare(b.id));
   };
 
-  /** def.houseEdge 中 best:true 的一筆；沒有就取 edge 最小值 */
-  LG.bestEdge = function bestEdge(def) {
-    const list = (def && def.houseEdge) || [];
+  /** 某變體的 houseEdge 陣列：variants[i].houseEdge 優先，否則 def.houseEdge */
+  LG.edgesFor = function edgesFor(def, variantId) {
+    const v = variantId && ((def && def.variants) || []).find((x) => x.id === variantId);
+    return (v && v.houseEdge && v.houseEdge.length ? v.houseEdge : (def && def.houseEdge)) || [];
+  };
+
+  /** houseEdge 中 best:true 的一筆；沒有就取 edge 最小值。給 variantId 時用該變體的 houseEdge（若有） */
+  LG.bestEdge = function bestEdge(def, variantId) {
+    const list = LG.edgesFor(def, variantId);
     if (!list.length) return null;
     return list.find((x) => x.best) || [...list].sort((a, b) => a.edge - b.edge)[0];
+  };
+
+  /** 有自己 houseEdge 的變體 → [{variant, best}]（首頁卡片/排行榜顯示變體資訊） */
+  LG.variantEdges = function variantEdges(def) {
+    return ((def && def.variants) || []).filter((v) => v.houseEdge && v.houseEdge.length)
+      .map((v) => ({ variant: v, best: LG.bestEdge(def, v.id) }));
   };
 
   /** 依模式與變體算出限注 {min,max}（variant.limits 覆寫 def.limits） */

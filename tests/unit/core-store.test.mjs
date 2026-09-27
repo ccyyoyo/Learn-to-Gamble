@@ -142,3 +142,23 @@ test('events：on / off / once；handler 例外不影響其他', () => {
   console.error = origErr;
   assert.deepEqual(got, ['a1', 'b1']);
 });
+
+test('bank.sandbox：教學示範籌碼不寫 store，關閉後回到真實餘額', () => {
+  const LG = loadLG({ core: CORE });
+  LG.bank.debit(995);
+  assert.equal(LG.bank.balance(), 5);
+  let events = 0;
+  LG.events.on('bank:change', () => { events += 1; });
+  LG.bank.sandbox(1000);
+  assert.equal(LG.bank.isSandbox(), true);
+  assert.equal(LG.bank.balance(), 1000);
+  LG.bank.debit(100);
+  LG.bank.credit(300);
+  assert.equal(LG.bank.balance(), 1200);
+  assert.equal(LG.store.get().bank, 5, 'store 不變');
+  assert.throws(() => LG.bank.debit(5000), /INSUFFICIENT/);
+  LG.bank.sandbox(null);
+  assert.equal(LG.bank.isSandbox(), false);
+  assert.equal(LG.bank.balance(), 5);
+  assert.ok(events >= 4);
+});

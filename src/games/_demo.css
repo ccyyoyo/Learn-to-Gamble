@@ -1,9 +1,0 @@
-/* 示範遊戲「猜大小」— 遊戲樣式只用自己的前綴（demo-） */
-.demo-table { display: flex; flex-direction: column; gap: 10px; align-items: stretch; }
-.demo-cardslot { min-height: 116px; }
-.demo-rule { text-align: center; font-size: .85em; opacity: .85; }
-.demo-spots { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding-bottom: 10px; }
-.demo-spot { min-height: 96px; padding-bottom: 28px; }
-.demo-spot .lg-spot__zh { font-size: 1.6em; }
-.demo-spot__rule { font-size: .72em; opacity: .7; }
-.demo-hint { margin: 8px 8px 0; }

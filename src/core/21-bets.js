@@ -4,7 +4,7 @@
 // 金流約定（所有遊戲一致）：
 //   下注階段「不扣款」；籌碼只是放在 Bets 模型上。可用餘額 = bank.balance() − bets.total()。
 //   No more bets（bettingWindow 的 onClose）後由遊戲 ctx.bank.debit(bets.total())，
-//   結算時 ctx.bank.credit(拿回金額含本金)。見 src/games/_demo.js。
+//   結算時 ctx.bank.credit(拿回金額含本金)。見 src/games/sicbo.js。
 (() => {
   const LG = globalThis.LG;
   const { round2, fmt } = LG.money;

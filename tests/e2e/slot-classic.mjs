@@ -85,7 +85,7 @@ export default async function (t) {
   await t.test('真實模式：無倒數、開始後才能 SPIN、只閃金額、餘額正確', async (page, h) => {
     await h.openGame(page, ID, 'real');
     const txt = await page.textContent('.lg-modal');
-    h.assert(txt.includes('沒有倒數') && txt.includes('RM 25.00'), '進場說明：' + txt);
+    h.assert(txt.includes('不倒數') && txt.includes('RM 25.00'), '進場說明：' + txt);
     h.assert(await page.$('[data-action="spin"]:disabled'), '按開始前不能轉');
     await h.startReal(page);
     await page.waitForSelector('[data-action="spin"]:not(:disabled)');

@@ -8,16 +8,34 @@
   const RAKE_TEXT = '無莊家優勢，抽水 5%（≤ RM 50）';
   let offs = [];
 
-  const pctStr = (n) => `${Number(n).toFixed(2).replace(/\.?0+$/, '')}%`;
-  const rtpStr = (edge) => `RTP ${(100 - edge).toFixed(2).replace(/\.?0+$/, '')}%`;
+  // 與 00-common.md §4 同格式：桌遊兩位小數（2.50%），老虎機一位（6.0%）
+  const pctStr = (n, def) => `${Number(n).toFixed(def && def.category === 'slots' && !/^video/.test(def.id) ? 1 : 2)}%`;
+  const rtpStr = (edge, def) => `RTP ${pctStr(100 - edge, def)}`;
 
   function edgeLine(def) {
     if (def.category === 'poker-room') return RAKE_TEXT;
     const b = LG.bestEdge(def);
     if (!b) return '';
     const bet = b.bet ? `（${b.bet.zh || ''}）` : '';
-    const rtp = def.category === 'slots' ? ` · ${rtpStr(b.edge)}` : '';
-    return `莊家優勢 ${b.approx ? '≈' : ''}${pctStr(b.edge)}${bet}${rtp}`;
+    const rtp = def.category === 'slots' ? ` · ${rtpStr(b.edge, def)}` : '';
+    return `莊家優勢 ${b.approx ? '≈' : ''}${pctStr(b.edge, def)}${bet}${rtp}`;
+  }
+
+  /** 變體別優勢（variants[i].houseEdge）→ '傳統 1.06% · 免佣 1.46% …'；沒有就空字串 */
+  function variantLine(def) {
+    const list = LG.variantEdges(def).filter((x) => x.best);
+    if (!list.length) return '';
+    return list.map(({ variant, best }) => `${variant.name.zh} ${best.approx ? '≈' : ''}${pctStr(best.edge)}`).join(' · ');
+  }
+  /** 排行榜：與代表值不同的變體 → '免佣 / 老虎：莊（免佣…）1.46%' */
+  function variantDiff(def, b) {
+    const groups = new Map();
+    LG.variantEdges(def).forEach(({ variant, best }) => {
+      if (!best || (best.edge === b.edge && (best.bet && best.bet.zh) === (b.bet && b.bet.zh))) return;
+      const k = `${best.bet ? best.bet.zh : ''} ${best.approx ? '≈' : ''}${pctStr(best.edge)}`;
+      groups.set(k, [...(groups.get(k) || []), variant.name.zh]);
+    });
+    return [...groups].map(([k, names]) => `${names.join(' / ')}：${k}`).join('；');
   }
 
   function ring(pct) {
@@ -43,6 +61,7 @@
       ]),
       el('p.lg-gcard__summary', { text: def.summary || '' }),
       el('div.lg-gcard__edge', { text: edgeLine(def) }),
+      variantLine(def) ? el('div.lg-gcard__variants', { html: `變體 <i class="en">Variants</i>：${variantLine(def)}` }) : null,
       el('div.lg-gcard__stats', { html: s.rounds ? `已玩 ${s.rounds} 局 · 淨 <b class="${s.net > 0 ? 'lg-win' : s.net < 0 ? 'lg-lose' : ''}">${LG.money.fmtSigned(s.net)}</b>` : '還沒玩過' }),
       modes,
     ]);
@@ -66,8 +85,8 @@
     const tbody = el('tbody', rows.map(({ d, b }, i) => el('tr', { dataset: { game: d.id, edge: b.edge } }, [
       el('td.lg-lb__rank', { text: String(i + 1) }),
       el('td', { html: `<a href="${LG.router.href(d.id, 'practice')}">${d.name.zh}</a> <i class="en">${d.name.en}</i>` }),
-      el('td', { html: b.bet ? term(b.bet.zh || '', b.bet.en || '') : '' }),
-      el('td.lg-lb__edge', { html: `${b.approx ? '≈' : ''}${pctStr(b.edge)}${d.category === 'slots' ? `<small>${rtpStr(b.edge)}</small>` : ''}` }),
+      el('td', { html: (b.bet ? term(b.bet.zh || '', b.bet.en || '') : '') + (variantDiff(d, b) ? `<small class="lg-lb__var">${variantDiff(d, b)}</small>` : '') }),
+      el('td.lg-lb__edge', { html: `${b.approx ? '≈' : ''}${pctStr(b.edge, d)}${d.category === 'slots' ? `<small>${rtpStr(b.edge, d)}</small>` : ''}` }),
     ])));
     tbody.appendChild(el('tr.lg-lb__room', { dataset: { game: 'poker-room' } }, [
       el('td.lg-lb__rank', { text: '—' }),
@@ -138,5 +157,5 @@
 
   function unmount() { offs.forEach((f) => f()); offs = []; }
 
-  LG.home = { render, unmount, edgeLine };
+  LG.home = { render, unmount, edgeLine, variantLine };
 })();

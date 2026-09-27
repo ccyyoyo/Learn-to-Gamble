@@ -141,6 +141,7 @@
     summary: '7 張分成 5 張高手與 2 張低手，兩手都贏莊家才算贏；約四成是和局。',
     houseEdge: [
       { bet: { zh: '玩家不做莊', en: 'Player never banks' }, edge: 2.84, best: true },
+      { bet: { zh: 'Fortune 旁注（模擬）', en: 'Fortune Bonus' }, edge: 8.6, approx: true },
     ],
     limits: { real: { min: 50, max: 3000 }, practice: { min: 10, max: 100000 } },
     denoms: [10, 25, 50, 100, 500, 1000],
@@ -479,9 +480,13 @@
         return { ph, pl, dh, dl };
       }
 
-      function sideText(side, you, dealer) {
-        if (side > 0) return `你的「${you}」> 莊的「${dealer}」→ 你贏`;
-        if (side < 0) return `你的「${you}」< 莊的「${dealer}」→ 莊贏`;
+      function sideText(side, you, dealer, evY, evD) {
+        // 牌型相同 → 說明差在哪一張（順子不適用：房規 A-2-3-4-5 是第二大順，不能只看最大張）
+        const C = LG.poker.CATEGORY;
+        const k = side && evY && evD && evY.cat !== C.STRAIGHT && evY.cat !== C.STRAIGHT_FLUSH ? LG.poker.kicker(evY, evD) : '';
+        const kk = k ? `（${k}）` : '';
+        if (side > 0) return `你的「${you}」> 莊的「${dealer}」${kk}→ 你贏`;
+        if (side < 0) return `你的「${you}」< 莊的「${dealer}」${kk}→ 莊贏`;
         return `你和莊都是「${you}」→ 一模一樣（copy）歸莊`;
       }
 
@@ -519,7 +524,7 @@
         if (r.cmp.foul) {
           why = `你的低手（${describeLow(ev.pl)}）比高手（${describeHigh(ev.ph)}）大，這叫 Foul，整手直接判輸。`;
         } else {
-          why = `高手：${sideText(r.cmp.high, describeHigh(ev.ph), describeHigh(ev.dh))}。低手：${sideText(r.cmp.low, describeLow(ev.pl), describeLow(ev.dl))}。`
+          why = `高手：${sideText(r.cmp.high, describeHigh(ev.ph), describeHigh(ev.dh), ev.ph, ev.dh)}。低手：${sideText(r.cmp.low, describeLow(ev.pl), describeLow(ev.dl), ev.pl, ev.dl)}。`
             + (res === 'win' ? '兩手都贏才算贏，贏了要付 5% 佣金。' : res === 'push' ? '一贏一輸 = push，本金退回。' : `兩手都沒贏${r.cmp.high === 0 || r.cmp.low === 0 ? '（copy 算莊贏）' : ''} → 輸。`);
         }
         if (!sameIds(P.low, state.hw.low)) why += `<br>房規排法：高手 ${cardsText(state.hw.high)}｜低手 ${cardsText(state.hw.low)}（第 ${state.hw.rule} 條）。`;
