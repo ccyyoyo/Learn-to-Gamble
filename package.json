@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "node build.mjs",
-    "test": "node --test --test-name-pattern='^(?!.*\\[slow\\]).*$' 'tests/unit/**/*.test.mjs'",
+    "test": "node --test --test-skip-pattern='\\[slow\\]' 'tests/unit/**/*.test.mjs'",
     "test:slow": "node --test 'tests/unit/**/*.test.mjs'",
     "e2e": "NODE_PATH=$(npm root -g) node tests/e2e/_run.mjs"
   },
