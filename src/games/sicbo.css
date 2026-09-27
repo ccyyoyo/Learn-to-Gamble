@@ -1,0 +1,116 @@
+/* 骰寶 Sic Bo — 前綴 sb- */
+.sb-table { display: flex; flex-direction: column; gap: 10px; }
+
+/* ---- 上方：骰盅 + 唱點 + 最近 10 局 */
+.sb-top { display: flex; gap: 12px; align-items: center; }
+.sb-top__side { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.sb-call { min-height: 1.4em; font-size: .95em; color: #fff; }
+.sb-call b { color: var(--gold); }
+.sb-history__k { font-size: .68em; opacity: .7; }
+.sb-history { display: flex; flex-wrap: wrap; gap: 3px; }
+.sb-hist { display: inline-flex; flex-direction: column; align-items: center; min-width: 24px; padding: 1px 3px; border-radius: 6px; background: rgba(0, 0, 0, .3); font-size: .72em; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.sb-hist small { font-size: .85em; opacity: .85; }
+.sb-hist--big small { color: #ff8a8a; }
+.sb-hist--small small { color: #8ab8ff; }
+.sb-hist--triple small { color: var(--gold); }
+.sb-hist--empty { opacity: .5; font-size: .8em; }
+
+.sb-bowl { position: relative; flex: 0 0 auto; width: 132px; height: 96px; }
+.sb-plate {
+  position: absolute; inset: 14px 0 0; border-radius: 50%;
+  background: radial-gradient(circle at 50% 40%, #f4efe4 0%, #d6cfbd 60%, #9c937f 100%);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, .5), inset 0 -4px 8px rgba(0, 0, 0, .2);
+  display: flex; align-items: center; justify-content: center;
+}
+.sb-dice { display: flex; gap: 4px; }
+.sb-cover {
+  position: absolute; left: 6px; right: 6px; top: 0; bottom: 8px; border-radius: 50% 50% 44% 44% / 60% 60% 40% 40%;
+  background: radial-gradient(circle at 40% 30%, #fbe3a0 0%, var(--gold) 40%, #8a6a1f 100%);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, .55), inset 0 -6px 10px rgba(0, 0, 0, .3);
+  display: flex; align-items: center; justify-content: center; color: #3b2a07; font-weight: 800; font-size: .8em; text-align: center;
+  transition: transform .45s ease, opacity .45s ease; transform-origin: 50% 100%;
+}
+.sb-cover .en { color: #3b2a07; }
+.sb-bowl.is-open .sb-cover { transform: translateY(-70%) rotate(-12deg); opacity: 0; pointer-events: none; }
+.sb-bowl.is-idle .sb-dice { opacity: .45; }
+.sb-bowl.is-covered .sb-dice { visibility: hidden; }
+.sb-bowl.is-shaking { animation: sb-shake var(--sb-shake, 1500ms) ease-in-out; }
+@keyframes sb-shake {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  10% { transform: translate(-6px, -3px) rotate(-5deg); } 20% { transform: translate(6px, 2px) rotate(5deg); }
+  30% { transform: translate(-6px, 3px) rotate(-4deg); } 40% { transform: translate(6px, -3px) rotate(4deg); }
+  50% { transform: translate(-5px, -2px) rotate(-5deg); } 60% { transform: translate(5px, 3px) rotate(5deg); }
+  70% { transform: translate(-4px, 2px) rotate(-3deg); } 80% { transform: translate(4px, -2px) rotate(3deg); }
+  90% { transform: translate(-2px, 1px) rotate(-1deg); }
+}
+@media (prefers-reduced-motion: reduce) { .sb-bowl.is-shaking { animation: none; } .sb-cover { transition: none; } }
+
+/* ---- 骰子（CSS 點陣） */
+.sb-die {
+  --s: 30px; display: inline-grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  width: var(--s); height: var(--s); padding: calc(var(--s) * .1); box-sizing: border-box;
+  background: #fff; border-radius: 22%; box-shadow: 0 2px 4px rgba(0, 0, 0, .45), inset 0 -2px 3px rgba(0, 0, 0, .12);
+  vertical-align: middle; flex: 0 0 auto;
+}
+.sb-die i { display: block; border-radius: 50%; margin: 14%; }
+.sb-die i.on { background: #16181c; }
+.sb-die[data-v="1"] i.on, .sb-die[data-v="4"] i.on { background: #d0202b; }
+.sb-die--sm { --s: 22px; }
+.sb-die--xs { --s: 13px; border-radius: 20%; padding: 1px; box-shadow: none; }
+.sb-die--xs i { margin: 8%; }
+.sb-dicerow { display: inline-flex; gap: 4px; vertical-align: middle; margin-right: 6px; }
+.sb-icons { display: inline-flex; gap: 1px; margin-left: 2px; vertical-align: middle; }
+
+/* ---- 檯面：手機先（大小單雙在上，其餘全寬） */
+.sb-board {
+  display: grid; gap: 6px;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: "l r" "c c";
+}
+.sb-side { display: grid; gap: 6px; grid-template-columns: 1fr 1fr; }
+.sb-side--l { grid-area: l; }
+.sb-side--r { grid-area: r; }
+.sb-center { grid-area: c; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.sb-sec { border: 1px solid var(--line-soft); border-radius: 10px; padding: 4px; }
+.sb-sec__k { font-size: .68em; text-align: center; opacity: .85; margin-bottom: 3px; }
+.sb-row { display: grid; gap: 3px; }
+.sb-triples { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.sb-triples .sb-spot--wide { grid-column: 1 / -1; order: 99; min-height: 44px; }
+.sb-doubles, .sb-singles { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.sb-totals { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.sb-combos { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+
+.sb-spot { min-width: 0; padding: 3px 1px 20px; border-radius: 7px; }
+.sb-spot .lg-spot__zh { font-size: .82em; white-space: nowrap; display: inline-flex; align-items: center; gap: 1px; }
+.sb-spot .lg-spot__en { font-size: .55em; letter-spacing: .04em; white-space: nowrap; }
+.sb-spot .lg-spot__odds { font-size: .62em; white-space: nowrap; }
+.sb-spot--total .lg-spot__zh { font-size: .95em; }
+.sb-spot--main { min-height: 64px; padding: 6px 4px 22px; }
+.sb-spot--main .lg-spot__zh { font-size: 1.35em; }
+.sb-spot--main .lg-spot__en { font-size: .64em; }
+.sb-spot--small, .sb-spot--big { background: rgba(0, 0, 0, .16); }
+.sb-spot__rule { font-size: .58em; opacity: .75; }
+.sb-spot--single .sb-die--xs { --s: 18px; }
+.sb-spot--single .lg-spot__zh { flex-direction: column; }
+.sb-spot__hint { display: none; font-size: .52em; color: var(--push); white-space: nowrap; line-height: 1.2; }
+.sb-show-hints .sb-spot__hint { display: block; }
+.sb-spot .lg-chipstack { transform: scale(.82); transform-origin: 50% 100%; }
+
+/* 中獎格燈亮 */
+.sb-spot.sb-lit { background: rgba(255, 224, 120, .28); border-color: #ffe27a; box-shadow: 0 0 0 2px #ffe27a, 0 0 16px rgba(255, 226, 122, .75); animation: sb-lit 1s ease-in-out 3; }
+@keyframes sb-lit { 50% { box-shadow: 0 0 0 2px #fff4c2, 0 0 26px rgba(255, 226, 122, 1); } }
+
+.sb-hint { margin: 8px 8px 0; }
+.sb-why { margin: 0; padding-left: 1.1em; }
+
+/* ---- 桌機：照規格 ASCII（小/單 在左、大/雙 在右，中間各區） */
+@media (min-width: 760px) {
+  .sb-board { grid-template-columns: 110px minmax(0, 1fr) 110px; grid-template-areas: "l c r"; }
+  .sb-side { grid-template-columns: 1fr; grid-auto-rows: 1fr; }
+  .sb-spot--main { min-height: 120px; }
+  .sb-triples { grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, 1.6fr) repeat(3, minmax(0, 1fr)); }
+  .sb-triples .sb-spot--wide { grid-column: auto; order: 0; }
+  .sb-combos { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+  .sb-bowl { width: 160px; height: 112px; }
+  .sb-dice .sb-die { --s: 36px; }
+}

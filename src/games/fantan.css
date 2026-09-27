@@ -1,0 +1,85 @@
+/* 番攤 Fan Tan — 前綴 ft- */
+.ft-table { display: flex; flex-direction: column; gap: 10px; }
+.ft-controls { display: flex; align-items: center; gap: 8px; justify-content: space-between; }
+.ft-history__wrap { min-width: 0; }
+.ft-history__k { font-size: .66em; opacity: .7; }
+.ft-history { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 2px; }
+.ft-hist { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: rgba(0, 0, 0, .35); font-size: .74em; font-weight: 700; }
+.ft-hist--1, .ft-hist--3 { color: #ff9a9a; }
+.ft-hist--2, .ft-hist--4 { color: #9ac2ff; }
+.ft-hist--empty { opacity: .5; font-size: .8em; }
+.ft-fast { flex: 0 0 auto; }
+.ft-fast.is-on { border-color: var(--gold); color: var(--gold); }
+
+/* ---- 方桌 3×3：角 / 號碼格 / 碗 */
+.ft-board { overflow-x: auto; }
+.ft-square {
+  display: grid; gap: 4px; min-width: 330px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1fr);
+  border: 2px solid var(--line-soft); border-radius: 12px; padding: 4px; background: rgba(0, 0, 0, .1);
+}
+.ft-zone { display: grid; gap: 3px; border-radius: 10px; padding: 3px; background: rgba(0, 0, 0, .14); min-width: 0; }
+.ft-zone--3, .ft-zone--1 { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 1fr); grid-template-rows: auto auto; }
+.ft-zone--3 .ft-fan { grid-column: 2; grid-row: 1; }
+.ft-zone--3 .ft-in { grid-column: 2; grid-row: 2; }
+.ft-zone--1 .ft-in { grid-column: 2; grid-row: 1; }
+.ft-zone--1 .ft-fan { grid-column: 2; grid-row: 2; }
+.ft-zone--3 .ft-l, .ft-zone--1 .ft-l { grid-column: 1; grid-row: 1 / 3; }
+.ft-zone--3 .ft-r, .ft-zone--1 .ft-r { grid-column: 3; grid-row: 1 / 3; }
+.ft-zone--2, .ft-zone--4 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto 1fr auto; }
+.ft-zone--2 .ft-t, .ft-zone--4 .ft-t { grid-column: 1 / 3; grid-row: 1; }
+.ft-zone--2 .ft-b, .ft-zone--4 .ft-b { grid-column: 1 / 3; grid-row: 3; }
+.ft-zone--2 .ft-fan { grid-column: 1; grid-row: 2; }
+.ft-zone--2 .ft-in { grid-column: 2; grid-row: 2; }
+.ft-zone--4 .ft-in { grid-column: 1; grid-row: 2; }
+.ft-zone--4 .ft-fan { grid-column: 2; grid-row: 2; }
+
+.ft-spot { min-width: 0; padding: 3px 1px 18px; border-radius: 7px; }
+.ft-spot .lg-spot__zh { font-size: .8em; white-space: nowrap; }
+.ft-spot .lg-spot__en { font-size: .52em; letter-spacing: .04em; white-space: nowrap; }
+.ft-spot .lg-spot__odds { font-size: .62em; }
+.ft-spot .lg-chipstack { transform: scale(.8); transform-origin: 50% 100%; }
+.ft-fan { background: rgba(217, 180, 81, .12); border-color: var(--gold); }
+.ft-fan__num { font-size: 1.6em; line-height: 1; color: var(--gold); font-family: Georgia, serif; }
+.ft-kwok { border-style: dashed; }
+.ft-spot--nim { border-width: 1.5px; }
+.ft-spot__hint { display: none; font-size: .5em; color: var(--push); line-height: 1.2; white-space: nowrap; }
+.ft-show-hints .ft-spot__hint { display: block; }
+.ft-spot.ft-push { border-color: var(--push); box-shadow: 0 0 0 2px var(--push); }
+
+/* ---- 中央：碗與鈕扣 */
+.ft-center { position: relative; min-height: 150px; border-radius: 22px; background: radial-gradient(circle, rgba(0, 0, 0, .1) 0%, rgba(0, 0, 0, .3) 100%); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.ft-pile { display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: 2px; width: 82%; max-height: 82%; padding: 4px; }
+.ft-pile i { display: block; width: 6px; height: 6px; border-radius: 50%; background: #f4ecd6; box-shadow: inset -1px -1px 0 rgba(0, 0, 0, .25); transition: transform .12s ease-in, opacity .12s ease-in; }
+.ft-pile i.is-out { transform: translate(18px, 10px); opacity: 0; }
+.ft-center.is-done .ft-pile i { width: 16px; height: 16px; background: #fff7e0; box-shadow: 0 0 10px rgba(255, 230, 150, .9); }
+.ft-bowl {
+  position: absolute; inset: 8%; border-radius: 50%;
+  background: radial-gradient(circle at 38% 30%, #e9e4da 0%, #b9b1a0 55%, #6c6556 100%);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, .6); display: flex; align-items: center; justify-content: center;
+  color: #3a332a; font-weight: 800; font-size: .8em; transition: transform .35s ease, opacity .35s ease; z-index: 2;
+}
+.ft-bowl .en { color: #3a332a; }
+.ft-center.is-open .ft-bowl { transform: translateY(-85%) scale(.8); opacity: 0; pointer-events: none; }
+.ft-stick { position: absolute; right: -40%; top: 55%; width: 60%; height: 4px; border-radius: 2px; background: #c89b52; opacity: 0; z-index: 3; }
+.ft-center.is-stroke .ft-stick { animation: ft-stroke .14s ease-out; }
+@keyframes ft-stroke { 0% { opacity: 1; transform: translateX(-60%); } 100% { opacity: 0; transform: translateX(10%); } }
+.ft-result { position: absolute; top: 6px; left: 0; right: 0; text-align: center; font-weight: 900; color: var(--gold); font-size: 1em; text-shadow: 0 2px 6px #000; z-index: 3; }
+.ft-count { position: absolute; bottom: 4px; left: 2px; right: 2px; text-align: center; font-size: .64em; line-height: 1.2; color: #fff; text-shadow: 0 1px 3px #000; z-index: 3; font-variant-numeric: tabular-nums; }
+.ft-count b { color: var(--gold); }
+@media (prefers-reduced-motion: reduce) { .ft-bowl, .ft-pile i { transition: none; } .ft-center.is-stroke .ft-stick { animation: none; } }
+
+/* ---- 外圈：單雙、對角的角、三門 */
+.ft-outer { display: flex; flex-direction: column; gap: 4px; }
+.ft-outer__row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+.ft-outer__k { font-size: .66em; text-align: center; opacity: .8; }
+.ft-hint { margin: 8px 8px 0; }
+.ft-why { margin: 0; padding-left: 1.1em; }
+
+@media (min-width: 760px) {
+  .ft-square { max-width: 640px; margin: 0 auto; }
+  .ft-outer { max-width: 640px; margin: 0 auto; width: 100%; }
+  .ft-center { min-height: 200px; }
+  .ft-pile i { width: 8px; height: 8px; }
+  .ft-spot .lg-spot__zh { font-size: .95em; }
+}
